@@ -1,0 +1,345 @@
+import { useState } from "react";
+import { useParams } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Calendar, Mail, Phone, MapPin, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { useLocation } from "wouter";
+import { Link } from "wouter";
+import { toast } from "sonner";
+
+export default function ApplicationDetail() {
+  const { id } = useParams<{ id: string }>();
+  const [, navigate] = useLocation();
+  const { user } = useAuth();
+  const [action, setAction] = useState<"approve" | "hold" | "resubmit" | null>(null);
+  const [remarks, setRemarks] = useState("");
+
+  // Fetch application
+  const applicationQuery = trpc.applications.getById.useQuery(
+    { id: parseInt(id || "0") },
+    { enabled: !!id }
+  );
+
+  // Fetch activity logs
+  const activityLogsQuery = trpc.activityLogs.getByApplicationId.useQuery(
+    { applicationId: parseInt(id || "0") },
+    { enabled: !!id }
+  );
+
+  // Update status mutation
+  const updateStatusMutation = trpc.applications.updateStatus.useMutation();
+
+  const app = applicationQuery.data;
+  const activityLogs = activityLogsQuery.data || [];
+
+  if (!user || (user.role !== "staff" && user.role !== "admin")) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="p-8 text-center max-w-md">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
+          <p className="text-muted-foreground">You don't have permission to view this page.</p>
+        </Card>
+      </div>
+    );
+  }
+
+  if (applicationQuery.isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">Loading application...</p>
+      </div>
+    );
+  }
+
+  if (!app) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="p-8 text-center max-w-md">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Application Not Found</h1>
+          <Button asChild className="mt-4">
+            <Link href="/dashboard">Back to Dashboard</Link>
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
+  const handleAction = async () => {
+    if (!action) return;
+
+    try {
+      await updateStatusMutation.mutateAsync({
+        applicationId: app.id,
+        status: action === "approve" ? "approved" : action === "hold" ? "on_hold" : "for_resubmission",
+        remarks: remarks || undefined,
+      });
+
+      toast.success(`Application ${action}ed successfully!`);
+      setAction(null);
+      setRemarks("");
+      applicationQuery.refetch();
+      activityLogsQuery.refetch();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update application");
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "approved":
+        return "bg-green-100 text-green-800";
+      case "for_resubmission":
+        return "bg-orange-100 text-orange-800";
+      case "on_hold":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getProcessingIndicator = (statusIndicator: string) => {
+    const colors = {
+      green: "text-green-600",
+      yellow: "text-yellow-600",
+      red: "text-red-600",
+    };
+
+    const icons = {
+      green: <CheckCircle2 className="h-5 w-5" />,
+      yellow: <Clock className="h-5 w-5" />,
+      red: <AlertCircle className="h-5 w-5" />,
+    };
+
+    return (
+      <div className={`flex items-center gap-2 ${colors[statusIndicator as keyof typeof colors]}`}>
+        {icons[statusIndicator as keyof typeof icons]}
+        <span className="font-medium">
+          {statusIndicator === "green" && "0-1 day"}
+          {statusIndicator === "yellow" && "2 days"}
+          {statusIndicator === "red" && "3+ days"}
+        </span>
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-border sticky top-0 z-40">
+        <div className="container py-4 flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/dashboard")}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold">Application Details</h1>
+            <p className="text-sm text-muted-foreground">{app.referenceNumber}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="container py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Status Card */}
+            <Card className="p-6 bg-gradient-meo text-white">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold">Application Status</h2>
+                <Badge className={`${getStatusColor(app.status)} text-xs`}>
+                  {app.status.replace(/_/g, " ").toUpperCase()}
+                </Badge>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm opacity-90">Submitted</p>
+                  <p className="text-lg font-semibold">
+                    {new Date(app.submittedAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm opacity-90">Processing Time</p>
+                  <div className="mt-1">
+                    {getProcessingIndicator(app.statusIndicator)}
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Applicant Information */}
+            <Card className="p-6">
+              <h3 className="text-lg font-bold mb-4">Applicant Information</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Full Name</p>
+                  <p className="font-semibold">{app.applicantName}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Capacity</p>
+                  <p className="font-semibold">{app.applicantCapacity}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <a href={`mailto:${app.applicantEmail}`} className="text-primary hover:underline">
+                    {app.applicantEmail}
+                  </a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <a href={`tel:${app.applicantPhone}`} className="text-primary hover:underline">
+                    {app.applicantPhone}
+                  </a>
+                </div>
+              </div>
+            </Card>
+
+            {/* Property Information */}
+            <Card className="p-6">
+              <h3 className="text-lg font-bold mb-4">Property Information</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Location</p>
+                  <div className="flex items-start gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <p className="font-semibold">{app.propertyLocation}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Complete Address</p>
+                  <p className="text-sm">{app.propertyAddress}</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Project Type</p>
+                    <p className="font-semibold">{app.projectType}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Building Classification</p>
+                    <p className="font-semibold">
+                      {app.buildingClassification || "Not provided"}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Project Scope</p>
+                  <p className="text-sm whitespace-pre-wrap">{app.projectScope}</p>
+                </div>
+              </div>
+            </Card>
+
+            {/* Activity Log */}
+            {activityLogs.length > 0 && (
+              <Card className="p-6">
+                <h3 className="text-lg font-bold mb-4">Activity Log</h3>
+                <div className="space-y-4">
+                  {activityLogs.map((log: any) => (
+                    <div key={log.id} className="flex gap-4 pb-4 border-b border-border last:border-0">
+                      <div className="h-8 w-8 rounded-full bg-gradient-meo flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs text-white font-bold">
+                          {log.staffName.charAt(0)}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm">{log.staffName}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {log.action.replace(/_/g, " ").toUpperCase()}
+                        </p>
+                        {log.remarks && (
+                          <p className="text-sm mt-1 text-foreground">{log.remarks}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {new Date(log.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
+          </div>
+
+          {/* Sidebar - Actions */}
+          <div className="space-y-6">
+            <Card className="p-6">
+              <h3 className="text-lg font-bold mb-4">Actions</h3>
+              {app.status === "pending" || app.status === "on_hold" ? (
+                <div className="space-y-3">
+                  <Button
+                    onClick={() => setAction("approve")}
+                    className="w-full bg-green-600 hover:bg-green-700"
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    onClick={() => setAction("hold")}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Put on Hold
+                  </Button>
+                  <Button
+                    onClick={() => setAction("resubmit")}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Request Resubmission
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  This application has already been processed.
+                </p>
+              )}
+            </Card>
+
+            {/* Remarks Section */}
+            {action && (
+              <Card className="p-6 border-primary">
+                <h3 className="text-lg font-bold mb-4">Add Remarks</h3>
+                <Textarea
+                  placeholder="Add any remarks or notes for this action..."
+                  value={remarks}
+                  onChange={(e) => setRemarks(e.target.value)}
+                  rows={4}
+                  className="mb-4"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleAction}
+                    disabled={updateStatusMutation.isPending}
+                    className="btn-primary-meo flex-1"
+                  >
+                    {updateStatusMutation.isPending ? "Processing..." : "Confirm"}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setAction(null);
+                      setRemarks("");
+                    }}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </Card>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

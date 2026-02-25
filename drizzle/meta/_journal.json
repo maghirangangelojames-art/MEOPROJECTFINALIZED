@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1770674173019,
+      "tag": "0000_fancy_prima",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1770674919552,
+      "tag": "0001_fearless_trauma",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1770674973530,
+      "tag": "0002_shiny_wonder_man",
+      "breakpoints": true
+    }
+  ]
+}
