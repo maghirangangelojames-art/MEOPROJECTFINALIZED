@@ -174,14 +174,25 @@ export async function getUserByOpenId(openId: string) {
  */
 export async function getApplicationsFIFO(limit = 50, offset = 0) {
   const db = await getDb();
-  if (!db) return [];
+  if (!db) {
+    console.warn("[Database] Cannot get FIFO applications: database not available");
+    return [];
+  }
 
-  return db
-    .select()
-    .from(applications)
-    .orderBy(desc(applications.submittedAt))
-    .limit(limit)
-    .offset(offset);
+  try {
+    console.log("[Database] Fetching applications FIFO - limit:", limit, "offset:", offset);
+    const result = await db
+      .select()
+      .from(applications)
+      .orderBy(desc(applications.submittedAt))
+      .limit(limit)
+      .offset(offset);
+    console.log("[Database] Found", result.length, "applications");
+    return result;
+  } catch (error) {
+    console.error("[Database] Error fetching FIFO applications:", error);
+    return [];
+  }
 }
 
 /**
@@ -189,15 +200,26 @@ export async function getApplicationsFIFO(limit = 50, offset = 0) {
  */
 export async function getApplicationsByStatus(status: string, limit = 50, offset = 0) {
   const db = await getDb();
-  if (!db) return [];
+  if (!db) {
+    console.warn("[Database] Cannot get applications by status: database not available");
+    return [];
+  }
 
-  return db
-    .select()
-    .from(applications)
-    .where(eq(applications.status, status as any))
-    .orderBy(desc(applications.submittedAt))
-    .limit(limit)
-    .offset(offset);
+  try {
+    console.log("[Database] Fetching applications by status:", status, "- limit:", limit, "offset:", offset);
+    const result = await db
+      .select()
+      .from(applications)
+      .where(eq(applications.status, status as any))
+      .orderBy(desc(applications.submittedAt))
+      .limit(limit)
+      .offset(offset);
+    console.log("[Database] Found", result.length, "applications with status:", status);
+    return result;
+  } catch (error) {
+    console.error("[Database] Error fetching applications by status:", error);
+    return [];
+  }
 }
 
 /**
@@ -270,13 +292,20 @@ export async function getApplicationByRefNumber(refNumber: string) {
   const db = await getDb();
   if (!db) return null;
 
-  const result = await db
-    .select()
-    .from(applications)
-    .where(eq(applications.referenceNumber, refNumber))
-    .limit(1);
+  try {
+    console.log("[Database] Querying application by reference number:", refNumber);
+    const result = await db
+      .select()
+      .from(applications)
+      .where(eq(applications.referenceNumber, refNumber))
+      .limit(1);
 
-  return result.length > 0 ? result[0] : null;
+    console.log("[Database] Query result for ref", refNumber, ":", result.length > 0 ? "Found" : "Not found");
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error("[Database] Error querying application by reference number:", error);
+    throw error;
+  }
 }
 
 /**
