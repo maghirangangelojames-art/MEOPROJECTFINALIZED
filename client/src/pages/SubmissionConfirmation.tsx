@@ -1,13 +1,14 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { CheckCircle, Copy, Home, FileText } from "lucide-react";
+import { CheckCircle, Copy, Home, FileText, Calendar, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 
 export default function SubmissionConfirmation() {
   const [location] = useLocation();
   const [copied, setCopied] = useState(false);
+  const submissionTime = new Date();
   
   // Extract reference number from URL
   const params = new URLSearchParams(location.split("?")[1]);
@@ -58,6 +59,27 @@ export default function SubmissionConfirmation() {
             <p className="text-xs opacity-75">
               {copied ? "✓ Copied to clipboard" : "Click to copy"}
             </p>
+            
+            {/* Date and Time Submitted */}
+            <div className="border-t border-white/20 pt-4 mt-4 space-y-2">
+              <div className="flex items-center justify-center gap-2 text-sm">
+                <Calendar className="h-4 w-4" />
+                <span>{submissionTime.toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}</span>
+              </div>
+              <div className="flex items-center justify-center gap-2 text-sm">
+                <Clock className="h-4 w-4" />
+                <span>{submissionTime.toLocaleTimeString('en-US', { 
+                  hour: '2-digit', 
+                  minute: '2-digit',
+                  second: '2-digit',
+                  hour12: true 
+                })}</span>
+              </div>
+            </div>
           </div>
 
           {/* What Happens Next */}
