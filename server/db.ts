@@ -247,13 +247,20 @@ export async function getApplicationByEmail(email: string) {
   const db = await getDb();
   if (!db) return null;
 
-  const result = await db
-    .select()
-    .from(applications)
-    .where(eq(applications.applicantEmail, email))
-    .limit(1);
+  try {
+    console.log("[Database] Querying application by email:", email);
+    const result = await db
+      .select()
+      .from(applications)
+      .where(eq(applications.applicantEmail, email))
+      .limit(1);
 
-  return result.length > 0 ? result[0] : null;
+    console.log("[Database] Query result for", email, ":", result.length > 0 ? "Found" : "Not found");
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error("[Database] Error querying application by email:", error);
+    throw error;
+  }
 }
 
 /**
@@ -279,8 +286,15 @@ export async function createApplication(data: any) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const result = await db.insert(applications).values(data);
-  return result;
+  try {
+    console.log("[Database] Creating application with data:", JSON.stringify(data, null, 2));
+    const result = await db.insert(applications).values(data);
+    console.log("[Database] Application created successfully");
+    return result;
+  } catch (error) {
+    console.error("[Database] Error creating application:", error);
+    throw error;
+  }
 }
 
 /**
