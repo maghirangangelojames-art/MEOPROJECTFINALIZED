@@ -66,19 +66,19 @@ export default function SubmissionConfirmation() {
             <ol className="space-y-3 text-sm text-blue-800">
               <li className="flex gap-3">
                 <span className="font-bold text-blue-600 flex-shrink-0">1.</span>
-                <span>Your application will be reviewed by our staff within 3 business days.</span>
+                <span>Your application will be reviewed by our staff within 1-3 business days.</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-blue-600 flex-shrink-0">2.</span>
-                <span>You will receive email updates on the status of your application.</span>
+                <span>You will be notified on your View Application page for your application status.</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-blue-600 flex-shrink-0">3.</span>
-                <span>Use your reference number to track your application status anytime.</span>
+                <span>The staff will send you either an approval or, if files are not correct, additional changes are necessary.</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-blue-600 flex-shrink-0">4.</span>
-                <span>If additional documents are needed, we will notify you via email.</span>
+                <span>Once approved, bring all your hard copies to Sariaya Municipal Engineering Office.</span>
               </li>
             </ol>
           </div>

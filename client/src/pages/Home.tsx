@@ -409,7 +409,7 @@ export default function Home() {
 
       {/* Learn More Modal */}
       <Dialog open={learnMoreOpen} onOpenChange={setLearnMoreOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl">How to File Your Building Permit Application</DialogTitle>
             <DialogDescription>

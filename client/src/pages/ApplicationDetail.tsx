@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, Mail, Phone, MapPin, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { ArrowLeft, Calendar, Mail, Phone, MapPin, AlertCircle, CheckCircle2, Clock, Lock, Unlock } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
@@ -18,6 +18,8 @@ export default function ApplicationDetail() {
   const { user } = useAuth();
   const [action, setAction] = useState<"approve" | "hold" | "resubmit" | null>(null);
   const [remarks, setRemarks] = useState("");
+  const [editingFileIndex, setEditingFileIndex] = useState<number | null>(null);
+  const [fileRemarks, setFileRemarks] = useState<Record<number, string>>({});
 
   // Fetch application
   const applicationQuery = trpc.applications.getById.useQuery(
@@ -31,6 +33,10 @@ export default function ApplicationDetail() {
     { enabled: !!id }
   );
 
+
+  // File management mutations
+  const updateFileLockMutation = trpc.applications.updateFileLockStatus.useMutation();
+  const updateFileRemarksMutation = trpc.applications.updateFileRemarks.useMutation();
   // Update status mutation
   const updateStatusMutation = trpc.applications.updateStatus.useMutation();
 
@@ -88,6 +94,39 @@ export default function ApplicationDetail() {
       activityLogsQuery.refetch();
     } catch (error: any) {
       toast.error(error?.message || "Failed to update application");
+    }
+  };
+
+  const handleToggleFileLock = async (fileIndex: number, currentLocked: boolean) => {
+    try {
+      await updateFileLockMutation.mutateAsync({
+        applicationId: app.id,
+        fileIndex,
+        isLocked: !currentLocked,
+      });
+      
+      toast.success(`File ${currentLocked ? "unlocked" : "locked"} successfully!`);
+      applicationQuery.refetch();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update file lock status");
+    }
+  };
+
+  const handleUpdateFileRemarks = async (fileIndex: number) => {
+    const remark = fileRemarks[fileIndex] || "";
+    
+    try {
+      await updateFileRemarksMutation.mutateAsync({
+        applicationId: app.id,
+        fileIndex,
+        remarks: remark,
+      });
+      
+      toast.success("File remarks updated successfully!");
+      setEditingFileIndex(null);
+      applicationQuery.refetch();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update file remarks");
     }
   };
 
@@ -261,22 +300,105 @@ export default function ApplicationDetail() {
                   {app.attachments.map((attachment: any, index: number) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+                      className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
                     >
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm truncate">{attachment.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {attachment.type === "application/pdf" ? "PDF" : "Image"}
-                        </p>
+                      <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-semibold text-sm truncate">{attachment.name}</p>
+                            {(attachment.isLocked !== false) && (
+                              <Lock className="h-4 w-4 text-amber-600 flex-shrink-0" title="File is locked by staff" />
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {attachment.type === "application/pdf" ? "PDF" : "Image"}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleToggleFileLock(index, attachment.isLocked !== false)}
+                            title={attachment.isLocked !== false ? "Unlock this file" : "Lock this file"}
+                          >
+                            {attachment.isLocked !== false ? (
+                              <Unlock className="h-4 w-4 mr-1" />
+                            ) : (
+                              <Lock className="h-4 w-4 mr-1" />
+                            )}
+                            {attachment.isLocked !== false ? "Unlock" : "Lock"}
+                          </Button>
+                          <a
+                            href={attachment.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+                          >
+                            View
+                          </a>
+                        </div>
                       </div>
-                      <a
-                        href={attachment.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="ml-4 px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
-                      >
-                        View
-                      </a>
+                      
+                      {/* Remarks Section */}
+                      <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                        {editingFileIndex === index ? (
+                          <div className="space-y-2">
+                            <label className="text-xs font-medium text-muted-foreground">Staff Remarks</label>
+                            <Textarea
+                              value={fileRemarks[index] || attachment.remarks || ""}
+                              onChange={(e) => setFileRemarks({ ...fileRemarks, [index]: e.target.value })}
+                              placeholder="Add remarks for this file (e.g., specific issues to fix)..."
+                              className="min-h-20"
+                              maxLength={500}
+                            />
+                            <div className="flex gap-2 justify-end">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingFileIndex(null)}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                size="sm"
+                                onClick={() => handleUpdateFileRemarks(index)}
+                              >
+                                Save Remarks
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div>
+                            {attachment.remarks ? (
+                              <div>
+                                <p className="text-xs font-medium text-muted-foreground mb-1">Staff Remarks:</p>
+                                <p className="text-sm text-foreground mb-2">{attachment.remarks}</p>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setFileRemarks({ ...fileRemarks, [index]: attachment.remarks });
+                                    setEditingFileIndex(index);
+                                  }}
+                                >
+                                  Edit Remarks
+                                </Button>
+                              </div>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setFileRemarks({ ...fileRemarks, [index]: "" });
+                                  setEditingFileIndex(index);
+                                }}
+                              >
+                                Add Remarks
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

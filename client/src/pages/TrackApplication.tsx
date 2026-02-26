@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, CheckCircle2, Clock, AlertCircle, FileText, Download, Home } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock, AlertCircle, FileText, Download, Home, Lock } from "lucide-react";
 import { SkeletonPageHeader, SkeletonCard } from "@/components/SkeletonLoader";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -159,7 +159,9 @@ export default function TrackApplication() {
             </Button>
             <div>
               <h1 className="text-2xl font-bold">Your Application</h1>
-              <p className="text-sm text-muted-foreground">{app.referenceNumber}</p>
+              <p className="text-sm text-muted-foreground">
+                Submitted on {new Date(app.submittedAt).toLocaleDateString()} at {new Date(app.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </p>
             </div>
           </div>
         </div>
@@ -182,9 +184,10 @@ export default function TrackApplication() {
                 <p className="font-mono font-semibold text-sm">{app.referenceNumber}</p>
               </div>
               <div>
-                <p className="text-white/70 text-xs uppercase">Submitted</p>
-                <p className="font-semibold">
-                  {new Date(app.submittedAt).toLocaleDateString()}
+                <p className="text-white/70 text-xs uppercase">Submitted Date & Time</p>
+                <p className="font-semibold text-sm">
+                  {new Date(app.submittedAt).toLocaleDateString()}<br />
+                  {new Date(app.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
               <div>
@@ -270,12 +273,23 @@ export default function TrackApplication() {
             <div className="space-y-3">
               {attachments.map((attachment: any, idx: number) => (
                 <div key={idx} className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 transition">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 flex-1">
                     <FileText className="h-5 w-5 text-muted-foreground" />
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm truncate">{attachment.name}</p>
                       <p className="text-xs text-muted-foreground">{attachment.type}</p>
+                      {attachment.remarks && (
+                        <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">
+                          <span className="font-medium">Staff Remarks:</span> {attachment.remarks}
+                        </p>
+                      )}
                     </div>
+                    {(attachment.isLocked !== false) && (
+                      <div className="flex items-center gap-1 ml-2" title="File is locked">
+                        <Lock className="h-4 w-4 text-amber-600" />
+                        <span className="text-xs text-amber-600 font-medium">Locked</span>
+                      </div>
+                    )}
                   </div>
                   <Button
                     variant="ghost"

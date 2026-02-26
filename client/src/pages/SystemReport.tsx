@@ -3,10 +3,15 @@ import { Button } from "@/components/ui/button";
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Download, FileText, Users, Clock, CheckCircle2, AlertCircle, TrendingUp } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
+import { SkeletonPageHeader, SkeletonCard } from "@/components/SkeletonLoader";
 
 const SystemReport = () => {
   const { user } = useAuth();
+  
+  // Fetch all applications for the report
+  const applicationsQuery = trpc.applications.list.useQuery({ limit: 10000, offset: 0 });
 
   // Check if user is staff or admin
   if (!user || (user.role !== "staff" && user.role !== "admin")) {
@@ -27,22 +32,75 @@ const SystemReport = () => {
       </div>
     );
   }
-  // Sample data for demonstration - starting fresh tracking from today
-  const applicationTrends = [
-    { month: "Feb 26", submitted: 0, approved: 0, pending: 0 },
-  ];
+
+  if (applicationsQuery.isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-white border-b border-border sticky top-0 z-40">
+          <div className="container py-8">
+            <SkeletonPageHeader />
+          </div>
+        </div>
+        <div className="container py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {[1, 2, 3, 4].map((i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Process real data
+  const applications = applicationsQuery.data || [];
+  const totalApplications = applications.length;
+  
+  // Calculate status distribution
+  const statusCounts = {
+    pending: applications.filter(app => app.status === "pending").length,
+    approved: applications.filter(app => app.status === "approved").length,
+    on_hold: applications.filter(app => app.status === "on_hold").length,
+    for_resubmission: applications.filter(app => app.status === "for_resubmission").length,
+  };
+
+  const approvalRate = totalApplications > 0 ? Math.round((statusCounts.approved / totalApplications) * 100) : 0;
+
+  // Calculate processing time stats
+  const processingDays = applications.map(app => app.processingDays || 0);
+  const avgProcessingDays = processingDays.length > 0 ? Math.round(processingDays.reduce((a, b) => a + b, 0) / processingDays.length) : 0;
+
+  // Build trends data (group by date)
+  const trendsMap = new Map<string, { submitted: number, approved: number, pending: number }>();
+  applications.forEach(app => {
+    const dateKey = new Date(app.submittedAt).toLocaleDateString();
+    const existing = trendsMap.get(dateKey) || { submitted: 0, approved: 0, pending: 0 };
+    existing.submitted += 1;
+    if (app.status === "approved") existing.approved += 1;
+    if (app.status === "pending") existing.pending += 1;
+    trendsMap.set(dateKey, existing);
+  });
+
+  const applicationTrends = Array.from(trendsMap.entries())
+    .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime())
+    .map(([date, data]) => ({ month: date, ...data }));
 
   const statusDistribution = [
-    { name: "Approved", value: 0, color: "#22c55e" },
-    { name: "Pending", value: 0, color: "#eab308" },
-    { name: "On Hold", value: 0, color: "#6b7280" },
-    { name: "Resubmission", value: 0, color: "#f97316" },
+    { name: "Approved", value: statusCounts.approved, color: "#22c55e" },
+    { name: "Pending", value: statusCounts.pending, color: "#eab308" },
+    { name: "On Hold", value: statusCounts.on_hold, color: "#6b7280" },
+    { name: "Resubmission", value: statusCounts.for_resubmission, color: "#f97316" },
   ];
 
+  // Processing time categories
+  const greenCount = applications.filter(app => (app.statusIndicator || "green") === "green").length;
+  const yellowCount = applications.filter(app => (app.statusIndicator || "yellow") === "yellow").length;
+  const redCount = applications.filter(app => (app.statusIndicator || "red") === "red").length;
+
   const processingTimeData = [
-    { range: "0-1 day", count: 0, percentage: 0 },
-    { range: "2 days", count: 0, percentage: 0 },
-    { range: "3+ days", count: 0, percentage: 0 },
+    { range: "0-1 day", count: greenCount, percentage: totalApplications > 0 ? Math.round((greenCount / totalApplications) * 100) : 0 },
+    { range: "2 days", count: yellowCount, percentage: totalApplications > 0 ? Math.round((yellowCount / totalApplications) * 100) : 0 },
+    { range: "3+ days", count: redCount, percentage: totalApplications > 0 ? Math.round((redCount / totalApplications) * 100) : 0 },
   ];
 
   const features = [
@@ -79,10 +137,10 @@ const SystemReport = () => {
   ];
 
   const stats = [
-    { label: "Total Applications", value: "0", change: "Starting fresh today" },
-    { label: "Approval Rate", value: "0%", change: "No approvals yet" },
-    { label: "Avg Processing Time", value: "0 days", change: "Tracking now" },
-    { label: "Active Users", value: "0", change: "Staff members" },
+    { label: "Total Applications", value: totalApplications.toString(), change: `${applicationTrends.length} submission dates` },
+    { label: "Approval Rate", value: `${approvalRate}%`, change: `${statusCounts.approved} applications approved` },
+    { label: "Avg Processing Time", value: `${avgProcessingDays} days`, change: "Based on current submissions" },
+    { label: "Active Users", value: applications.length > 0 ? Math.min(applications.length, 50) + "+" : "0", change: "Applicants in system" },
   ];
 
   return (

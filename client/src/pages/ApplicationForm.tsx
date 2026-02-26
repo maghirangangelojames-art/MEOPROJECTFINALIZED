@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, ArrowRight, CheckCircle2, FileText, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, FileText, X, AlertCircle } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
@@ -104,8 +104,10 @@ const barangays = [
 const capacities = ["Owner", "Authorized Representative"];
 
 const projectTypes = [
-  "Residential - Single Family",
-  "Residential - Multi-Family",
+  "Dwellings",
+  "Buildings/Structures",
+  "Hotels",
+  "Apartments",
 ];
 
 const baseRequiredDocuments = [
@@ -161,7 +163,7 @@ export default function ApplicationForm() {
   const uploadAttachmentMutation = trpc.applications.uploadAttachment.useMutation();
 
   const watchedValues = watch() as Partial<FormData>;
-  const shouldShowNonLotOwnerDocs = isNotLotOwner || watchedValues.applicantCapacity === "Authorized Representative";
+  const shouldShowNonLotOwnerDocs = isNotLotOwner && watchedValues.applicantCapacity !== "Owner";
   const requiredDocuments = [
     ...baseRequiredDocuments,
     ...(shouldShowNonLotOwnerDocs ? nonLotOwnerDocuments : []),
@@ -474,21 +476,29 @@ export default function ApplicationForm() {
 
                   {/* Conditional Owner Name - Only shown if Authorized Representative */}
                   {watchedValues.applicantCapacity === "Authorized Representative" && (
-                    <div>
-                      <Label htmlFor="ownerName" className="text-base font-semibold mb-3 block text-foreground">
-                        Property/Lot Owner Name <span className="text-red-500">*</span>
-                      </Label>
-                      <Input
-                        id="ownerName"
-                        placeholder="Enter the property owner's full name"
-                        {...register("ownerName")}
-                        className={`transition-all ${errors.ownerName ? "border-red-500 ring-2 ring-red-200" : ""}`}
-                      />
-                      {errors.ownerName && (
-                        <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                          ⚠️ {errors.ownerName.message}
+                    <div className="space-y-4 p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
+                      <div className="flex items-start gap-2">
+                        <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-amber-700 dark:text-amber-300">
+                          As an Authorized Representative, you will need to provide 2 additional documents: <strong>Authorization from the lot owner</strong> and <strong>Authorization to erect/construct building</strong>. These will be required in the Documents step.
                         </p>
-                      )}
+                      </div>
+                      <div>
+                        <Label htmlFor="ownerName" className="text-base font-semibold mb-3 block text-foreground">
+                          Property/Lot Owner Name <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                          id="ownerName"
+                          placeholder="Enter the property owner's full name"
+                          {...register("ownerName")}
+                          className={`transition-all ${errors.ownerName ? "border-red-500 ring-2 ring-red-200" : ""}`}
+                        />
+                        {errors.ownerName && (
+                          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                            ⚠️ {errors.ownerName.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   )}
 

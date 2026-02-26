@@ -14,9 +14,12 @@ import {
   updateApplicationStatus,
   createActivityLog,
   getActivityLogsByApplicationId,
+  getDb,
 } from "./db";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
+import { eq } from "drizzle-orm";
+import { applications } from "../drizzle/schema";
 
 // Helper to generate reference number
 function generateReferenceNumber(): string {
@@ -319,6 +322,90 @@ export const appRouter = router({
           action: input.status === "approved" ? "approved" : input.status === "for_resubmission" ? "resubmission_requested" : "on_hold",
           remarks: input.remarks,
         });
+
+        return { success: true };
+      }),
+
+    // Update file lock status (staff only)
+    updateFileLockStatus: protectedProcedure
+      .input(
+        z.object({
+          applicationId: z.number(),
+          fileIndex: z.number(),
+          isLocked: z.boolean(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user?.role !== "staff" && ctx.user?.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN" });
+        }
+
+        const app = await getApplicationById(input.applicationId);
+        if (!app) throw new TRPCError({ code: "NOT_FOUND" });
+
+        const attachments = (app.attachments as any[]) || [];
+        if (input.fileIndex < 0 || input.fileIndex >= attachments.length) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid file index" });
+        }
+
+        // Update the specific file's lock status
+        attachments[input.fileIndex].isLocked = input.isLocked;
+
+        // Update the application with the modified attachments
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+        await db
+          .update(applications)
+          .set({ attachments, updatedAt: new Date() })
+          .where(eq(applications.id, input.applicationId));
+
+        // Log activity
+        await createActivityLog({
+          applicationId: input.applicationId,
+          staffId: ctx.user.id,
+          staffName: ctx.user.name || "Unknown",
+          staffEmail: ctx.user.email || "unknown@example.com",
+          action: "viewed",
+          remarks: `File ${input.fileIndex + 1} ${input.isLocked ? "locked" : "unlocked"}`,
+        });
+
+        return { success: true };
+      }),
+
+    // Update file remarks (staff only)
+    updateFileRemarks: protectedProcedure
+      .input(
+        z.object({
+          applicationId: z.number(),
+          fileIndex: z.number(),
+          remarks: z.string().max(500),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user?.role !== "staff" && ctx.user?.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN" });
+        }
+
+        const app = await getApplicationById(input.applicationId);
+        if (!app) throw new TRPCError({ code: "NOT_FOUND" });
+
+        const attachments = (app.attachments as any[]) || [];
+        if (input.fileIndex < 0 || input.fileIndex >= attachments.length) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid file index" });
+        }
+
+        // Update the specific file's remarks
+        attachments[input.fileIndex].remarks = input.remarks;
+
+        // Update the application with the modified attachments
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+        await db
+          .update(applications)
+          .set({ attachments, updatedAt: new Date() })
+          .where(eq(applications.id, input.applicationId));
 
         return { success: true };
       }),
