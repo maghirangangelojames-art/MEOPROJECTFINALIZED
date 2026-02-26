@@ -218,6 +218,19 @@ export const appRouter = router({
         };
       }),
 
+    // Get application by reference number (public endpoint for confirmation page)
+    getByRefNumber: publicProcedure
+      .input(z.object({ refNumber: z.string().min(1) }))
+      .query(async ({ input }) => {
+        const app = await getApplicationByRefNumber(input.refNumber);
+        if (!app) throw new TRPCError({ code: "NOT_FOUND" });
+        return {
+          ...app,
+          processingDays: getProcessingDays(app.submittedAt),
+          statusIndicator: getStatusIndicator(app.submittedAt),
+        };
+      }),
+
     // Get current user's application
     getMyApplication: protectedProcedure
       .query(async ({ ctx }) => {

@@ -4,15 +4,25 @@ import { Card } from "@/components/ui/card";
 import { CheckCircle, Copy, Home, FileText, Calendar, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
 
 export default function SubmissionConfirmation() {
   const [location] = useLocation();
   const [copied, setCopied] = useState(false);
-  const submissionTime = new Date();
   
   // Extract reference number from URL
   const params = new URLSearchParams(location.split("?")[1]);
   const refNumber = params.get("refNumber") || "PERMIT-2026-00000";
+  
+  // Fetch the application to get the exact submission timestamp from the database
+  const applicationQuery = trpc.applications.getByRefNumber.useQuery({
+    refNumber,
+  }, {
+    retry: false,
+  });
+  
+  const app = applicationQuery.data;
+  const submissionTime = app?.submittedAt ? new Date(app.submittedAt) : new Date();
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(refNumber);
