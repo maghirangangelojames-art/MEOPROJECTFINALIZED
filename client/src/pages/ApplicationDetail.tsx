@@ -167,7 +167,14 @@ export default function ApplicationDetail() {
                 <div>
                   <p className="text-sm opacity-90">Submitted</p>
                   <p className="text-lg font-semibold">
-                    {new Date(app.submittedAt).toLocaleDateString()}
+                    {new Date(app.submittedAt).toLocaleString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true
+                    })}
                   </p>
                 </div>
                 <div>

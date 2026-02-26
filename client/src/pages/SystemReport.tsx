@@ -27,27 +27,22 @@ const SystemReport = () => {
       </div>
     );
   }
-  // Sample data for demonstration
+  // Sample data for demonstration - starting fresh tracking from today
   const applicationTrends = [
-    { month: "Jan", submitted: 12, approved: 8, pending: 4 },
-    { month: "Feb", submitted: 19, approved: 12, pending: 7 },
-    { month: "Mar", submitted: 25, approved: 18, pending: 7 },
-    { month: "Apr", submitted: 32, approved: 28, pending: 4 },
-    { month: "May", submitted: 28, approved: 24, pending: 4 },
-    { month: "Jun", submitted: 35, approved: 31, pending: 4 },
+    { month: "Feb 26", submitted: 0, approved: 0, pending: 0 },
   ];
 
   const statusDistribution = [
-    { name: "Approved", value: 121, color: "#22c55e" },
-    { name: "Pending", value: 26, color: "#eab308" },
-    { name: "On Hold", value: 8, color: "#6b7280" },
-    { name: "Resubmission", value: 5, color: "#f97316" },
+    { name: "Approved", value: 0, color: "#22c55e" },
+    { name: "Pending", value: 0, color: "#eab308" },
+    { name: "On Hold", value: 0, color: "#6b7280" },
+    { name: "Resubmission", value: 0, color: "#f97316" },
   ];
 
   const processingTimeData = [
-    { range: "0-1 day", count: 45, percentage: 28 },
-    { range: "2 days", count: 38, percentage: 23 },
-    { range: "3+ days", count: 77, percentage: 49 },
+    { range: "0-1 day", count: 0, percentage: 0 },
+    { range: "2 days", count: 0, percentage: 0 },
+    { range: "3+ days", count: 0, percentage: 0 },
   ];
 
   const features = [
@@ -84,10 +79,10 @@ const SystemReport = () => {
   ];
 
   const stats = [
-    { label: "Total Applications", value: "160", change: "+12% this month" },
-    { label: "Approval Rate", value: "75.6%", change: "+5% from last month" },
-    { label: "Avg Processing Time", value: "2.1 days", change: "Within 3-day target" },
-    { label: "Active Users", value: "24", change: "Staff members" },
+    { label: "Total Applications", value: "0", change: "Starting fresh today" },
+    { label: "Approval Rate", value: "0%", change: "No approvals yet" },
+    { label: "Avg Processing Time", value: "0 days", change: "Tracking now" },
+    { label: "Active Users", value: "0", change: "Staff members" },
   ];
 
   return (
