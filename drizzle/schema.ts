@@ -48,6 +48,7 @@ export const applications = pgTable("applications", {
   applicantEmail: varchar("applicantEmail", { length: 320 }).notNull(),
   applicantPhone: varchar("applicantPhone", { length: 20 }).notNull(),
   applicantCapacity: varchar("applicantCapacity", { length: 100 }).notNull(), // Owner, Contractor, Architect, etc.
+  ownerName: varchar("ownerName", { length: 255 }), // Only for Authorized Representatives
   barangay: varchar("barangay", { length: 100 }).notNull(),
   
   // Property Information

@@ -17,19 +17,20 @@ import { useAuth } from "@/_core/hooks/useAuth";
 
 // Validation schemas for each step
 const step1Schema = z.object({
+  applicantCapacity: z.string().min(1, "Please select a capacity"),
+  ownerName: z.string().optional(),
   applicantName: z.string().min(2, "Name must be at least 2 characters"),
   applicantEmail: z.string().email("Invalid email address"),
   applicantPhone: z.string().regex(/^\d{11}$/, "Phone number must be exactly 11 digits"),
-  applicantCapacity: z.string().min(1, "Please select a capacity"),
+  propertyLocation: z.string().min(5, "Location must be at least 5 characters"),
+  propertyAddress: z.string().min(5, "Address must be at least 5 characters"),
+  barangay: z.string().min(1, "Please select a barangay"),
 });
 
 const step2Schema = z.object({
-  propertyLocation: z.string().min(5, "Location must be at least 5 characters"),
-  propertyAddress: z.string().min(5, "Address must be at least 5 characters"),
   projectType: z.string().min(1, "Please select a project type"),
   projectScope: z.string().min(10, "Scope must be at least 10 characters"),
   buildingClassification: z.string().min(1, "Please select a building classification"),
-  barangay: z.string().min(1, "Please select a barangay"),
 });
 
 const fullSchema = step1Schema.merge(step2Schema);
@@ -105,11 +106,6 @@ const capacities = ["Owner", "Authorized Representative"];
 const projectTypes = [
   "Residential - Single Family",
   "Residential - Multi-Family",
-  "Commercial - Retail",
-  "Commercial - Office",
-  "Industrial",
-  "Institutional",
-  "Other",
 ];
 
 const baseRequiredDocuments = [
@@ -165,9 +161,10 @@ export default function ApplicationForm() {
   const uploadAttachmentMutation = trpc.applications.uploadAttachment.useMutation();
 
   const watchedValues = watch() as Partial<FormData>;
+  const shouldShowNonLotOwnerDocs = isNotLotOwner || watchedValues.applicantCapacity === "Authorized Representative";
   const requiredDocuments = [
     ...baseRequiredDocuments,
-    ...(isNotLotOwner ? nonLotOwnerDocuments : []),
+    ...(shouldShowNonLotOwnerDocs ? nonLotOwnerDocuments : []),
   ];
 
   useEffect(() => {
@@ -299,11 +296,12 @@ export default function ApplicationForm() {
         applicantPhone: formData.applicantPhone || data.applicantPhone || "",
         applicantCapacity: formData.applicantCapacity || data.applicantCapacity || "",
         barangay: formData.barangay || data.barangay || "",
-        propertyLocation: data.propertyLocation || "",
-        propertyAddress: data.propertyAddress || "",
+        propertyLocation: formData.propertyLocation || data.propertyLocation || "",
+        propertyAddress: formData.propertyAddress || data.propertyAddress || "",
         projectType: data.projectType || "",
         projectScope: data.projectScope || "",
         buildingClassification: data.buildingClassification || "",
+        ownerName: (formData.applicantCapacity || data.applicantCapacity) === "Authorized Representative" ? (formData.ownerName || data.ownerName || "") : undefined,
       };
 
       const attachments = await Promise.all(
@@ -453,6 +451,51 @@ export default function ApplicationForm() {
                     👤 Applicant Information
                   </div>
                 
+                  {/* Capacity - First Field */}
+                  <div>
+                    <Label htmlFor="applicantCapacity" className="text-base font-semibold mb-3 block text-foreground">
+                      Your Capacity <span className="text-red-500">*</span>
+                    </Label>
+                    <Select value={watchedValues.applicantCapacity || ""} onValueChange={(value) => setValue("applicantCapacity", value)}>
+                      <SelectTrigger id="applicantCapacity">
+                        <SelectValue placeholder="Select capacity" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {capacities.map((cap) => (
+                          <SelectItem key={cap} value={cap}>
+                            {cap}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.applicantCapacity && (
+                      <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                        ⚠️ {errors.applicantCapacity.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Conditional Owner Name - Only shown if Authorized Representative */}
+                  {watchedValues.applicantCapacity === "Authorized Representative" && (
+                    <div>
+                      <Label htmlFor="ownerName" className="text-base font-semibold mb-3 block text-foreground">
+                        Property/Lot Owner Name <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="ownerName"
+                        placeholder="Enter the property owner's full name"
+                        {...register("ownerName")}
+                        className={`transition-all ${errors.ownerName ? "border-red-500 ring-2 ring-red-200" : ""}`}
+                      />
+                      {errors.ownerName && (
+                        <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                          ⚠️ {errors.ownerName.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Full Name */}
                   <div>
                     <Label htmlFor="applicantName" className="text-base font-semibold mb-3 block text-foreground">
                       Full Name <span className="text-red-500">*</span>
@@ -470,6 +513,7 @@ export default function ApplicationForm() {
                     )}
                   </div>
 
+                  {/* Email and Phone */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="applicantEmail" className="text-base font-semibold mb-3 block text-foreground">
@@ -507,96 +551,21 @@ export default function ApplicationForm() {
                     </div>
                   </div>
 
+                  {/* Property Location and Barangay */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="applicantCapacity" className="text-base font-semibold mb-3 block text-foreground">
-                        Your Capacity <span className="text-red-500">*</span>
+                      <Label htmlFor="propertyLocation" className="text-base font-semibold mb-3 block text-foreground">
+                        Property Location <span className="text-red-500">*</span>
                       </Label>
-                      <Select value={watchedValues.applicantCapacity || ""} onValueChange={(value) => setValue("applicantCapacity", value)}>
-                        <SelectTrigger id="applicantCapacity">
-                          <SelectValue placeholder="Select capacity" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {capacities.map((cap) => (
-                            <SelectItem key={cap} value={cap}>
-                              {cap}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {errors.applicantCapacity && (
+                      <Input
+                        id="propertyLocation"
+                        placeholder="e.g., Lot 5, Block 3, Sariaya Heights"
+                        {...register("propertyLocation")}
+                        className={`transition-all ${errors.propertyLocation ? "border-red-500 ring-2 ring-red-200" : ""}`}
+                      />
+                      {errors.propertyLocation && (
                         <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                          ⚠️ {errors.applicantCapacity.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {step === 2 && (
-              <>
-                <div className="space-y-6">
-                  <div className="inline-block px-4 py-2 bg-purple-100 dark:bg-purple-900 rounded-full text-sm font-semibold text-purple-800 dark:text-purple-100">
-                    🏠 Property Details
-                  </div>
-
-                  <div>
-                    <Label htmlFor="propertyLocation" className="text-base font-semibold mb-3 block text-foreground">
-                      Property Location <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="propertyLocation"
-                      placeholder="e.g., Lot 5, Block 3, Sariaya Heights"
-                      {...register("propertyLocation")}
-                      className={`transition-all ${errors.propertyLocation ? "border-red-500 ring-2 ring-red-200" : ""}`}
-                    />
-                    {errors.propertyLocation && (
-                      <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                        ⚠️ {errors.propertyLocation.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="propertyAddress" className="text-base font-semibold mb-3 block text-foreground">
-                      Complete Address <span className="text-red-500">*</span>
-                    </Label>
-                    <Textarea
-                      id="propertyAddress"
-                      placeholder="Enter the complete property address"
-                      {...register("propertyAddress")}
-                      className={`transition-all ${errors.propertyAddress ? "border-red-500 ring-2 ring-red-200" : ""}`}
-                      rows={3}
-                    />
-                    {errors.propertyAddress && (
-                      <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                        ⚠️ {errors.propertyAddress.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="projectType" className="text-base font-semibold mb-3 block text-foreground">
-                        Project Type <span className="text-red-500">*</span>
-                      </Label>
-                      <Select value={watchedValues.projectType || ""} onValueChange={(value) => setValue("projectType", value)}>
-                        <SelectTrigger id="projectType">
-                          <SelectValue placeholder="Select project type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {projectTypes.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {errors.projectType && (
-                        <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                          ⚠️ {errors.projectType.message}
+                          ⚠️ {errors.propertyLocation.message}
                         </p>
                       )}
                     </div>
@@ -625,6 +594,58 @@ export default function ApplicationForm() {
                     </div>
                   </div>
 
+                  {/* Complete Address */}
+                  <div>
+                    <Label htmlFor="propertyAddress" className="text-base font-semibold mb-3 block text-foreground">
+                      Complete Address <span className="text-red-500">*</span>
+                    </Label>
+                    <Textarea
+                      id="propertyAddress"
+                      placeholder="Enter the complete property address"
+                      {...register("propertyAddress")}
+                      className={`transition-all ${errors.propertyAddress ? "border-red-500 ring-2 ring-red-200" : ""}`}
+                      rows={3}
+                    />
+                    {errors.propertyAddress && (
+                      <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                        ⚠️ {errors.propertyAddress.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {step === 2 && (
+              <>
+                <div className="space-y-6">
+                  <div className="inline-block px-4 py-2 bg-purple-100 dark:bg-purple-900 rounded-full text-sm font-semibold text-purple-800 dark:text-purple-100">
+                    �️ Project Details
+                  </div>
+
+                  <div>
+                    <Label htmlFor="projectType" className="text-base font-semibold mb-3 block text-foreground">
+                      Project Type <span className="text-red-500">*</span>
+                    </Label>
+                    <Select value={watchedValues.projectType || ""} onValueChange={(value) => setValue("projectType", value)}>
+                      <SelectTrigger id="projectType">
+                        <SelectValue placeholder="Select project type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {projectTypes.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.projectType && (
+                      <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                        ⚠️ {errors.projectType.message}
+                      </p>
+                    )}
+                  </div>
+
                   <div>
                     <Label htmlFor="buildingClassification" className="text-base font-semibold mb-3 block text-foreground">
                       Classification of Building <span className="text-red-500">*</span>
@@ -635,20 +656,13 @@ export default function ApplicationForm() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Residential">Residential</SelectItem>
-                        <SelectItem value="Commercial">Commercial</SelectItem>
-                        <SelectItem value="Industrial">Industrial</SelectItem>
                       </SelectContent>
                     </Select>
-                    {/* Waiting Period Note */}
                     {watchedValues.buildingClassification && (
                       <div className="mt-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
                         <p className="text-sm font-medium text-blue-800 dark:text-blue-200 flex items-center gap-2">
                           ⏱️ Estimated Processing Time:
-                          <span className="font-bold">
-                            {watchedValues.buildingClassification === "Residential" && "1-3 days"}
-                            {watchedValues.buildingClassification === "Commercial" && "3-7 days"}
-                            {watchedValues.buildingClassification === "Industrial" && "7-15 days"}
-                          </span>
+                          <span className="font-bold">1-3 days</span>
                         </p>
                       </div>
                     )}
@@ -741,11 +755,11 @@ export default function ApplicationForm() {
                       <input
                         type="checkbox"
                         className="mt-1 w-4 h-4"
-                        checked={isNotLotOwner}
+                        checked={isNotLotOwner || watchedValues.applicantCapacity === "Authorized Representative"}
                         onChange={(event) => {
-                          const checked = event.target.checked;
+                          const checked = event.currentTarget.checked;
                           setIsNotLotOwner(checked);
-                          if (!checked) {
+                          if (!checked && watchedValues.applicantCapacity !== "Authorized Representative") {
                             setFileErrors((prev) => {
                               const next = { ...prev };
                               nonLotOwnerDocuments.forEach((doc) => {
@@ -825,10 +839,13 @@ export default function ApplicationForm() {
                 <div className="space-y-4 border rounded-lg p-4">
                   <p className="font-semibold">Applicant Information</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                    <p><span className="font-medium">Your Capacity:</span> {formData.applicantCapacity || watchedValues.applicantCapacity || "-"}</p>
+                    {(formData.applicantCapacity || watchedValues.applicantCapacity) === "Authorized Representative" && (
+                      <p><span className="font-medium">Property Owner Name:</span> {formData.ownerName || watchedValues.ownerName || "-"}</p>
+                    )}
                     <p><span className="font-medium">Full Name:</span> {formData.applicantName || watchedValues.applicantName || "-"}</p>
                     <p><span className="font-medium">Email:</span> {formData.applicantEmail || watchedValues.applicantEmail || "-"}</p>
                     <p><span className="font-medium">Phone:</span> {formData.applicantPhone || watchedValues.applicantPhone || "-"}</p>
-                    <p><span className="font-medium">Capacity:</span> {formData.applicantCapacity || watchedValues.applicantCapacity || "-"}</p>
                   </div>
                 </div>
 
@@ -836,10 +853,16 @@ export default function ApplicationForm() {
                   <p className="font-semibold">Property Details</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                     <p><span className="font-medium">Property Location:</span> {formData.propertyLocation || watchedValues.propertyLocation || "-"}</p>
-                    <p><span className="font-medium">Project Type:</span> {formData.projectType || watchedValues.projectType || "-"}</p>
                     <p><span className="font-medium">Barangay:</span> {formData.barangay || watchedValues.barangay || "-"}</p>
-                    <p><span className="font-medium">Building Classification:</span> {formData.buildingClassification || watchedValues.buildingClassification || "-"}</p>
                     <p className="sm:col-span-2"><span className="font-medium">Complete Address:</span> {formData.propertyAddress || watchedValues.propertyAddress || "-"}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4 border rounded-lg p-4">
+                  <p className="font-semibold">Project Details</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                    <p><span className="font-medium">Project Type:</span> {formData.projectType || watchedValues.projectType || "-"}</p>
+                    <p><span className="font-medium">Building Classification:</span> {formData.buildingClassification || watchedValues.buildingClassification || "-"}</p>
                     <p className="sm:col-span-2"><span className="font-medium">Project Scope:</span> {formData.projectScope || watchedValues.projectScope || "-"}</p>
                   </div>
                 </div>

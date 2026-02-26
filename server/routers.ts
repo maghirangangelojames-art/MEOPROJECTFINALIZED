@@ -236,6 +236,7 @@ export const appRouter = router({
           applicantEmail: z.string().email(),
           applicantPhone: z.string().min(1),
           applicantCapacity: z.string().min(1),
+          ownerName: z.string().optional(),
           barangay: z.string().min(1),
           propertyLocation: z.string().min(1),
           propertyAddress: z.string().min(1),

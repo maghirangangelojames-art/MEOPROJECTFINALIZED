@@ -191,6 +191,12 @@ export default function ApplicationDetail() {
                   <p className="text-xs text-muted-foreground mb-1">Capacity</p>
                   <p className="font-semibold">{app.applicantCapacity}</p>
                 </div>
+                {app.ownerName && (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Property/Lot Owner Name</p>
+                    <p className="font-semibold">{app.ownerName}</p>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <a href={`mailto:${app.applicantEmail}`} className="text-primary hover:underline">
@@ -239,6 +245,36 @@ export default function ApplicationDetail() {
                 </div>
               </div>
             </Card>
+
+            {/* Attachments/Documents */}
+            {app.attachments && app.attachments.length > 0 && (
+              <Card className="p-6">
+                <h3 className="text-lg font-bold mb-4">Attached Documents</h3>
+                <div className="space-y-3">
+                  {app.attachments.map((attachment: any, index: number) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm truncate">{attachment.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {attachment.type === "application/pdf" ? "PDF" : "Image"}
+                        </p>
+                      </div>
+                      <a
+                        href={attachment.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-4 px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
+                      >
+                        View
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
 
             {/* Activity Log */}
             {activityLogs.length > 0 && (

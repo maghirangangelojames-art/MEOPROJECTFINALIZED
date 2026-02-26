@@ -2,8 +2,31 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Download, FileText, Users, Clock, CheckCircle2, AlertCircle, TrendingUp } from "lucide-react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Link } from "wouter";
 
 const SystemReport = () => {
+  const { user } = useAuth();
+
+  // Check if user is staff or admin
+  if (!user || (user.role !== "staff" && user.role !== "admin")) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950 dark:to-red-900 flex items-center justify-center">
+        <Card className="p-8 text-center max-w-md">
+          <div className="h-14 w-14 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="h-7 w-7 text-red-600 dark:text-red-400" />
+          </div>
+          <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
+          <p className="text-muted-foreground mb-6">
+            System reports are only available to staff members.
+          </p>
+          <Button asChild className="btn-primary-meo">
+            <Link href="/">Back to Home</Link>
+          </Button>
+        </Card>
+      </div>
+    );
+  }
   // Sample data for demonstration
   const applicationTrends = [
     { month: "Jan", submitted: 12, approved: 8, pending: 4 },

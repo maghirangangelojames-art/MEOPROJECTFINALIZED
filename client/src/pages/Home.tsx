@@ -2,13 +2,16 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe } from "lucide-react";
+import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, HelpCircle, AlertCircle } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useState } from "react";
 
 export default function Home() {
   const { user, isAuthenticated, logout, loading } = useAuth();
+  const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const canStartApplication = isAuthenticated && user?.role === "user";
 
   const handleLogout = async () => {
@@ -108,12 +111,12 @@ export default function Home() {
                   </Tooltip>
                 )}
                 <Button
-                  asChild
                   size="lg"
                   variant="outline"
                   className="border-white text-white hover:bg-white/10 hover:text-white shadow-sm"
+                  onClick={() => setLearnMoreOpen(true)}
                 >
-                  <a href="#features">Learn More</a>
+                  Learn More
                 </Button>
               </div>
               {!canStartApplication ? (
@@ -403,6 +406,141 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Learn More Modal */}
+      <Dialog open={learnMoreOpen} onOpenChange={setLearnMoreOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">How to File Your Building Permit Application</DialogTitle>
+            <DialogDescription>
+              Step-by-step guide to complete your application
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6">
+            {/* Step 1 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white font-bold text-sm">
+                  1
+                </div>
+                <h3 className="font-semibold text-lg">Applicant Information</h3>
+              </div>
+              <div className="ml-11 space-y-2 text-sm text-muted-foreground">
+                <p>
+                  <strong>Your Capacity:</strong> Select whether you are the property owner or an authorized representative
+                </p>
+                <p>
+                  <strong>Owner Name (if applicable):</strong> If you're an authorized representative, provide the property owner's name
+                </p>
+                <p>
+                  <strong>Personal Details:</strong> Enter your full name, email, and 11-digit phone number
+                </p>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-white font-bold text-sm">
+                  2
+                </div>
+                <h3 className="font-semibold text-lg">Property & Location Details</h3>
+              </div>
+              <div className="ml-11 space-y-2 text-sm text-muted-foreground">
+                <p>
+                  <strong>Property Location:</strong> Lot number, block, and subdivision name (e.g., Lot 5, Block 3, Sariaya Heights)
+                </p>
+                <p>
+                  <strong>Complete Address:</strong> Full address including street, barangay, municipality, and postal code
+                </p>
+                <p>
+                  <strong>Barangay:</strong> Select your property's barangay from the list
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white font-bold text-sm">
+                  3
+                </div>
+                <h3 className="font-semibold text-lg">Project Details</h3>
+              </div>
+              <div className="ml-11 space-y-2 text-sm text-muted-foreground">
+                <p>
+                  <strong>Project Type:</strong> Select either "Residential - Single Family" or "Residential - Multi-Family"
+                </p>
+                <p>
+                  <strong>Project Scope:</strong> Describe what you plan to build (e.g., size, number of stories, intended use)
+                </p>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 text-white font-bold text-sm">
+                  4
+                </div>
+                <h3 className="font-semibold text-lg">Required Documents</h3>
+              </div>
+              <div className="ml-11 space-y-2 text-sm text-muted-foreground">
+                <p className="font-semibold text-foreground">Upload the following documents (PDF or JPG):</p>
+                <ul className="list-disc list-inside space-y-1 text-xs">
+                  <li>Build plans & structural analysis (signed by licensed engineer)</li>
+                  <li>Electrical permit (signed by professional engineer)</li>
+                  <li>Sanitary/plumbing permit (signed by master plumber)</li>
+                  <li>Tax declaration & property documents</li>
+                  <li>Barangay clearance</li>
+                  <li>DOLE application (if applicable)</li>
+                  <li>Authorization documents (if not the owner)</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Step 5 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white font-bold text-sm">
+                  5
+                </div>
+                <h3 className="font-semibold text-lg">Review & Submit</h3>
+              </div>
+              <div className="ml-11 space-y-2 text-sm text-muted-foreground">
+                <p>
+                  Review all your information on the final page, then click "Submit Application"
+                </p>
+                <p>
+                  You'll receive a reference number to track your application progress
+                </p>
+              </div>
+            </div>
+
+            {/* Timeline Info */}
+            <div className="rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 p-4">
+              <div className="flex gap-3">
+                <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-sm text-blue-900 dark:text-blue-100">Processing Timeline</p>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                    All residential permits are typically processed within 1-3 business days. You can track your application status in real-time using your reference number.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button asChild className="btn-primary-meo flex-1">
+                <Link href="/apply">Start Application</Link>
+              </Button>
+              <Button variant="outline" className="flex-1" onClick={() => setLearnMoreOpen(false)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

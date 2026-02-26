@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Search, Clock, CheckCircle2, AlertCircle, Pause, FileText, TrendingUp, Zap } from "lucide-react";
+import { Calendar, Search, Clock, CheckCircle2, AlertCircle, Pause, FileText, TrendingUp, Zap, ArrowLeft } from "lucide-react";
 import { SkeletonAppCard } from "@/components/SkeletonLoader";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -100,6 +100,16 @@ export default function StaffDashboard() {
         <div className="container py-8">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                asChild
+                className="text-white hover:bg-white/10"
+              >
+                <Link href="/">
+                  <ArrowLeft className="h-5 w-5" />
+                </Link>
+              </Button>
               <div className="h-12 w-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
                 <FileText className="h-6 w-6 text-white" />
               </div>
