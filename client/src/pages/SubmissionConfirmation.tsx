@@ -22,7 +22,7 @@ export default function SubmissionConfirmation() {
   });
   
   const app = applicationQuery.data;
-  const submissionTime = app?.submittedAt ? new Date(app.submittedAt) : new Date();
+  const submissionTime = app?.submittedAt ? new Date(app.submittedAt) : null;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(refNumber);
@@ -71,25 +71,31 @@ export default function SubmissionConfirmation() {
             </p>
             
             {/* Date and Time Submitted */}
-            <div className="border-t border-white/20 pt-4 mt-4 space-y-2">
-              <div className="flex items-center justify-center gap-2 text-sm">
-                <Calendar className="h-4 w-4" />
-                <span>{submissionTime.toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}</span>
+            {submissionTime ? (
+              <div className="border-t border-white/20 pt-4 mt-4 space-y-2">
+                <div className="flex items-center justify-center gap-2 text-sm">
+                  <Calendar className="h-4 w-4" />
+                  <span>{submissionTime.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}</span>
+                </div>
+                <div className="flex items-center justify-center gap-2 text-sm">
+                  <Clock className="h-4 w-4" />
+                  <span>{submissionTime.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true 
+                  })}</span>
+                </div>
               </div>
-              <div className="flex items-center justify-center gap-2 text-sm">
-                <Clock className="h-4 w-4" />
-                <span>{submissionTime.toLocaleTimeString('en-US', { 
-                  hour: '2-digit', 
-                  minute: '2-digit',
-                  second: '2-digit',
-                  hour12: true 
-                })}</span>
+            ) : (
+              <div className="border-t border-white/20 pt-4 mt-4 animate-pulse">
+                <p className="text-xs opacity-50 text-center">Loading submission time...</p>
               </div>
-            </div>
+            )}
           </div>
 
           {/* What Happens Next */}

@@ -37,6 +37,7 @@ export default function ApplicationDetail() {
   // File management mutations
   const updateFileLockMutation = trpc.applications.updateFileLockStatus.useMutation();
   const updateFileRemarksMutation = trpc.applications.updateFileRemarks.useMutation();
+  const deleteFileRemarksMutation = trpc.applications.deleteFileRemarks.useMutation();
   // Update status mutation
   const updateStatusMutation = trpc.applications.updateStatus.useMutation();
 
@@ -127,6 +128,21 @@ export default function ApplicationDetail() {
       applicationQuery.refetch();
     } catch (error: any) {
       toast.error(error?.message || "Failed to update file remarks");
+    }
+  };
+
+  const handleDeleteFileRemarks = async (fileIndex: number) => {
+    try {
+      await deleteFileRemarksMutation.mutateAsync({
+        applicationId: app.id,
+        fileIndex,
+      });
+      
+      toast.success("File remarks deleted successfully!");
+      setEditingFileIndex(null);
+      applicationQuery.refetch();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to delete file remarks");
     }
   };
 
@@ -373,16 +389,26 @@ export default function ApplicationDetail() {
                               <div>
                                 <p className="text-xs font-medium text-muted-foreground mb-1">Staff Remarks:</p>
                                 <p className="text-sm text-foreground mb-2">{attachment.remarks}</p>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => {
-                                    setFileRemarks({ ...fileRemarks, [index]: attachment.remarks });
-                                    setEditingFileIndex(index);
-                                  }}
-                                >
-                                  Edit Remarks
-                                </Button>
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => {
+                                      setFileRemarks({ ...fileRemarks, [index]: attachment.remarks });
+                                      setEditingFileIndex(index);
+                                    }}
+                                  >
+                                    Edit Remarks
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="text-red-600 hover:text-red-700"
+                                    onClick={() => handleDeleteFileRemarks(index)}
+                                  >
+                                    Delete Remarks
+                                  </Button>
+                                </div>
                               </div>
                             ) : (
                               <Button

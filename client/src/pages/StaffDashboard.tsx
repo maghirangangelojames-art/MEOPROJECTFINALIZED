@@ -16,7 +16,7 @@ export default function StaffDashboard() {
   const { user } = useAuth();
   const [, navigate] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "for_resubmission" | "on_hold">("pending");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "for_resubmission" | "resubmitted">("pending");
   const [limit] = useState(20);
   const [offset, setOffset] = useState(0);
 
@@ -49,6 +49,12 @@ export default function StaffDashboard() {
       })
     : statusFilter === "all"
     ? trpc.applications.list.useQuery({ limit, offset })
+    : statusFilter === "resubmitted"
+    ? trpc.applications.byStatus.useQuery({
+        status: "pending",
+        limit,
+        offset,
+      })
     : trpc.applications.byStatus.useQuery({
         status: statusFilter as any,
         limit,
@@ -65,8 +71,6 @@ export default function StaffDashboard() {
         return <Badge className="badge-status-green">✓ Approved</Badge>;
       case "for_resubmission":
         return <Badge className="badge-status-red">↺ Resubmission Needed</Badge>;
-      case "on_hold":
-        return <Badge className="badge-status-blue">⏸ On Hold</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }
@@ -156,7 +160,7 @@ export default function StaffDashboard() {
                   <SelectItem value="pending">⏳ Pending</SelectItem>
                   <SelectItem value="approved">✓ Approved</SelectItem>
                   <SelectItem value="for_resubmission">↺ Resubmission Needed</SelectItem>
-                  <SelectItem value="on_hold">⏸ On Hold</SelectItem>
+                  <SelectItem value="resubmitted">↻ Resubmitted</SelectItem>
                 </SelectContent>
               </Select>
             </div>

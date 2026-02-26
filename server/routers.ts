@@ -423,6 +423,52 @@ export const appRouter = router({
         return { success: true };
       }),
 
+    // Delete file remarks (staff only)
+    deleteFileRemarks: protectedProcedure
+      .input(
+        z.object({
+          applicationId: z.number(),
+          fileIndex: z.number(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user?.role !== "staff" && ctx.user?.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN" });
+        }
+
+        const app = await getApplicationById(input.applicationId);
+        if (!app) throw new TRPCError({ code: "NOT_FOUND" });
+
+        const attachments = (app.attachments as any[]) || [];
+        if (input.fileIndex < 0 || input.fileIndex >= attachments.length) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid file index" });
+        }
+
+        // Delete the file's remarks by setting it to empty string
+        attachments[input.fileIndex].remarks = "";
+
+        // Update the application with the modified attachments
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+        await db
+          .update(applications)
+          .set({ attachments, updatedAt: new Date() })
+          .where(eq(applications.id, input.applicationId));
+
+        // Log activity
+        await createActivityLog({
+          applicationId: input.applicationId,
+          staffId: ctx.user.id,
+          staffName: ctx.user.name || "Unknown",
+          staffEmail: ctx.user.email || "unknown@example.com",
+          action: "viewed",
+          remarks: `Remarks deleted from file ${input.fileIndex + 1}`,
+        });
+
+        return { success: true };
+      }),
+
     // Resubmit application with updated files
     resubmitApplication: protectedProcedure
       .input(
