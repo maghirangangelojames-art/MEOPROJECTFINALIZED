@@ -529,7 +529,7 @@ export const appRouter = router({
           .update(applications)
           .set({
             attachments: currentAttachments,
-            status: "pending",
+            status: "pending_resubmit",
             updatedAt: now,
           })
           .where(eq(applications.id, input.applicationId));
@@ -587,7 +587,7 @@ export const appRouter = router({
 
         const updateData: any = {
           updatedAt: new Date(),
-          status: "pending",
+          status: "pending_resubmit",
         };
 
         // Only update fields that were provided

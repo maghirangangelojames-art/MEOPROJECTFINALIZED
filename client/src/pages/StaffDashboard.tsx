@@ -51,7 +51,7 @@ export default function StaffDashboard() {
     ? trpc.applications.list.useQuery({ limit, offset })
     : statusFilter === "resubmitted"
     ? trpc.applications.byStatus.useQuery({
-        status: "pending",
+        status: "pending_resubmit" as any,
         limit,
         offset,
       })
@@ -71,6 +71,8 @@ export default function StaffDashboard() {
         return <Badge className="badge-status-green">✓ Approved</Badge>;
       case "for_resubmission":
         return <Badge className="badge-status-red">↺ Resubmission Needed</Badge>;
+      case "pending_resubmit":
+        return <Badge variant="outline" className="badge-status-blue">↻ Resubmitted</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }

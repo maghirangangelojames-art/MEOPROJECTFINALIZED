@@ -12,7 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", ["user", "admin", "staff"]);
-export const applicationStatusEnum = pgEnum("application_status", ["pending", "approved", "for_resubmission", "on_hold"]);
+export const applicationStatusEnum = pgEnum("application_status", ["pending", "approved", "for_resubmission", "on_hold", "pending_resubmit"]);
 export const activityActionEnum = pgEnum("activity_action", ["submitted", "approved", "on_hold", "resubmission_requested", "viewed"]);
 export const notificationTypeEnum = pgEnum("notification_type", ["submitted", "approved", "on_hold", "resubmission_requested"]);
 export const deliveryStatusEnum = pgEnum("delivery_status", ["pending", "sent", "failed", "bounced"]);

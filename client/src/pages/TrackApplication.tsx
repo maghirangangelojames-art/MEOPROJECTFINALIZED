@@ -153,6 +153,8 @@ export default function TrackApplication() {
         return "bg-green-100 text-green-800";
       case "for_resubmission":
         return "bg-orange-100 text-orange-800";
+      case "pending_resubmit":
+        return "bg-blue-100 text-blue-800";
       case "on_hold":
         return "bg-gray-100 text-gray-800";
       default:
@@ -235,7 +237,7 @@ export default function TrackApplication() {
     try {
       setIsSubmitting(true);
 
-      // Update application info and change status back to pending
+      // Update application info and change status to pending_resubmit
       await updateApplicationInfoMutation.mutateAsync({
         applicationId: app.id,
         applicantName: resubmitFormData.applicantName,
@@ -267,6 +269,8 @@ export default function TrackApplication() {
         return <CheckCircle2 className="h-5 w-5 text-green-600" />;
       case "for_resubmission":
         return <AlertCircle className="h-5 w-5 text-orange-600" />;
+      case "pending_resubmit":
+        return <Clock className="h-5 w-5 text-blue-600" />;
       case "on_hold":
         return <Clock className="h-5 w-5 text-gray-600" />;
       default:
@@ -282,6 +286,8 @@ export default function TrackApplication() {
         return "Your application has been approved!";
       case "for_resubmission":
         return "Your application needs editing. Please review the remarks below.";
+      case "pending_resubmit":
+        return "Your resubmitted application is being reviewed.";
       case "on_hold":
         return "Your application is on hold.";
       default:

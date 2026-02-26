@@ -154,6 +154,8 @@ export default function ApplicationDetail() {
         return "bg-green-100 text-green-800";
       case "for_resubmission":
         return "bg-orange-100 text-orange-800";
+      case "pending_resubmit":
+        return "bg-blue-100 text-blue-800";
       case "on_hold":
         return "bg-gray-100 text-gray-800";
       default:
@@ -466,7 +468,7 @@ export default function ApplicationDetail() {
           <div className="space-y-6">
             <Card className="p-6">
               <h3 className="text-lg font-bold mb-4">Actions</h3>
-              {app.status === "pending" || app.status === "for_resubmission" ? (
+              {app.status === "pending" || app.status === "for_resubmission" || app.status === "pending_resubmit" ? (
                 <div className="space-y-3">
                   <Button
                     onClick={() => setAction("approve")}
