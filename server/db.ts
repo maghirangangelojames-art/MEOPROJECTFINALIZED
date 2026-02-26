@@ -60,8 +60,10 @@ export async function getDb() {
   console.log("[Database] Connection URL:", urlSafe);
   console.log("[Database] Attempting connection (attempt", _connectionRetries + 1, "of", MAX_RETRIES, ")");
 
-  // Determine if we're on Railway (internal or production)
+  // Determine if we're on Railway or using Supabase (both require SSL)
   const isRailway = connectionString.includes('railway') || process.env.RAILWAY_ENVIRONMENT;
+  const isSupabase = connectionString.includes('supabase');
+  const requiresSsl = isRailway || isSupabase;
   
   try {
     _pool = new Pool({
@@ -69,8 +71,8 @@ export async function getDb() {
       connectionTimeoutMillis: 15000,
       idleTimeoutMillis: 30000,
       max: 10,
-      // Railway requires SSL for all connections
-      ssl: isRailway ? { rejectUnauthorized: false } : undefined,
+      // Railway and Supabase require SSL for all connections
+      ssl: requiresSsl ? { rejectUnauthorized: false } : undefined,
     });
     await _pool.query("select 1");
     _db = drizzle(_pool);
