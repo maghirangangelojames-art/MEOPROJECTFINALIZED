@@ -22,12 +22,12 @@ const step1Schema = z.object({
   applicantName: z.string().min(2, "Name must be at least 2 characters"),
   applicantEmail: z.string().email("Invalid email address"),
   applicantPhone: z.string().regex(/^\d{11}$/, "Phone number must be exactly 11 digits"),
-  propertyLocation: z.string().min(5, "Location must be at least 5 characters"),
   propertyAddress: z.string().min(5, "Address must be at least 5 characters"),
   barangay: z.string().min(1, "Please select a barangay"),
 });
 
 const step2Schema = z.object({
+  propertyLocation: z.string().min(5, "Location must be at least 5 characters"),
   projectType: z.string().min(1, "Please select a project type"),
   projectScope: z.string().min(10, "Scope must be at least 10 characters"),
   buildingClassification: z.string().min(1, "Please select a building classification"),
@@ -169,13 +169,10 @@ export default function ApplicationForm() {
 
   useEffect(() => {
     return () => {
-      Object.values(previewUrls).forEach((url) => {
-        if (url.startsWith("blob:")) {
-          URL.revokeObjectURL(url);
-        }
-      });
+      // Only revoke blob URLs when component unmounts, not on every step change
+      if (step === 4) return; // Don't revoke while on review step
     };
-  }, [previewUrls]);
+  }, []);
 
   const handleRemoveFile = (documentKey: string) => {
     // Immediately reset the input value
@@ -551,47 +548,28 @@ export default function ApplicationForm() {
                     </div>
                   </div>
 
-                  {/* Property Location and Barangay */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="propertyLocation" className="text-base font-semibold mb-3 block text-foreground">
-                        Property Location <span className="text-red-500">*</span>
-                      </Label>
-                      <Input
-                        id="propertyLocation"
-                        placeholder="e.g., Lot 5, Block 3, Sariaya Heights"
-                        {...register("propertyLocation")}
-                        className={`transition-all ${errors.propertyLocation ? "border-red-500 ring-2 ring-red-200" : ""}`}
-                      />
-                      {errors.propertyLocation && (
-                        <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                          ⚠️ {errors.propertyLocation.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <Label htmlFor="barangay" className="text-base font-semibold mb-3 block text-foreground">
-                        Barangay <span className="text-red-500">*</span>
-                      </Label>
-                      <Select value={watchedValues.barangay || ""} onValueChange={(value) => setValue("barangay", value)}>
-                        <SelectTrigger id="barangay">
-                          <SelectValue placeholder="Select barangay" />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-96 overflow-y-auto">
-                          {barangays.map((brgy) => (
-                            <SelectItem key={brgy} value={brgy}>
-                              {brgy}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {errors.barangay && (
-                        <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                          ⚠️ {errors.barangay.message}
-                        </p>
-                      )}
-                    </div>
+                  {/* Barangay */}
+                  <div>
+                    <Label htmlFor="barangay" className="text-base font-semibold mb-3 block text-foreground">
+                      Barangay <span className="text-red-500">*</span>
+                    </Label>
+                    <Select value={watchedValues.barangay || ""} onValueChange={(value) => setValue("barangay", value)}>
+                      <SelectTrigger id="barangay">
+                        <SelectValue placeholder="Select barangay" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-96 overflow-y-auto">
+                        {barangays.map((brgy) => (
+                          <SelectItem key={brgy} value={brgy}>
+                            {brgy}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.barangay && (
+                      <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                        ⚠️ {errors.barangay.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* Complete Address */}
@@ -620,7 +598,24 @@ export default function ApplicationForm() {
               <>
                 <div className="space-y-6">
                   <div className="inline-block px-4 py-2 bg-purple-100 dark:bg-purple-900 rounded-full text-sm font-semibold text-purple-800 dark:text-purple-100">
-                    �️ Project Details
+                    🏠 Property & Project Details
+                  </div>
+
+                  <div>
+                    <Label htmlFor="propertyLocation" className="text-base font-semibold mb-3 block text-foreground">
+                      Property Location <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="propertyLocation"
+                      placeholder="e.g., Lot 5, Block 3, Sariaya Heights"
+                      {...register("propertyLocation")}
+                      className={`transition-all ${errors.propertyLocation ? "border-red-500 ring-2 ring-red-200" : ""}`}
+                    />
+                    {errors.propertyLocation && (
+                      <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                        ⚠️ {errors.propertyLocation.message}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -774,10 +769,10 @@ export default function ApplicationForm() {
                     </label>
                   </div>
 
-                  {isNotLotOwner && (
+                  {shouldShowNonLotOwnerDocs && (
                     <div className="border-2 border-orange-200 dark:border-orange-800 rounded-lg p-6 space-y-4 bg-orange-50 dark:bg-orange-950">
                       <p className="text-sm font-semibold text-orange-900 dark:text-orange-100">
-                        📋 Additional requirements for non-lot owners
+                        📋 Additional requirements for non-lot owners & authorized representatives
                       </p>
                       {nonLotOwnerDocuments.map((document, index) => (
                         <div key={document.key} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-3">
@@ -850,7 +845,7 @@ export default function ApplicationForm() {
                 </div>
 
                 <div className="space-y-4 border rounded-lg p-4">
-                  <p className="font-semibold">Property Details</p>
+                  <p className="font-semibold">Property & Location Details</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                     <p><span className="font-medium">Property Location:</span> {formData.propertyLocation || watchedValues.propertyLocation || "-"}</p>
                     <p><span className="font-medium">Barangay:</span> {formData.barangay || watchedValues.barangay || "-"}</p>
