@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, HelpCircle, AlertCircle } from "lucide-react";
+import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useState } from "react";
@@ -544,5 +544,3 @@ export default function Home() {
     </div>
   );
 }
-
-import { LayoutDashboard } from "lucide-react";
