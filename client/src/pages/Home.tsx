@@ -8,11 +8,13 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Facebook, Mail, Phone } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NotificationBell } from "@/components/NotificationBell";
 import { useState } from "react";
 
 export default function Home() {
   const { user, isAuthenticated, logout, loading } = useAuth();
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
+  const [showPhoneNumber, setShowPhoneNumber] = useState(false);
   const canStartApplication = isAuthenticated && user?.role === "user";
 
   const handleLogout = async () => {
@@ -30,18 +32,21 @@ export default function Home() {
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-slide-in-down">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="h-10 w-10 rounded-lg bg-gradient-meo flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-md">
-              <FileText className="h-6 w-6 text-white" />
+            <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg transition-all duration-300 shadow-md border border-white/20">
+              <FileText className="h-6 w-6 text-white drop-shadow-lg" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-bold text-foreground">MEO Sariaya</h1>
-              <p className="text-xs text-muted-foreground">Building Permit System</p>
+              <h1 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">MEO Sariaya</h1>
+              <p className="text-xs text-muted-foreground font-medium">Building Permit System</p>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
             {isAuthenticated ? (
               <div className="flex items-center gap-2 sm:gap-3">
+                {user?.role === "user" && (
+                  <NotificationBell />
+                )}
                 <span className="text-sm text-muted-foreground hidden sm:inline font-medium">
                   {user?.name || "User"}
                 </span>
@@ -251,18 +256,18 @@ export default function Home() {
           </div>
 
           {/* Stats Section */}
-          <div className="mt-16 grid gap-8 sm:grid-cols-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 rounded-2xl p-8 shadow-lg animate-scale-in">
+          <div className="mt-16 grid gap-8 sm:grid-cols-3 bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-950/40 dark:to-purple-950/40 rounded-2xl p-8 shadow-lg animate-scale-in border border-border dark:border-border/50">
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">1000+</div>
-              <p className="text-muted-foreground">Applications Processed</p>
+              <p className="text-muted-foreground font-medium">Applications Processed</p>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">98%</div>
-              <p className="text-muted-foreground">Satisfaction Rate</p>
+              <p className="text-muted-foreground font-medium">Satisfaction Rate</p>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">2-3 days</div>
-              <p className="text-muted-foreground">Average Processing Time</p>
+              <p className="text-muted-foreground font-medium">Average Processing Time</p>
             </div>
           </div>
 
@@ -326,7 +331,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 py-16 sm:py-20 lg:py-28 animate-fade-in">
+      <section className="bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-950/30 dark:to-purple-950/30 py-16 sm:py-20 lg:py-28 animate-fade-in border-t border-border">
         <div className="container space-y-8 text-center">
           <div className="space-y-4 animate-slide-in-up">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
@@ -614,7 +619,7 @@ export default function Home() {
                 asChild 
                 className="btn-secondary-meo w-full mt-auto"
               >
-                <a href="mailto:meo@sariaya.gov.ph">
+                <a href="mailto:meo.sariaya2022@gmail.com">
                   Send Email
                 </a>
               </Button>
@@ -631,14 +636,30 @@ export default function Home() {
                   Call us during office hours
                 </p>
               </div>
-              <Button 
-                asChild 
-                className="btn-secondary-meo w-full mt-auto"
-              >
-                <a href="tel:+639123456789">
-                  Call Now
-                </a>
-              </Button>
+              {showPhoneNumber ? (
+                <div className="w-full space-y-3 mt-auto">
+                  <a 
+                    href="tel:+639173736190"
+                    className="btn-primary-meo w-full inline-block text-center"
+                  >
+                    (042) 373 6190
+                  </a>
+                  <Button 
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setShowPhoneNumber(false)}
+                  >
+                    Hide
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  className="btn-secondary-meo w-full mt-auto"
+                  onClick={() => setShowPhoneNumber(true)}
+                >
+                  Reveal Phone Number
+                </Button>
+              )}
             </Card>
           </div>
 

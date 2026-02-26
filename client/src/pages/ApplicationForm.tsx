@@ -359,27 +359,44 @@ export default function ApplicationForm() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-blue-950 dark:via-slate-900 dark:to-purple-950 py-8 px-4 animate-fade-in">
       <div className="max-w-2xl mx-auto">
+        {/* Back Button */}
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate("/")}
+          className="mb-6 btn-ghost-meo animate-slide-in-left"
+        >
+          <ArrowLeft className="h-5 w-5 mr-2" />
+          Back to Home
+        </Button>
+
         {/* Header with Logos */}
         <div className="mb-8 animate-slide-in-down">
           {/* Logo Section */}
-          <div className="flex flex-col items-center justify-center gap-4 mb-6">
-            <div className="flex items-center justify-center gap-8">
+          <div className="flex flex-col items-center justify-center gap-6 mb-8">
+            <div className="flex items-center justify-center gap-8 flex-wrap">
               {/* Sariaya Municipal Logo */}
-              <div className="flex flex-col items-center">
-                <img 
-                  src="/sariaya-logo.png" 
-                  alt="Sariaya Municipal Logo" 
-                  className="h-24 w-24 object-contain filter drop-shadow-lg hover:scale-110 transition-transform duration-300"
-                />
+              <div className="flex flex-col items-center group">
+                <div className="relative bg-background dark:bg-muted/20 rounded-full p-3 shadow-lg group-hover:shadow-xl transition-all duration-300 border border-border dark:border-border/50 group-hover:scale-110">
+                  <img 
+                    src="/sariaya-logo.png" 
+                    alt="Sariaya Municipal Logo" 
+                    className="h-24 w-24 object-contain filter drop-shadow-md"
+                  />
+                </div>
+                <p className="text-xs font-semibold text-muted-foreground mt-3 text-center">Municipal Government</p>
               </div>
               
               {/* MEO Logo (Main Focus) */}
-              <div className="flex flex-col items-center">
-                <img 
-                  src="/meo-logo.png" 
-                  alt="MEO Engineering Office Logo" 
-                  className="h-32 w-32 object-contain filter drop-shadow-lg hover:scale-110 transition-transform duration-300"
-                />
+              <div className="flex flex-col items-center group">
+                <div className="relative bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full p-4 shadow-lg group-hover:shadow-2xl group-hover:from-blue-200 group-hover:to-purple-200 dark:group-hover:from-blue-800/50 dark:group-hover:to-purple-800/50 transition-all duration-300 border-2 border-primary/20 dark:border-primary/40 group-hover:scale-110 group-hover:-translate-y-2">
+                  <img 
+                    src="/meo-logo.png" 
+                    alt="MEO Engineering Office Logo" 
+                    className="h-32 w-32 object-contain filter drop-shadow-lg"
+                  />
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                </div>
+                <p className="text-xs font-semibold text-primary mt-3 text-center">Engineering Office</p>
               </div>
             </div>
             

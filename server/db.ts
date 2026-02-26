@@ -342,6 +342,17 @@ export async function updateApplicationStatus(id: number, status: string, remark
     updateData.staffRemarks = remarks;
   }
 
+  // If application is being approved, clear all file remarks
+  if (status === "approved") {
+    const app = await getApplicationById(id);
+    if (app && app.attachments && Array.isArray(app.attachments)) {
+      updateData.attachments = (app.attachments as any[]).map((attachment: any) => ({
+        ...attachment,
+        remarks: "", // Clear remarks for all files when approved
+      }));
+    }
+  }
+
   return db
     .update(applications)
     .set(updateData)

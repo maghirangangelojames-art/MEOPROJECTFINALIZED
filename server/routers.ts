@@ -336,7 +336,12 @@ export const appRouter = router({
           remarks: input.remarks,
         });
 
-        return { success: true };
+        // Return success with notification type for client-side notification
+        return { 
+          success: true,
+          notificationType: input.status === "approved" ? "approved" : input.status === "for_resubmission" ? "resubmission_requested" : "on_hold",
+          referenceNumber: app.referenceNumber,
+        };
       }),
 
     // Update file lock status (staff only)

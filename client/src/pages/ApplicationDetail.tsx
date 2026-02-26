@@ -82,13 +82,33 @@ export default function ApplicationDetail() {
     if (!action) return;
 
     try {
-      await updateStatusMutation.mutateAsync({
+      const result = await updateStatusMutation.mutateAsync({
         applicationId: app.id,
         status: action === "approve" ? "approved" : "for_resubmission",
         remarks: remarks || undefined,
       });
 
-      toast.success(`Application ${action}ed successfully!`);
+      // Create notification for applicant (stored in localStorage)
+      const notifications = JSON.parse(localStorage.getItem("appNotifications") || "[]");
+      const newNotification = {
+        id: Date.now(),
+        type: result.notificationType === "approved" ? "approved" : "resubmission_requested",
+        message: result.notificationType === "approved" 
+          ? "Your building permit application has been approved successfully!" 
+          : "Your application requires modifications. Please review the details and resubmit.",
+        applicationRef: result.referenceNumber,
+        timestamp: new Date(),
+        read: false,
+      };
+      notifications.unshift(newNotification);
+      localStorage.setItem("appNotifications", JSON.stringify(notifications.slice(0, 50))); // Keep only last 50
+
+      if (action === "approve") {
+        toast.success("✓ Application approved successfully! All remarks have been cleared.");
+      } else {
+        toast.success("✓ Resubmission requested. The applicant has been notified of the required modifications.");
+      }
+      
       setAction(null);
       setRemarks("");
       applicationQuery.refetch();
@@ -493,10 +513,19 @@ export default function ApplicationDetail() {
 
             {/* Remarks Section */}
             {action && (
-              <Card className="p-6 border-primary">
-                <h3 className="text-lg font-bold mb-4">Add Remarks</h3>
+              <Card className="p-6 border-2 border-primary/20 dark:border-primary/40">
+                <h3 className="text-lg font-bold mb-2">
+                  {action === "approve" ? "Approval Notes" : "Modification Requirements"}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {action === "approve" 
+                    ? "Optional: Add any final notes or conditions for approval."
+                    : "Specify the changes or documents required from the applicant."}
+                </p>
                 <Textarea
-                  placeholder="Add any remarks or notes for this action..."
+                  placeholder={action === "approve"
+                    ? "E.g., Approved with conditions for safety inspection after construction..."
+                    : "E.g., Please resubmit updated structural plans and engineering certification..."}
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
                   rows={4}
@@ -508,7 +537,11 @@ export default function ApplicationDetail() {
                     disabled={updateStatusMutation.isPending}
                     className="btn-primary-meo flex-1"
                   >
-                    {updateStatusMutation.isPending ? "Processing..." : "Confirm"}
+                    {updateStatusMutation.isPending 
+                      ? "Processing..." 
+                      : action === "approve" 
+                      ? "Approve Application" 
+                      : "Request Modifications"}
                   </Button>
                   <Button
                     onClick={() => {
