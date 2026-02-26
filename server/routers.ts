@@ -546,6 +546,80 @@ export const appRouter = router({
 
         return { success: true };
       }),
+
+    // Update application information during resubmission
+    updateApplicationInfoDuringResubmission: protectedProcedure
+      .input(
+        z.object({
+          applicationId: z.number(),
+          applicantName: z.string().min(1).optional(),
+          applicantEmail: z.string().email().optional(),
+          applicantPhone: z.string().optional(),
+          applicantCapacity: z.string().optional(),
+          ownerName: z.string().optional(),
+          barangay: z.string().optional(),
+          propertyLocation: z.string().optional(),
+          propertyAddress: z.string().optional(),
+          projectType: z.string().optional(),
+          projectScope: z.string().optional(),
+          buildingClassification: z.string().optional(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const app = await getApplicationById(input.applicationId);
+        if (!app) throw new TRPCError({ code: "NOT_FOUND" });
+
+        // Verify the application belongs to the user
+        if (app.applicantEmail !== ctx.user?.email) {
+          throw new TRPCError({ code: "FORBIDDEN" });
+        }
+
+        // Verify application is in "for_resubmission" status
+        if (app.status !== "for_resubmission") {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Application is not in resubmission status",
+          });
+        }
+
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+        const updateData: any = {
+          updatedAt: new Date(),
+          status: "pending",
+        };
+
+        // Only update fields that were provided
+        if (input.applicantName !== undefined) updateData.applicantName = input.applicantName;
+        if (input.applicantEmail !== undefined) updateData.applicantEmail = input.applicantEmail;
+        if (input.applicantPhone !== undefined) updateData.applicantPhone = input.applicantPhone;
+        if (input.applicantCapacity !== undefined) updateData.applicantCapacity = input.applicantCapacity;
+        if (input.ownerName !== undefined) updateData.ownerName = input.ownerName;
+        if (input.barangay !== undefined) updateData.barangay = input.barangay;
+        if (input.propertyLocation !== undefined) updateData.propertyLocation = input.propertyLocation;
+        if (input.propertyAddress !== undefined) updateData.propertyAddress = input.propertyAddress;
+        if (input.projectType !== undefined) updateData.projectType = input.projectType;
+        if (input.projectScope !== undefined) updateData.projectScope = input.projectScope;
+        if (input.buildingClassification !== undefined) updateData.buildingClassification = input.buildingClassification;
+
+        await db
+          .update(applications)
+          .set(updateData)
+          .where(eq(applications.id, input.applicationId));
+
+        // Log activity
+        await createActivityLog({
+          applicationId: input.applicationId,
+          staffId: ctx.user.id,
+          staffName: ctx.user?.name || "Unknown",
+          staffEmail: ctx.user?.email || "unknown@example.com",
+          action: "submitted",
+          remarks: "Applicant updated application information during resubmission",
+        });
+
+        return { success: true };
+      }),
   }),
 
   // ============ Activity Logs ============
