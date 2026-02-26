@@ -1,12 +1,32 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, CheckCircle2, Clock, AlertCircle, FileText, Download, Home, Lock } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock, AlertCircle, FileText, Download, Home, Lock, Edit2 } from "lucide-react";
 import { SkeletonPageHeader, SkeletonCard } from "@/components/SkeletonLoader";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Link, useLocation } from "wouter";
 import DashboardLayout from "@/components/DashboardLayout";
+import FileEditDialog from "@/components/FileEditDialog";
+import { toast } from "sonner";
+
+// Helper to convert file to base64
+async function fileToBase64(file: File): Promise<string> {
+  const arrayBuffer = await file.arrayBuffer();
+  let binary = "";
+  const bytes = new Uint8Array(arrayBuffer);
+  const chunkSize = 0x8000;
+
+  for (let index = 0; index < bytes.length; index += chunkSize) {
+    const chunk = bytes.subarray(index, index + chunkSize);
+    for (let chunkIndex = 0; chunkIndex < chunk.length; chunkIndex++) {
+      binary += String.fromCharCode(chunk[chunkIndex]);
+    }
+  }
+
+  return btoa(binary);
+}
 
 export default function TrackApplication() {
   const { user } = useAuth({
@@ -14,10 +34,16 @@ export default function TrackApplication() {
     redirectPath: "/login",
   });
   const [, navigate] = useLocation();
+  const [editingFileIndex, setEditingFileIndex] = useState<number | null>(null);
+  const [editingFileName, setEditingFileName] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const applicationQuery = trpc.applications.getMyApplication.useQuery(undefined, {
     retry: false,
   });
+  const uploadAttachmentMutation = trpc.applications.uploadAttachment.useMutation();
+  const resubmitApplicationMutation = trpc.applications.resubmitApplication.useMutation();
+  
   const app = applicationQuery.data;
 
   if (applicationQuery.isLoading) {
@@ -111,6 +137,56 @@ export default function TrackApplication() {
         return "bg-gray-100 text-gray-800";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const handleFileEdit = async (
+    fileIndex: number,
+    file: File,
+    fileName: string
+  ) => {
+    if (!app) return;
+
+    try {
+      setIsSubmitting(true);
+
+      // Upload the new file
+      const fileBase64 = await fileToBase64(file);
+      const uploaded = await uploadAttachmentMutation.mutateAsync({
+        documentKey: `attachment_${fileIndex}`,
+        fileName: file.name,
+        mimeType: file.type === "application/pdf" ? "application/pdf" : "image/jpeg",
+        fileBase64,
+      });
+
+      // Prepare the updated attachments array
+      const updatedAttachments = [
+        {
+          fileIndex,
+          name: file.name,
+          url: uploaded.url,
+          type: file.type,
+        },
+      ];
+
+      // Resubmit the application with updated file
+      await resubmitApplicationMutation.mutateAsync({
+        applicationId: app.id,
+        updatedAttachments,
+      });
+
+      setEditingFileIndex(null);
+      toast.success("File updated and application resubmitted for review!");
+
+      // Refresh the application data
+      applicationQuery.refetch();
+    } catch (error: any) {
+      const message =
+        error?.message || "Failed to update file. Please try again.";
+      toast.error(message);
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -291,21 +367,54 @@ export default function TrackApplication() {
                       </div>
                     )}
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    asChild
-                    title="Download document"
-                  >
-                    <a href={attachment.url} target="_blank" rel="noopener noreferrer">
-                      <Download className="h-4 w-4" />
-                      <span className="sr-only">Download</span>
-                    </a>
-                  </Button>
+                  <div className="flex items-center gap-2 ml-2">
+                    {app.status === "for_resubmission" && attachment.isLocked === false && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setEditingFileIndex(idx);
+                          setEditingFileName(attachment.name);
+                        }}
+                        title="Replace this file"
+                      >
+                        <Edit2 className="h-4 w-4 text-blue-600" />
+                        <span className="sr-only">Edit file</span>
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      asChild
+                      title="Download document"
+                    >
+                      <a href={attachment.url} target="_blank" rel="noopener noreferrer">
+                        <Download className="h-4 w-4" />
+                        <span className="sr-only">Download</span>
+                      </a>
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
           </Card>
+        )}
+
+        {/* File Edit Dialog */}
+        {app && editingFileIndex !== null && (
+          <FileEditDialog
+            open={editingFileIndex !== null}
+            onOpenChange={(open) => {
+              if (!open) {
+                setEditingFileIndex(null);
+                setEditingFileName("");
+              }
+            }}
+            fileName={editingFileName}
+            fileIndex={editingFileIndex}
+            onSubmit={handleFileEdit}
+            isLoading={isSubmitting}
+          />
         )}
 
         {/* Staff Remarks */}

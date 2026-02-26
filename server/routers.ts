@@ -409,6 +409,84 @@ export const appRouter = router({
 
         return { success: true };
       }),
+
+    // Resubmit application with updated files
+    resubmitApplication: protectedProcedure
+      .input(
+        z.object({
+          applicationId: z.number(),
+          updatedAttachments: z.array(
+            z.object({
+              fileIndex: z.number(),
+              name: z.string(),
+              url: z.string(),
+              type: z.string(),
+            })
+          ),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const app = await getApplicationById(input.applicationId);
+        if (!app) throw new TRPCError({ code: "NOT_FOUND" });
+
+        // Verify the application belongs to the user
+        if (app.applicantEmail !== ctx.user?.email) {
+          throw new TRPCError({ code: "FORBIDDEN" });
+        }
+
+        // Verify application is in "for_resubmission" status
+        if (app.status !== "for_resubmission") {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Application is not in resubmission status",
+          });
+        }
+
+        const currentAttachments = (app.attachments as any[]) || [];
+
+        // Update the specified file attachments
+        input.updatedAttachments.forEach((update) => {
+          if (
+            update.fileIndex >= 0 &&
+            update.fileIndex < currentAttachments.length
+          ) {
+            // Preserve locked status and remarks, update file data
+            const existingAttachment = currentAttachments[update.fileIndex];
+            currentAttachments[update.fileIndex] = {
+              ...existingAttachment,
+              name: update.name,
+              url: update.url,
+              type: update.type,
+            };
+          }
+        });
+
+        // Update application status back to pending and set updatedAt
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+        const now = new Date();
+        await db
+          .update(applications)
+          .set({
+            attachments: currentAttachments,
+            status: "pending",
+            updatedAt: now,
+          })
+          .where(eq(applications.id, input.applicationId));
+
+        // Log activity
+        await createActivityLog({
+          applicationId: input.applicationId,
+          staffId: ctx.user.id,
+          staffName: ctx.user?.name || "Unknown",
+          staffEmail: ctx.user?.email || "unknown@example.com",
+          action: "submitted",
+          remarks: `Applicant submitted revised files for ${input.updatedAttachments.length} document(s)`,
+        });
+
+        return { success: true };
+      }),
   }),
 
   // ============ Activity Logs ============
