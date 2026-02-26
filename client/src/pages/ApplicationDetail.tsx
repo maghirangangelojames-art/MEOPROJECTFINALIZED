@@ -16,7 +16,7 @@ export default function ApplicationDetail() {
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
   const { user } = useAuth();
-  const [action, setAction] = useState<"approve" | "hold" | "resubmit" | null>(null);
+  const [action, setAction] = useState<"approve" | "resubmit" | null>(null);
   const [remarks, setRemarks] = useState("");
   const [editingFileIndex, setEditingFileIndex] = useState<number | null>(null);
   const [fileRemarks, setFileRemarks] = useState<Record<number, string>>({});
@@ -84,7 +84,7 @@ export default function ApplicationDetail() {
     try {
       await updateStatusMutation.mutateAsync({
         applicationId: app.id,
-        status: action === "approve" ? "approved" : action === "hold" ? "on_hold" : "for_resubmission",
+        status: action === "approve" ? "approved" : "for_resubmission",
         remarks: remarks || undefined,
       });
 
@@ -466,20 +466,13 @@ export default function ApplicationDetail() {
           <div className="space-y-6">
             <Card className="p-6">
               <h3 className="text-lg font-bold mb-4">Actions</h3>
-              {app.status === "pending" || app.status === "on_hold" ? (
+              {app.status === "pending" || app.status === "for_resubmission" ? (
                 <div className="space-y-3">
                   <Button
                     onClick={() => setAction("approve")}
                     className="w-full bg-green-600 hover:bg-green-700"
                   >
                     Approve
-                  </Button>
-                  <Button
-                    onClick={() => setAction("hold")}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    Put on Hold
                   </Button>
                   <Button
                     onClick={() => setAction("resubmit")}

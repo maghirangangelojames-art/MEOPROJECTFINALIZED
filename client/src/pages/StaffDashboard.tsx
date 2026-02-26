@@ -209,11 +209,19 @@ export default function StaffDashboard() {
                   {/* Submission Time & Processing */}
                   <div className="space-y-2">
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">📅 Submitted</p>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-primary" />
-                      <span className="text-sm font-medium text-foreground">
-                        {new Date(app.submittedAt).toLocaleDateString()}
-                      </span>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-medium text-foreground">
+                          {new Date(app.submittedAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-primary" />
+                        <span className="text-sm text-muted-foreground">
+                          {new Date(app.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
                     </div>
                     {getProcessingIndicator(app.statusIndicator, app.processingDays)}
                   </div>
