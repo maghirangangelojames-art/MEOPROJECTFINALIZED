@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Facebook, Mail, Phone } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useState } from "react";
@@ -358,6 +359,312 @@ export default function Home() {
               </Button>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 sm:py-24 lg:py-32 bg-muted/30 dark:bg-muted/10 animate-fade-in">
+        <div className="container space-y-12">
+          <div className="space-y-4 text-center animate-slide-in-up">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
+              Find answers to common questions about our building permit system and process.
+            </p>
+          </div>
+
+          <div className="max-w-3xl mx-auto">
+            <Accordion type="single" collapsible className="space-y-3">
+              {/* FAQ 1 */}
+              <AccordionItem value="faq-1" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  What is the Sariaya Building Permit System?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2">
+                  The Sariaya Building Permit System is a digital platform that streamlines the building permit application and approval process. It allows applicants to submit permit applications online, track their status in real-time, and communicate directly with the municipal staff.
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 2 */}
+              <AccordionItem value="faq-2" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  Who can use this system?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2">
+                  Any individual or authorized representative who needs to apply for a building permit in Sariaya can use this system. You'll need to create an account and log in to submit applications.
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 3 */}
+              <AccordionItem value="faq-3" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  What are the main benefits of using this system?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2 space-y-2">
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>Faster permit processing</li>
+                    <li>Transparent status tracking</li>
+                    <li>Secure document upload</li>
+                    <li>Real-time notifications about your application status</li>
+                    <li>No need to visit the office for initial submission</li>
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 4 */}
+              <AccordionItem value="faq-4" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  How do I create an account?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2">
+                  Click the "Sign In" button on the homepage. You'll be guided through a secure login process. First-time users will be guided to set up their account with their personal information.
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 5 */}
+              <AccordionItem value="faq-5" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  What information do I need to register?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2 space-y-2">
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>Full name</li>
+                    <li>Valid email address</li>
+                    <li>11-digit phone number</li>
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 6 */}
+              <AccordionItem value="faq-6" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  Is my information secure?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2">
+                  Yes, all your personal information is encrypted and securely stored in our database. We comply with data privacy standards and only authorized staff can access your information for processing your application.
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 7 */}
+              <AccordionItem value="faq-7" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  What types of building projects can I apply for?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2 space-y-2">
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>Dwellings (Residential Houses)</li>
+                    <li>Buildings/Structures</li>
+                    <li>Hotels</li>
+                    <li>Apartments</li>
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 8 */}
+              <AccordionItem value="faq-8" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  What is "Applicant Capacity" and why is it important?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2 space-y-3">
+                  <p>Applicant Capacity indicates your role in the project:</p>
+                  <ul className="list-disc list-inside space-y-2">
+                    <li><strong className="text-foreground">Owner:</strong> You are the property owner applying for your own project</li>
+                    <li><strong className="text-foreground">Authorized Representative:</strong> You are representing the actual property owner (you'll need to provide the owner's name)</li>
+                  </ul>
+                  <p>If you're an Authorized Representative, you'll need to upload additional authorization documents from the property owner.</p>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 9 */}
+              <AccordionItem value="faq-9" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  What documents do I need to submit?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2 space-y-2">
+                  <p className="font-semibold text-foreground">Required documents typically include:</p>
+                  <ul className="list-disc list-inside space-y-1 text-sm">
+                    <li>Build plans and structural analysis signed by a licensed civil engineer/architect</li>
+                    <li>Electrical permit/plan signed by a licensed electrical engineer</li>
+                    <li>Sanitary/plumbing permit signed by a licensed master plumber</li>
+                    <li>Tax declaration</li>
+                    <li>Transfer certificate of title</li>
+                    <li>Current year tax receipt</li>
+                    <li>Barangay clearance</li>
+                    <li>DOLE application (CHSP) - Grand Central</li>
+                    <li>If not the lot owner: Authorization from the lot owner</li>
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 10 */}
+              <AccordionItem value="faq-10" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  Can I save my application and complete it later?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2">
+                  Yes, the system saves your progress as you fill out the multi-step form. You can close the application and return to it later without losing your information.
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 11 */}
+              <AccordionItem value="faq-11" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  What file formats are accepted for document uploads?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2">
+                  The system accepts common document formats including PDF, JPG, PNG, and other standard image/document formats. Individual field requirements may specify certain formats, so please check the upload instructions for each document.
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 12 */}
+              <AccordionItem value="faq-12" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  How do I track the status of my application?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2">
+                  After submission, you'll receive a reference number. Use the "View Application" or "Track Application" section to check your application status. You'll also receive email notifications about any status changes (approved, on hold, needs resubmission, etc.).
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 13 */}
+              <AccordionItem value="faq-13" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  How long does it take to process my application?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2">
+                  Processing times may vary depending on the completeness of your submission and current workload. Typically, applications are processed within 2-3 business days. You'll be notified of any updates via email. If additional documents are needed, you'll be asked to resubmit through the system.
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 14 */}
+              <AccordionItem value="faq-14" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  What does "Resubmission Required" mean?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2">
+                  If your application status shows "Resubmission Required," it means the staff needs additional information or clarified documents. You'll receive details about what's needed, and you can upload the revised documents directly through the system.
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* FAQ 15 */}
+              <AccordionItem value="faq-15" className="border border-border rounded-lg px-6 dark:bg-muted/5">
+                <AccordionTrigger className="text-lg font-semibold hover:text-primary transition-colors">
+                  What if my application is rejected?
+                </AccordionTrigger>
+                <AccordionContent className="text-base text-muted-foreground pt-2">
+                  If not approved, staff will provide detailed remarks explaining why. You can address the concerns and resubmit your application with the necessary corrections. Our staff is here to help you through the process.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Us Section */}
+      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 animate-fade-in">
+        <div className="container space-y-12">
+          <div className="space-y-4 text-center animate-slide-in-up">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+              Get in Touch
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
+              Have a question? Connect with us through our social media or contact information.
+            </p>
+          </div>
+
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
+            {/* Facebook Card */}
+            <Card className="card-hover group p-8 space-y-4 text-center flex flex-col items-center animate-slide-in-up dark:bg-muted/10">
+              <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
+                <Facebook className="h-7 w-7 text-white" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-semibold text-lg">Facebook</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Follow us on Facebook for updates and announcements
+                </p>
+              </div>
+              <Button 
+                asChild 
+                className="btn-primary-meo w-full mt-auto"
+              >
+                <a 
+                  href="https://www.facebook.com/p/Municipal-Engineering-Office-Sariaya-100083072363534/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  Visit Facebook
+                </a>
+              </Button>
+            </Card>
+
+            {/* Email Card */}
+            <Card className="card-hover group p-8 space-y-4 text-center flex flex-col items-center animate-slide-in-up dark:bg-muted/10" style={{ animationDelay: "0.1s" }}>
+              <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
+                <Mail className="h-7 w-7 text-white" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-semibold text-lg">Email</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Send us an email for inquiries
+                </p>
+              </div>
+              <Button 
+                asChild 
+                className="btn-secondary-meo w-full mt-auto"
+              >
+                <a href="mailto:meo@sariaya.gov.ph">
+                  Send Email
+                </a>
+              </Button>
+            </Card>
+
+            {/* Phone Card */}
+            <Card className="card-hover group p-8 space-y-4 text-center flex flex-col items-center animate-slide-in-up dark:bg-muted/10" style={{ animationDelay: "0.2s" }}>
+              <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
+                <Phone className="h-7 w-7 text-white" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-semibold text-lg">Phone</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Call us during office hours
+                </p>
+              </div>
+              <Button 
+                asChild 
+                className="btn-secondary-meo w-full mt-auto"
+              >
+                <a href="tel:+639123456789">
+                  Call Now
+                </a>
+              </Button>
+            </Card>
+          </div>
+
+          {/* Social Media Info */}
+          <div className="max-w-2xl mx-auto bg-background dark:bg-muted/5 rounded-2xl p-8 border border-border text-center animate-scale-in">
+            <p className="text-lg font-semibold text-foreground mb-4">
+              Follow Us on Social Media
+            </p>
+            <p className="text-muted-foreground mb-6 leading-relaxed">
+              Stay updated with the latest news, announcements, and updates about building permits in Sariaya. Connect with us on Facebook for real-time information.
+            </p>
+            <Button 
+              asChild 
+              size="lg"
+              className="btn-lg-primary-meo"
+            >
+              <a 
+                href="https://www.facebook.com/p/Municipal-Engineering-Office-Sariaya-100083072363534/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <Facebook className="h-5 w-5" />
+                Follow on Facebook
+              </a>
+            </Button>
+          </div>
         </div>
       </section>
 
