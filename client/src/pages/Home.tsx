@@ -15,6 +15,7 @@ export default function Home() {
   const { user, isAuthenticated, logout, loading } = useAuth();
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const [showPhoneNumber, setShowPhoneNumber] = useState(false);
+  const [showEmail, setShowEmail] = useState(false);
   const canStartApplication = isAuthenticated && user?.role === "user";
 
   const handleLogout = async () => {
@@ -615,14 +616,30 @@ export default function Home() {
                   Send us an email for inquiries
                 </p>
               </div>
-              <Button 
-                asChild 
-                className="btn-secondary-meo w-full mt-auto"
-              >
-                <a href="mailto:meo.sariaya2022@gmail.com">
-                  Send Email
-                </a>
-              </Button>
+              {showPhoneNumber ? (
+                <div className="w-full space-y-3 mt-auto">
+                  <a 
+                    href="mailto:meo.sariaya2022@gmail.com"
+                    className="btn-primary-meo w-full inline-block text-center"
+                  >
+                    meo.sariaya2022@gmail.com
+                  </a>
+                  <Button 
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setShowPhoneNumber(false)}
+                  >
+                    Hide
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  className="btn-secondary-meo w-full mt-auto"
+                  onClick={() => setShowPhoneNumber(true)}
+                >
+                  Reveal Email
+                </Button>
+              )
             </Card>
 
             {/* Phone Card */}
@@ -636,7 +653,7 @@ export default function Home() {
                   Call us during office hours
                 </p>
               </div>
-              {showPhoneNumber ? (
+{showPhoneNumber ? (
                 <div className="w-full space-y-3 mt-auto">
                   <a 
                     href="tel:+639173736190"

@@ -97,6 +97,8 @@ export default function ApplicationDetail() {
           ? "Your building permit application has been approved successfully!" 
           : "Your application requires modifications. Please review the details and resubmit.",
         applicationRef: result.referenceNumber,
+        status: action === "approve" ? "approved" : "for_resubmission",
+        remarks: remarks || undefined,
         timestamp: new Date(),
         read: false,
       };
@@ -143,7 +145,24 @@ export default function ApplicationDetail() {
         remarks: remark,
       });
       
-      toast.success("File remarks updated successfully!");
+      // Create notification for applicant about new remarks
+      if (remark) {
+        const notifications = JSON.parse(localStorage.getItem("appNotifications") || "[]");
+        const newNotification = {
+          id: Date.now(),
+          type: "remarks",
+          message: `Staff added remarks to document ${fileIndex + 1}. Please review and address any concerns.`,
+          applicationRef: app.referenceNumber,
+          remarks: remark,
+          status: app.status,
+          timestamp: new Date(),
+          read: false,
+        };
+        notifications.unshift(newNotification);
+        localStorage.setItem("appNotifications", JSON.stringify(notifications.slice(0, 50)));
+      }
+      
+      toast.success("File remarks updated successfully! Applicant has been notified.");
       setEditingFileIndex(null);
       applicationQuery.refetch();
     } catch (error: any) {
@@ -169,17 +188,17 @@ export default function ApplicationDetail() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200";
       case "approved":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200";
       case "for_resubmission":
-        return "bg-orange-100 text-orange-800";
+        return "bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200";
       case "pending_resubmit":
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200";
       case "on_hold":
-        return "bg-gray-100 text-gray-800";
+        return "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200";
     }
   };
 
@@ -209,9 +228,9 @@ export default function ApplicationDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       {/* Header */}
-      <div className="bg-white border-b border-border sticky top-0 z-40">
+      <div className="bg-white dark:bg-slate-900 border-b border-border sticky top-0 z-40 shadow-sm">
         <div className="container py-4 flex items-center gap-4">
           <Button
             variant="ghost"
@@ -338,9 +357,9 @@ export default function ApplicationDetail() {
                   {app.attachments.map((attachment: any, index: number) => (
                     <div
                       key={index}
-                      className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+                      className="border border-border rounded-lg overflow-hidden bg-white dark:bg-slate-800"
                     >
-                      <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <p className="font-semibold text-sm truncate">{attachment.name}</p>

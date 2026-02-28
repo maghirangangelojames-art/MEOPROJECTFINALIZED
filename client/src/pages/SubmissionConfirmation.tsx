@@ -99,31 +99,31 @@ export default function SubmissionConfirmation() {
           </div>
 
           {/* What Happens Next */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-left space-y-4">
-            <h3 className="font-semibold text-blue-900 text-lg">What Happens Next?</h3>
-            <ol className="space-y-3 text-sm text-blue-800">
+          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-6 text-left space-y-4">
+            <h3 className="font-semibold text-blue-900 dark:text-blue-100 text-lg">What Happens Next?</h3>
+            <ol className="space-y-3 text-sm text-blue-800 dark:text-blue-200">
               <li className="flex gap-3">
-                <span className="font-bold text-blue-600 flex-shrink-0">1.</span>
+                <span className="font-bold text-blue-600 dark:text-blue-300 flex-shrink-0">1.</span>
                 <span>Your application will be reviewed by our staff within 1-3 business days.</span>
               </li>
               <li className="flex gap-3">
-                <span className="font-bold text-blue-600 flex-shrink-0">2.</span>
+                <span className="font-bold text-blue-600 dark:text-blue-300 flex-shrink-0">2.</span>
                 <span>You will be notified on your View Application page for your application status.</span>
               </li>
               <li className="flex gap-3">
-                <span className="font-bold text-blue-600 flex-shrink-0">3.</span>
+                <span className="font-bold text-blue-600 dark:text-blue-300 flex-shrink-0">3.</span>
                 <span>The staff will send you either an approval or, if files are not correct, additional changes are necessary.</span>
               </li>
               <li className="flex gap-3">
-                <span className="font-bold text-blue-600 flex-shrink-0">4.</span>
+                <span className="font-bold text-blue-600 dark:text-blue-300 flex-shrink-0">4.</span>
                 <span>Once approved, bring all your hard copies to Sariaya Municipal Engineering Office.</span>
               </li>
             </ol>
           </div>
 
           {/* Important Notes */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-left">
-            <p className="text-sm text-amber-900">
+          <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 text-left">
+            <p className="text-sm text-amber-900 dark:text-amber-100">
               <span className="font-semibold">📌 Important:</span> Save your reference number for future inquiries. You can use it to track your application status at any time.
             </p>
           </div>
