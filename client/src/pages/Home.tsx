@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Facebook, Mail, Phone } from "lucide-react";
+import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Facebook, Mail, Phone, Copy } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -16,6 +16,7 @@ export default function Home() {
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
   const [showPhoneNumber, setShowPhoneNumber] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
   const canStartApplication = isAuthenticated && user?.role === "user";
 
   const handleLogout = async () => {
@@ -610,20 +611,39 @@ export default function Home() {
               <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
                 <Mail className="h-7 w-7 text-white" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 flex-1">
                 <h3 className="font-semibold text-lg">Email</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   Send us an email for inquiries
                 </p>
               </div>
               {showEmail ? (
-                <div className="w-full space-y-3 mt-auto">
-                  <a 
-                    href="mailto:meo.sariaya2022@gmail.com"
-                    className="btn-primary-meo w-full inline-block text-center"
-                  >
-                    meo.sariaya2022@gmail.com
-                  </a>
+                <div className="w-full space-y-3 mt-auto pt-2">
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/30 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                    <p className="text-xs text-muted-foreground mb-2 font-medium">Email Address</p>
+                    <div className="flex items-center justify-between gap-2 bg-white dark:bg-slate-800 rounded px-3 py-2 border border-purple-200 dark:border-purple-800">
+                      <a 
+                        href="mailto:meo.sariaya2022@gmail.com"
+                        className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline flex-1 truncate"
+                      >
+                        meo.sariaya2022@gmail.com
+                      </a>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText("meo.sariaya2022@gmail.com");
+                          setEmailCopied(true);
+                          setTimeout(() => setEmailCopied(false), 2000);
+                        }}
+                        className="p-1.5 hover:bg-purple-100 dark:hover:bg-purple-900/50 rounded transition-colors flex-shrink-0"
+                        title="Copy email"
+                      >
+                        <Copy className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                      </button>
+                    </div>
+                    {emailCopied && (
+                      <p className="text-xs text-green-600 dark:text-green-400 mt-2 font-medium">✓ Copied to clipboard</p>
+                    )}
+                  </div>
                   <Button 
                     variant="outline"
                     className="w-full"
@@ -647,20 +667,23 @@ export default function Home() {
               <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
                 <Phone className="h-7 w-7 text-white" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 flex-1">
                 <h3 className="font-semibold text-lg">Phone</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   Call us during office hours
                 </p>
               </div>
-{showPhoneNumber ? (
-                <div className="w-full space-y-3 mt-auto">
-                  <a 
-                    href="tel:+639173736190"
-                    className="btn-primary-meo w-full inline-block text-center"
-                  >
-                    (042) 373 6190
-                  </a>
+              {showPhoneNumber ? (
+                <div className="w-full space-y-3 mt-auto pt-2">
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 rounded-lg p-4 border border-green-200 dark:border-green-800">
+                    <p className="text-xs text-muted-foreground mb-2 font-medium">Phone Number</p>
+                    <a 
+                      href="tel:+639173736190"
+                      className="inline-block bg-white dark:bg-slate-800 rounded px-4 py-2 font-semibold text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800 hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors"
+                    >
+                      (042) 373 6190
+                    </a>
+                  </div>
                   <Button 
                     variant="outline"
                     className="w-full"
