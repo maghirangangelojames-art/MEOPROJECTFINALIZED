@@ -21,7 +21,10 @@ const step1Schema = z.object({
   ownerName: z.string().optional(),
   applicantName: z.string().min(2, "Name must be at least 2 characters"),
   applicantEmail: z.string().email("Invalid email address"),
-  applicantPhone: z.string().regex(/^\d{11}$/, "Phone number must be exactly 11 digits"),
+  applicantPhone: z.string().regex(
+    /^(\+639|09)\d{9}$|^\d{11}$/,
+    "Phone number must be in format: +639123456789, 09123456789, or 11 digits"
+  ),
   propertyAddress: z.string().min(5, "Address must be at least 5 characters"),
   barangay: z.string().min(1, "Please select a barangay"),
 });
@@ -563,7 +566,7 @@ export default function ApplicationForm() {
                       </Label>
                       <Input
                         id="applicantPhone"
-                        placeholder="+63 9XX XXX XXXX"
+                        placeholder="+639123456789 or 09123456789"
                         {...register("applicantPhone")}
                         className={`transition-all ${errors.applicantPhone ? "border-red-500 ring-2 ring-red-200" : ""}`}
                       />
