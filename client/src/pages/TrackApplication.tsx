@@ -66,6 +66,80 @@ export default function TrackApplication() {
   
   const app = applicationQuery.data;
 
+  // Create notifications when application status changes
+  useEffect(() => {
+    if (!app) return;
+
+    const notifications = JSON.parse(localStorage.getItem("appNotifications") || "[]");
+    const hasNotificationForThisStatus = notifications.some(
+      (n: any) => n.applicationRef === app.referenceNumber && 
+      (n.type === "resubmission_requested" || n.type === "remarks" || n.type === "approved") &&
+      new Date(n.timestamp).getTime() > new Date(app.updatedAt).getTime() - 5000
+    );
+
+    if (hasNotificationForThisStatus) return; // Notification already created
+
+    // Create notification if application is approved
+    if (app.status === "approved") {
+      const newNotification = {
+        id: Date.now(),
+        type: "approved",
+        message: "🎉 Your building permit application has been approved! Congratulations!",
+        applicationRef: app.referenceNumber,
+        status: "approved",
+        timestamp: new Date(),
+        read: false,
+      };
+      notifications.unshift(newNotification);
+      localStorage.setItem("appNotifications", JSON.stringify(notifications.slice(0, 50)));
+      return;
+    }
+
+    // Create notification if application requires resubmission with remarks
+    if (app.status === "for_resubmission") {
+      const hasRemarks = (app.attachments as any[])?.some((att: any) => att.remarks) || app.staffRemarks;
+      
+      if (hasRemarks) {
+        const newNotification = {
+          id: Date.now(),
+          type: "resubmission_requested",
+          message: app.staffRemarks 
+            ? "Your application requires modifications. Staff has provided detailed remarks for your review."
+            : "Your application requires modifications. Please review the staff remarks and unlock files.",
+          applicationRef: app.referenceNumber,
+          status: "for_resubmission",
+          remarks: app.staffRemarks,
+          timestamp: new Date(),
+          read: false,
+        };
+        notifications.unshift(newNotification);
+        localStorage.setItem("appNotifications", JSON.stringify(notifications.slice(0, 50)));
+      }
+    }
+
+    // Create notification if there are file remarks
+    const attachmentsWithRemarks = (app.attachments as any[])?.filter((att: any) => att.remarks) || [];
+    if (attachmentsWithRemarks.length > 0) {
+      const hasRemarksNotification = notifications.some(
+        (n: any) => n.type === "remarks" && n.applicationRef === app.referenceNumber
+      );
+
+      if (!hasRemarksNotification) {
+        const newNotification = {
+          id: Date.now(),
+          type: "remarks",
+          message: `Staff has added remarks to ${attachmentsWithRemarks.length} document(s). Please review the feedback.`,
+          applicationRef: app.referenceNumber,
+          status: app.status,
+          timestamp: new Date(),
+          read: false,
+        };
+        notifications.unshift(newNotification);
+        localStorage.setItem("appNotifications", JSON.stringify(notifications.slice(0, 50)));
+      }
+    }
+  }, [app]);
+
   if (applicationQuery.isLoading) {
     return (
       <DashboardLayout>
