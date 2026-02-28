@@ -88,7 +88,6 @@ const SystemReport = () => {
   const statusDistribution = [
     { name: "Approved", value: statusCounts.approved, color: "#22c55e" },
     { name: "Pending", value: statusCounts.pending, color: "#eab308" },
-    { name: "On Hold", value: statusCounts.on_hold, color: "#6b7280" },
     { name: "Resubmission", value: statusCounts.for_resubmission, color: "#f97316" },
   ];
 
