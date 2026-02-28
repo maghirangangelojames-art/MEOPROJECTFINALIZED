@@ -616,7 +616,7 @@ export default function Home() {
                   Send us an email for inquiries
                 </p>
               </div>
-              {showPhoneNumber ? (
+              {showEmail ? (
                 <div className="w-full space-y-3 mt-auto">
                   <a 
                     href="mailto:meo.sariaya2022@gmail.com"
@@ -627,7 +627,7 @@ export default function Home() {
                   <Button 
                     variant="outline"
                     className="w-full"
-                    onClick={() => setShowPhoneNumber(false)}
+                    onClick={() => setShowEmail(false)}
                   >
                     Hide
                   </Button>
@@ -635,11 +635,11 @@ export default function Home() {
               ) : (
                 <Button 
                   className="btn-secondary-meo w-full mt-auto"
-                  onClick={() => setShowPhoneNumber(true)}
+                  onClick={() => setShowEmail(true)}
                 >
                   Reveal Email
                 </Button>
-              )
+              )}
             </Card>
 
             {/* Phone Card */}

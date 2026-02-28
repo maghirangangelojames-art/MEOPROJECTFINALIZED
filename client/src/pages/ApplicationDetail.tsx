@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, Mail, Phone, MapPin, AlertCircle, CheckCircle2, Clock, Lock, Unlock } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { ArrowLeft, Calendar, Mail, Phone, MapPin, AlertCircle, CheckCircle2, Clock, Lock, LockOpen } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
@@ -41,7 +42,7 @@ export default function ApplicationDetail() {
   // Update status mutation
   const updateStatusMutation = trpc.applications.updateStatus.useMutation();
 
-  const app = applicationQuery.data;
+  const app = applicationQuery.data as any;
   const activityLogs = activityLogsQuery.data || [];
 
   if (!user || (user.role !== "staff" && user.role !== "admin")) {
@@ -350,11 +351,11 @@ export default function ApplicationDetail() {
             </Card>
 
             {/* Attachments/Documents */}
-            {app.attachments && app.attachments.length > 0 && (
+            {app.attachments && (app.attachments as any[]).length > 0 && (
               <Card className="p-6">
                 <h3 className="text-lg font-bold mb-4">Attached Documents</h3>
                 <div className="space-y-3">
-                  {app.attachments.map((attachment: any, index: number) => (
+                  {(app.attachments as any[]).map((attachment: any, index: number) => (
                     <div
                       key={index}
                       className="border border-border rounded-lg overflow-hidden bg-white dark:bg-slate-800"
@@ -364,7 +365,12 @@ export default function ApplicationDetail() {
                           <div className="flex items-center gap-2 mb-1">
                             <p className="font-semibold text-sm truncate">{attachment.name}</p>
                             {(attachment.isLocked !== false) && (
-                              <Lock className="h-4 w-4 text-amber-600 flex-shrink-0" title="File is locked by staff" />
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Lock className="h-4 w-4 text-amber-600 flex-shrink-0" />
+                                </TooltipTrigger>
+                                <TooltipContent>File is locked by staff</TooltipContent>
+                              </Tooltip>
                             )}
                           </div>
                           <p className="text-xs text-muted-foreground">
@@ -379,7 +385,7 @@ export default function ApplicationDetail() {
                             title={attachment.isLocked !== false ? "Unlock this file" : "Lock this file"}
                           >
                             {attachment.isLocked !== false ? (
-                              <Unlock className="h-4 w-4 mr-1" />
+                              <LockOpen className="h-4 w-4 mr-1" />
                             ) : (
                               <Lock className="h-4 w-4 mr-1" />
                             )}

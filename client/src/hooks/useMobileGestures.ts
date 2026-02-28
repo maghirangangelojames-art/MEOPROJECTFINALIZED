@@ -102,7 +102,6 @@ export function useIsTouchDevice() {
       return (
         typeof window !== "undefined" &&
         (!!navigator.maxTouchPoints ||
-          !!navigator.msMaxTouchPoints ||
           (window.matchMedia && window.matchMedia("(pointer:coarse)").matches))
       );
     };
