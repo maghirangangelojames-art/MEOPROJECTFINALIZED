@@ -284,21 +284,21 @@ export default function ApplicationDetail() {
             </Card>
 
             {/* Applicant Information */}
-            <Card className="p-6">
-              <h3 className="text-lg font-bold mb-4">Applicant Information</h3>
+            <Card className="p-6 bg-white dark:bg-slate-800/50">
+              <h3 className="text-lg font-bold mb-4 text-foreground">Applicant Information</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Full Name</p>
-                  <p className="font-semibold">{app.applicantName}</p>
+                  <p className="font-semibold text-foreground">{app.applicantName}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Capacity</p>
-                  <p className="font-semibold">{app.applicantCapacity}</p>
+                  <p className="font-semibold text-foreground">{app.applicantCapacity}</p>
                 </div>
                 {app.ownerName && (
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Property/Lot Owner Name</p>
-                    <p className="font-semibold">{app.ownerName}</p>
+                    <p className="font-semibold text-foreground">{app.ownerName}</p>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
@@ -317,53 +317,53 @@ export default function ApplicationDetail() {
             </Card>
 
             {/* Property Information */}
-            <Card className="p-6">
-              <h3 className="text-lg font-bold mb-4">Property Information</h3>
+            <Card className="p-6 bg-white dark:bg-slate-800/50">
+              <h3 className="text-lg font-bold mb-4 text-foreground">Property Information</h3>
               <div className="space-y-4">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Location</p>
                   <div className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                    <p className="font-semibold">{app.propertyLocation}</p>
+                    <p className="font-semibold text-foreground">{app.propertyLocation}</p>
                   </div>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Complete Address</p>
-                  <p className="text-sm">{app.propertyAddress}</p>
+                  <p className="text-sm text-foreground">{app.propertyAddress}</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Project Type</p>
-                    <p className="font-semibold">{app.projectType}</p>
+                    <p className="font-semibold text-foreground">{app.projectType}</p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Building Classification</p>
-                    <p className="font-semibold">
+                    <p className="font-semibold text-foreground">
                       {app.buildingClassification || "Not provided"}
                     </p>
                   </div>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Project Scope</p>
-                  <p className="text-sm whitespace-pre-wrap">{app.projectScope}</p>
+                  <p className="text-sm text-foreground whitespace-pre-wrap">{app.projectScope}</p>
                 </div>
               </div>
             </Card>
 
             {/* Attachments/Documents */}
             {app.attachments && (app.attachments as any[]).length > 0 && (
-              <Card className="p-6">
-                <h3 className="text-lg font-bold mb-4">Attached Documents</h3>
+              <Card className="p-6 bg-white dark:bg-slate-800/50">
+                <h3 className="text-lg font-bold mb-4 text-foreground">Attached Documents</h3>
                 <div className="space-y-3">
                   {(app.attachments as any[]).map((attachment: any, index: number) => (
                     <div
                       key={index}
                       className="border border-border rounded-lg overflow-hidden bg-white dark:bg-slate-800"
                     >
-                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 border-b border-border">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="font-semibold text-sm truncate">{attachment.name}</p>
+                            <p className="font-semibold text-sm truncate text-foreground">{attachment.name}</p>
                             {(attachment.isLocked !== false) && (
                               <Tooltip>
                                 <TooltipTrigger asChild>
@@ -403,7 +403,7 @@ export default function ApplicationDetail() {
                       </div>
                       
                       {/* Remarks Section */}
-                      <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                      <div className="p-4 bg-muted/50 dark:bg-slate-700/30 border-t border-border">
                         {editingFileIndex === index ? (
                           <div className="space-y-2">
                             <label className="text-xs font-medium text-muted-foreground">Staff Remarks</label>
@@ -480,18 +480,18 @@ export default function ApplicationDetail() {
 
             {/* Activity Log */}
             {activityLogs.length > 0 && (
-              <Card className="p-6">
-                <h3 className="text-lg font-bold mb-4">Activity Log</h3>
+              <Card className="p-6 bg-white dark:bg-slate-800/50">
+                <h3 className="text-lg font-bold mb-4 text-foreground">Activity Log</h3>
                 <div className="space-y-4">
                   {activityLogs.map((log: any) => (
-                    <div key={log.id} className="flex gap-4 pb-4 border-b border-border last:border-0">
+                      <div className="flex gap-4 pb-4 border-b border-border last:border-0">
                       <div className="h-8 w-8 rounded-full bg-gradient-meo flex items-center justify-center flex-shrink-0">
                         <span className="text-xs text-white font-bold">
                           {log.staffName.charAt(0)}
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm">{log.staffName}</p>
+                        <p className="font-semibold text-sm text-foreground">{log.staffName}</p>
                         <p className="text-xs text-muted-foreground">
                           {log.action.replace(/_/g, " ").toUpperCase()}
                         </p>
@@ -511,8 +511,8 @@ export default function ApplicationDetail() {
 
           {/* Sidebar - Actions */}
           <div className="space-y-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-bold mb-4">Actions</h3>
+            <Card className="p-6 bg-white dark:bg-slate-800/50">
+              <h3 className="text-lg font-bold mb-4 text-foreground">Actions</h3>
               {app.status === "pending" || app.status === "for_resubmission" || app.status === "pending_resubmit" ? (
                 <div className="space-y-3">
                   <Button
@@ -538,8 +538,8 @@ export default function ApplicationDetail() {
 
             {/* Remarks Section */}
             {action && (
-              <Card className="p-6 border-2 border-primary/20 dark:border-primary/40">
-                <h3 className="text-lg font-bold mb-2">
+              <Card className="p-6 border-2 border-primary/20 dark:border-primary/40 bg-white dark:bg-slate-800/50">
+                <h3 className="text-lg font-bold mb-2 text-foreground">
                   {action === "approve" ? "Approval Notes" : "Modification Requirements"}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">
