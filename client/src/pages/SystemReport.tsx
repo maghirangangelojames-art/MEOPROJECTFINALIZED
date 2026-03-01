@@ -234,10 +234,10 @@ const SystemReport = () => {
           </ResponsiveContainer>
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
             {processingTimeData.map((item, idx) => (
-              <div key={idx} className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-muted-foreground mb-1">{item.range}</p>
+              <div key={idx} className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{item.range}</p>
                 <p className="text-2xl font-bold text-foreground">{item.count}</p>
-                <p className="text-xs text-green-600">{item.percentage}% of total</p>
+                <p className="text-xs text-green-700 dark:text-green-400">{item.percentage}% of total</p>
               </div>
             ))}
           </div>
@@ -337,25 +337,25 @@ const SystemReport = () => {
         <Card className="p-8 mb-12">
           <h2 className="text-2xl font-bold mb-6">Performance Metrics</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Test Coverage</p>
-              <p className="text-3xl font-bold text-blue-600">25 tests</p>
-              <p className="text-xs text-green-600">100% passing</p>
+            <div className="p-4 bg-blue-100 dark:bg-blue-900 rounded-lg border border-blue-200 dark:border-blue-700">
+              <p className="text-sm text-blue-800 dark:text-blue-100 mb-1">Test Coverage</p>
+              <p className="text-3xl font-bold text-blue-700 dark:text-blue-200">25 tests</p>
+              <p className="text-xs text-green-700 dark:text-green-400">100% passing</p>
             </div>
-            <div className="p-4 bg-green-50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Response Time</p>
-              <p className="text-3xl font-bold text-green-600">&lt;100ms</p>
-              <p className="text-xs text-green-600">Average API response</p>
+            <div className="p-4 bg-green-100 dark:bg-green-900 rounded-lg border border-green-200 dark:border-green-700">
+              <p className="text-sm text-green-800 dark:text-green-100 mb-1">Response Time</p>
+              <p className="text-3xl font-bold text-green-700 dark:text-green-200">&lt;100ms</p>
+              <p className="text-xs text-green-700 dark:text-green-400">Average API response</p>
             </div>
-            <div className="p-4 bg-purple-50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Pages Built</p>
-              <p className="text-3xl font-bold text-purple-600">6 pages</p>
-              <p className="text-xs text-green-600">All responsive</p>
+            <div className="p-4 bg-purple-100 dark:bg-purple-900 rounded-lg border border-purple-200 dark:border-purple-700">
+              <p className="text-sm text-purple-800 dark:text-purple-100 mb-1">Pages Built</p>
+              <p className="text-3xl font-bold text-purple-700 dark:text-purple-200">6 pages</p>
+              <p className="text-xs text-green-700 dark:text-green-400">All responsive</p>
             </div>
-            <div className="p-4 bg-orange-50 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Mobile Support</p>
-              <p className="text-3xl font-bold text-orange-600">100%</p>
-              <p className="text-xs text-green-600">Fully responsive</p>
+            <div className="p-4 bg-orange-100 dark:bg-orange-900 rounded-lg border border-orange-200 dark:border-orange-700">
+              <p className="text-sm text-orange-800 dark:text-orange-100 mb-1">Mobile Support</p>
+              <p className="text-3xl font-bold text-orange-700 dark:text-orange-200">100%</p>
+              <p className="text-xs text-green-700 dark:text-green-400">Fully responsive</p>
             </div>
           </div>
         </Card>
