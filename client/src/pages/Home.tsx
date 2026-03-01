@@ -5,11 +5,12 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy } from "lucide-react";
+import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy, MapPin } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
-import { useState } from "react";
+import { MapView } from "@/components/Map";
+import { useState, useRef } from "react";
 
 export default function Home() {
   const { user, isAuthenticated, logout, loading } = useAuth();
@@ -17,7 +18,35 @@ export default function Home() {
   const [showPhoneNumber, setShowPhoneNumber] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const [emailCopied, setEmailCopied] = useState(false);
+  const mapRef = useRef<google.maps.Map | null>(null);
   const canStartApplication = isAuthenticated && user?.role === "user";
+
+  // Sariaya coordinates (Municipality of Sariaya, Quezon Province)
+  const sariayaCenter = { lat: 13.8539, lng: 121.3891 };
+  
+  const handleMapReady = (map: google.maps.Map) => {
+    mapRef.current = map;
+    
+    // MEO Office marker
+    const marker = new (window as any).google.maps.marker.AdvancedMarkerElement({
+      map: mapRef.current,
+      position: sariayaCenter,
+      title: "MEO Sariaya - Main Office",
+    });
+
+    // Create info window
+    const infoWindow = new (window as any).google.maps.InfoWindow({
+      content: `<div style="padding: 8px;">
+        <h3 style="margin: 0 0 4px 0; font-weight: bold;">Municipal Engineering Office</h3>
+        <p style="margin: 0 0 4px 0; font-size: 12px;">Sariaya, Quezon Province</p>
+        <p style="margin: 0; font-size: 12px;">📞 (042) 373 6190</p>
+      </div>`,
+    });
+
+    marker.addListener("click", () => {
+      infoWindow.open(map, marker);
+    });
+  };
 
   const handleLogout = async () => {
     try {
@@ -136,12 +165,18 @@ export default function Home() {
               ) : null}
             </div>
 
-            {/* Hero Illustration */}
-            <div className="relative h-64 sm:h-80 lg:h-96 animate-slide-in-right">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-3xl backdrop-blur-sm border border-white/20 flex items-center justify-center shadow-2xl hover:shadow-3xl transition-all duration-300 group">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-white/5 rounded-2xl blur-2xl animate-pulse" />
-                  <FileText className="h-32 w-32 text-white/40 relative" />
+            {/* Hero Map */}
+            <div className="relative h-64 sm:h-80 lg:h-96 animate-slide-in-right rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300 border border-white/20">
+              <MapView
+                initialCenter={sariayaCenter}
+                initialZoom={15}
+                onMapReady={handleMapReady}
+                className="h-full w-full"
+              />
+              <div className="absolute top-4 left-4 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-lg p-3 shadow-lg border border-white/20">
+                <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <MapPin className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  Sariaya, Quezon
                 </div>
               </div>
             </div>
