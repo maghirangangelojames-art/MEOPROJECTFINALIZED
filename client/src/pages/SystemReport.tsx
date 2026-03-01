@@ -6,12 +6,121 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { SkeletonPageHeader, SkeletonCard } from "@/components/SkeletonLoader";
+import { useState } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import * as XLSX from "xlsx";
+import Papa from "papaparse";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const SystemReport = () => {
   const { user } = useAuth();
+  const [isExporting, setIsExporting] = useState(false);
   
   // Fetch all applications for the report
   const applicationsQuery = trpc.applications.list.useQuery({ limit: 10000, offset: 0 });
+
+  // Export to PDF
+  const exportToPDF = async () => {
+    setIsExporting(true);
+    try {
+      const element = document.getElementById("report-content");
+      if (!element) return;
+      
+      const canvas = await html2canvas(element, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+      
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= 297;
+      
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= 297;
+      }
+      
+      pdf.save("System_Report_" + new Date().toISOString().split("T")[0] + ".pdf");
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // Export to Excel
+  const exportToExcel = () => {
+    setIsExporting(true);
+    try {
+      const applications = applicationsQuery.data || [];
+      
+      // Prepare data for Excel
+      const data = applications.map((app) => ({
+        "Reference Number": app.referenceNumber,
+        "Applicant Name": app.applicantName,
+        "Status": app.status,
+        "Submitted Date": new Date(app.submittedAt).toLocaleDateString(),
+        "Processing Days": app.processingDays,
+        "Project Type": app.projectType,
+        "Barangay": app.barangay,
+      }));
+      
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Applications");
+      
+      XLSX.writeFile(workbook, "System_Report_" + new Date().toISOString().split("T")[0] + ".xlsx");
+    } catch (error) {
+      console.error("Error exporting Excel:", error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // Export to CSV
+  const exportToCSV = () => {
+    setIsExporting(true);
+    try {
+      const applications = applicationsQuery.data || [];
+      
+      const data = applications.map((app) => ({
+        "Reference Number": app.referenceNumber,
+        "Applicant Name": app.applicantName,
+        "Status": app.status,
+        "Submitted Date": new Date(app.submittedAt).toLocaleDateString(),
+        "Processing Days": app.processingDays,
+        "Project Type": app.projectType,
+        "Barangay": app.barangay,
+      }));
+      
+      const csv = Papa.unparse(data);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute("href", url);
+      link.setAttribute("download", "System_Report_" + new Date().toISOString().split("T")[0] + ".csv");
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error exporting CSV:", error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // Check if user is staff or admin
   if (!user || (user.role !== "staff" && user.role !== "admin")) {
@@ -154,16 +263,34 @@ const SystemReport = () => {
                 MEO Sariaya Digital Building Permit System - Performance Overview
               </p>
             </div>
-            <Button className="btn-primary-meo flex items-center gap-2">
-              <Download className="h-4 w-4" />
-              Export Report
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="btn-primary-meo flex items-center gap-2" disabled={isExporting}>
+                  <Download className="h-4 w-4" />
+                  {isExporting ? "Exporting..." : "Export Report"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={exportToPDF} disabled={isExporting}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Export as PDF
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportToExcel} disabled={isExporting}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Export as Excel
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportToCSV} disabled={isExporting}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Export as CSV
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="container py-12">
+      <div id="report-content" className="container py-12">
         {/* Key Statistics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {stats.map((stat, idx) => (
