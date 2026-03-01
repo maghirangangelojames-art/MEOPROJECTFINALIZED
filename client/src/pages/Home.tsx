@@ -174,53 +174,60 @@ export default function Home() {
 
             {/* Hero Carousel */}
             <div className="relative h-64 sm:h-80 lg:h-96 animate-slide-in-right">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-3xl backdrop-blur-sm border border-white/20 overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300">
-                {/* Carousel Container */}
+              <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-shadow duration-500 bg-gradient-to-br from-white/8 via-white/5 to-transparent border border-white/20">
+                {/* Carousel Content Container */}
                 <div className="relative w-full h-full flex flex-col">
-                  {/* Image Placeholder */}
-                  <div className="flex-1 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center relative overflow-hidden groups">
-                    <div className="absolute inset-0 bg-white/5 rounded-lg blur-xl" />
-                    <div className="relative flex flex-col items-center justify-center h-full w-full text-white/60">
-                      <div className="text-6xl mb-4">📱</div>
-                      <span className="text-sm font-medium">{pageScreenshots[currentScreenshotIndex].title}</span>
+                  {/* Image Section - Cleaner */}
+                  <div className="flex-1 bg-gradient-to-b from-white/8 to-white/4 flex items-center justify-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-radial from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                    
+                    {/* Content with smooth fade */}
+                    <div key={currentScreenshotIndex} className="relative flex flex-col items-center justify-center h-full w-full text-white/70 animate-carousel-fade">
+                      <div className="text-7xl sm:text-8xl mb-6 transition-transform duration-300">📱</div>
+                      <h3 className="text-lg sm:text-xl font-semibold text-white/90 drop-shadow-sm">
+                        {pageScreenshots[currentScreenshotIndex].title}
+                      </h3>
                     </div>
                   </div>
 
-                  {/* Description */}
-                  <div className="px-4 py-4 bg-white/5 border-t border-white/10">
-                    <p className="text-sm text-white/80 text-center leading-relaxed">
+                  {/* Divider */}
+                  <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+                  {/* Description Section */}
+                  <div className="px-6 py-5 bg-white/4 backdrop-blur-sm">
+                    <p key={`desc-${currentScreenshotIndex}`} className="text-sm text-white/80 text-center leading-relaxed animate-carousel-fade font-light">
                       {pageScreenshots[currentScreenshotIndex].description}
                     </p>
                   </div>
                 </div>
 
-                {/* Navigation Buttons */}
+                {/* Navigation Buttons - Smoother */}
                 <button
                   onClick={goToPrevious}
                   aria-label="Previous page screenshot"
-                  className="absolute left-3 top-1/3 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white border border-white/20 hover:border-white/40"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/10 hover:bg-white/25 active:bg-white/30 transition-all duration-200 text-white border border-white/30 hover:border-white/50 shadow-lg hover:shadow-xl group"
                 >
-                  <ChevronLeft className="h-5 w-5" />
+                  <ChevronLeft className="h-5 w-5 transition-transform group-hover:scale-110 duration-200" />
                 </button>
                 <button
                   onClick={goToNext}
                   aria-label="Next page screenshot"
-                  className="absolute right-3 top-1/3 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white border border-white/20 hover:border-white/40"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/10 hover:bg-white/25 active:bg-white/30 transition-all duration-200 text-white border border-white/30 hover:border-white/50 shadow-lg hover:shadow-xl group"
                 >
-                  <ChevronRight className="h-5 w-5" />
+                  <ChevronRight className="h-5 w-5 transition-transform group-hover:scale-110 duration-200" />
                 </button>
 
-                {/* Indicator Dots */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                {/* Indicator Dots - Cleaner */}
+                <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-3 z-20 bg-white/5 px-4 py-2 rounded-full border border-white/20 backdrop-blur-sm">
                   {pageScreenshots.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentScreenshotIndex(index)}
                       aria-label={`Go to page ${index + 1}`}
-                      className={`h-2 rounded-full transition-all ${
+                      className={`transition-all duration-300 rounded-full ${
                         index === currentScreenshotIndex
-                          ? "w-6 bg-white"
-                          : "w-2 bg-white/40 hover:bg-white/60"
+                          ? "w-8 h-2.5 bg-white/90 shadow-lg"
+                          : "w-2.5 h-2.5 bg-white/40 hover:bg-white/60 hover:scale-125"
                       }`}
                     />
                   ))}
