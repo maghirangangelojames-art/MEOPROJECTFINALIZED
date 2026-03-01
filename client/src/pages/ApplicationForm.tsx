@@ -172,13 +172,6 @@ export default function ApplicationForm() {
   ];
 
   useEffect(() => {
-    // Automatically uncheck "I am not the property/lot owner" when Owner is selected
-    if (watchedValues.applicantCapacity === "Owner" && isNotLotOwner) {
-      setIsNotLotOwner(false);
-    }
-  }, [watchedValues.applicantCapacity]);
-
-  useEffect(() => {
     return () => {
       // Only revoke blob URLs when component unmounts, not on every step change
       if (step === 4) return; // Don't revoke while on review step
