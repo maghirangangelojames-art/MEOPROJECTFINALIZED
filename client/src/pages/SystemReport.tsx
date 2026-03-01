@@ -8,7 +8,6 @@ import { Link } from "wouter";
 import { SkeletonPageHeader, SkeletonCard } from "@/components/SkeletonLoader";
 import { useState } from "react";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 import * as XLSX from "xlsx";
 import Papa from "papaparse";
 import {
@@ -29,31 +28,90 @@ const SystemReport = () => {
   const exportToPDF = async () => {
     setIsExporting(true);
     try {
-      const element = document.getElementById("report-content");
-      if (!element) return;
-      
-      const canvas = await html2canvas(element, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
+      const applications = applicationsQuery.data || [];
       const pdf = new jsPDF("p", "mm", "a4");
       
-      const imgWidth = 210;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = 0;
+      // Title
+      pdf.setFontSize(16);
+      pdf.text("System Report & Analytics", 20, 20);
       
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= 297;
+      // Date
+      pdf.setFontSize(10);
+      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 30);
       
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= 297;
-      }
+      let yPosition = 45;
+      
+      // Summary Statistics
+      pdf.setFontSize(12);
+      pdf.text("Summary Statistics", 20, yPosition);
+      yPosition += 10;
+      
+      pdf.setFontSize(10);
+      const stats = [
+        `Total Applications: ${applications.length}`,
+        `Approved: ${applications.filter(app => app.status === "approved").length}`,
+        `Pending: ${applications.filter(app => app.status === "pending").length}`,
+        `On Hold: ${applications.filter(app => app.status === "on_hold").length}`,
+        `For Resubmission: ${applications.filter(app => app.status === "for_resubmission").length}`,
+      ];
+      
+      stats.forEach(stat => {
+        pdf.text(stat, 25, yPosition);
+        yPosition += 8;
+      });
+      
+      yPosition += 5;
+      
+      // Applications Table
+      pdf.setFontSize(12);
+      pdf.text("Applications Details", 20, yPosition);
+      yPosition += 8;
+      
+      // Table headers
+      pdf.setFontSize(9);
+      const headers = ["Ref #", "Name", "Status", "Submitted", "Days"];
+      const columnWidths = [25, 50, 30, 35, 20];
+      let xPosition = 20;
+      
+      headers.forEach((header, idx) => {
+        pdf.text(header, xPosition, yPosition);
+        xPosition += columnWidths[idx];
+      });
+      
+      yPosition += 7;
+      pdf.setDrawColor(200);
+      pdf.line(20, yPosition, 190, yPosition);
+      yPosition += 5;
+      
+      // Table data
+      pdf.setFontSize(8);
+      applications.slice(0, 20).forEach((app) => {
+        if (yPosition > 270) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        const cols = [
+          app.referenceNumber?.substring(0, 12) || "N/A",
+          app.applicantName?.substring(0, 20) || "N/A",
+          app.status || "N/A",
+          new Date(app.submittedAt).toLocaleDateString().substring(0, 10),
+          (app.processingDays || 0).toString(),
+        ];
+        
+        xPosition = 20;
+        cols.forEach((col, idx) => {
+          pdf.text(col, xPosition, yPosition);
+          xPosition += columnWidths[idx];
+        });
+        
+        yPosition += 6;
+      });
       
       pdf.save("System_Report_" + new Date().toISOString().split("T")[0] + ".pdf");
     } catch (error) {
       console.error("Error exporting PDF:", error);
+      alert("Failed to export PDF. Please try again.");
     } finally {
       setIsExporting(false);
     }
@@ -65,24 +123,43 @@ const SystemReport = () => {
     try {
       const applications = applicationsQuery.data || [];
       
+      if (applications.length === 0) {
+        alert("No data to export.");
+        setIsExporting(false);
+        return;
+      }
+      
       // Prepare data for Excel
       const data = applications.map((app) => ({
-        "Reference Number": app.referenceNumber,
-        "Applicant Name": app.applicantName,
-        "Status": app.status,
+        "Reference Number": app.referenceNumber || "",
+        "Applicant Name": app.applicantName || "",
+        "Email": app.applicantEmail || "",
+        "Status": app.status || "",
         "Submitted Date": new Date(app.submittedAt).toLocaleDateString(),
-        "Processing Days": app.processingDays,
-        "Project Type": app.projectType,
-        "Barangay": app.barangay,
+        "Processing Days": app.processingDays || 0,
+        "Project Type": app.projectType || "",
+        "Barangay": app.barangay || "",
       }));
       
       const worksheet = XLSX.utils.json_to_sheet(data);
+      worksheet["!cols"] = [
+        { wch: 20 },
+        { wch: 25 },
+        { wch: 25 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 12 },
+        { wch: 20 },
+        { wch: 20 },
+      ];
+      
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Applications");
       
       XLSX.writeFile(workbook, "System_Report_" + new Date().toISOString().split("T")[0] + ".xlsx");
     } catch (error) {
       console.error("Error exporting Excel:", error);
+      alert("Failed to export Excel. Please try again.");
     } finally {
       setIsExporting(false);
     }
@@ -94,14 +171,21 @@ const SystemReport = () => {
     try {
       const applications = applicationsQuery.data || [];
       
+      if (applications.length === 0) {
+        alert("No data to export.");
+        setIsExporting(false);
+        return;
+      }
+      
       const data = applications.map((app) => ({
-        "Reference Number": app.referenceNumber,
-        "Applicant Name": app.applicantName,
-        "Status": app.status,
+        "Reference Number": app.referenceNumber || "",
+        "Applicant Name": app.applicantName || "",
+        "Email": app.applicantEmail || "",
+        "Status": app.status || "",
         "Submitted Date": new Date(app.submittedAt).toLocaleDateString(),
-        "Processing Days": app.processingDays,
-        "Project Type": app.projectType,
-        "Barangay": app.barangay,
+        "Processing Days": app.processingDays || 0,
+        "Project Type": app.projectType || "",
+        "Barangay": app.barangay || "",
       }));
       
       const csv = Papa.unparse(data);
@@ -112,11 +196,15 @@ const SystemReport = () => {
       link.setAttribute("href", url);
       link.setAttribute("download", "System_Report_" + new Date().toISOString().split("T")[0] + ".csv");
       link.style.visibility = "hidden";
+      
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      
+      URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error exporting CSV:", error);
+      alert("Failed to export CSV. Please try again.");
     } finally {
       setIsExporting(false);
     }
@@ -290,7 +378,7 @@ const SystemReport = () => {
       </div>
 
       {/* Main Content */}
-      <div id="report-content" className="container py-12">
+      <div className="container py-12">
         {/* Key Statistics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {stats.map((stat, idx) => (
