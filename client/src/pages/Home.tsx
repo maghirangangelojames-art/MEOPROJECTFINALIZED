@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy } from "lucide-react";
+import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -136,13 +136,63 @@ export default function Home() {
               ) : null}
             </div>
 
-            {/* Hero Illustration */}
+            {/* Hero Illustration - Application Form Preview */}
             <div className="relative h-64 sm:h-80 lg:h-96 animate-slide-in-right">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-3xl backdrop-blur-sm border border-white/20 flex items-center justify-center shadow-2xl hover:shadow-3xl transition-all duration-300 group">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-white/5 rounded-2xl blur-2xl animate-pulse" />
-                  <FileText className="h-32 w-32 text-white/40 relative" />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-3xl backdrop-blur-sm border border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-300 overflow-hidden">
+                {/* Form Preview Card */}
+                <div className="h-full flex flex-col p-4 sm:p-6 bg-white/5 backdrop-blur-sm">
+                  {/* Form Header */}
+                  <div className="mb-4 sm:mb-6">
+                    <h3 className="text-sm sm:text-base font-bold text-white/90">Application Form</h3>
+                    <p className="text-xs text-white/70 mt-1">Step 1 of 4: Applicant Information</p>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full h-1 bg-white/10 rounded-full mb-4 overflow-hidden">
+                    <div className="h-full w-1/4 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full" />
+                  </div>
+
+                  {/* Form Fields Preview */}
+                  <div className="flex-1 space-y-3 mb-4">
+                    {/* Field 1 */}
+                    <div>
+                      <label className="text-xs font-medium text-white/80 block mb-1">Your Capacity</label>
+                      <div className="h-7 sm:h-8 bg-white/10 rounded border border-white/20 flex items-center px-2">
+                        <span className="text-xs text-white/60">Select capacity...</span>
+                      </div>
+                    </div>
+
+                    {/* Field 2 */}
+                    <div>
+                      <label className="text-xs font-medium text-white/80 block mb-1">Full Name</label>
+                      <div className="h-7 sm:h-8 bg-white/10 rounded border border-white/20 flex items-center px-2">
+                        <span className="text-xs text-white/60">Enter your full name</span>
+                      </div>
+                    </div>
+
+                    {/* Field 3 */}
+                    <div>
+                      <label className="text-xs font-medium text-white/80 block mb-1">Email Address</label>
+                      <div className="h-7 sm:h-8 bg-white/10 rounded border border-white/20 flex items-center px-2">
+                        <span className="text-xs text-white/60">your.email@example.com</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Form Footer */}
+                  <div className="flex gap-2">
+                    <button className="flex-1 py-2 px-3 text-xs font-medium text-white/70 border border-white/20 rounded hover:bg-white/10 transition-colors">
+                      Back
+                    </button>
+                    <button className="flex-1 py-2 px-3 text-xs font-medium text-white bg-gradient-to-r from-blue-500 to-purple-500 rounded hover:shadow-lg transition-all flex items-center justify-center gap-1 group">
+                      Next
+                      <ChevronRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                  </div>
                 </div>
+
+                {/* Decorative corner element */}
+                <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
               </div>
             </div>
           </div>
