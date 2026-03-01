@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Facebook, Mail, Phone, Copy } from "lucide-react";
+import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -580,32 +580,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
-            {/* Facebook Card */}
-            <Card className="card-hover group p-8 space-y-4 text-center flex flex-col items-center animate-slide-in-up dark:bg-muted/10">
-              <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
-                <Facebook className="h-7 w-7 text-white" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-semibold text-lg">Facebook</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Follow us on Facebook for updates and announcements
-                </p>
-              </div>
-              <Button 
-                asChild 
-                className="btn-primary-meo w-full mt-auto"
-              >
-                <a 
-                  href="https://www.facebook.com/p/Municipal-Engineering-Office-Sariaya-100083072363534/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  Visit Facebook
-                </a>
-              </Button>
-            </Card>
-
+          <div className="grid gap-8 sm:grid-cols-2 max-w-2xl mx-auto">
             {/* Email Card */}
             <Card className="card-hover group p-8 space-y-4 text-center flex flex-col items-center animate-slide-in-up dark:bg-muted/10" style={{ animationDelay: "0.1s" }}>
               <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
@@ -703,29 +678,7 @@ export default function Home() {
             </Card>
           </div>
 
-          {/* Social Media Info */}
-          <div className="max-w-2xl mx-auto bg-background dark:bg-muted/5 rounded-2xl p-8 border border-border text-center animate-scale-in">
-            <p className="text-lg font-semibold text-foreground mb-4">
-              Follow Us on Social Media
-            </p>
-            <p className="text-muted-foreground mb-6 leading-relaxed">
-              Stay updated with the latest news, announcements, and updates about building permits in Sariaya. Connect with us on Facebook for real-time information.
-            </p>
-            <Button 
-              asChild 
-              size="lg"
-              className="btn-lg-primary-meo"
-            >
-              <a 
-                href="https://www.facebook.com/p/Municipal-Engineering-Office-Sariaya-100083072363534/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                <Facebook className="h-5 w-5" />
-                Follow on Facebook
-              </a>
-            </Button>
-          </div>
+
         </div>
       </section>
 

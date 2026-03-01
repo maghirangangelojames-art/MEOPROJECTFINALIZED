@@ -173,6 +173,13 @@ export default function ApplicationForm() {
   ];
 
   useEffect(() => {
+    // Automatically uncheck "I am not the property/lot owner" when Owner is selected
+    if (watchedValues.applicantCapacity === "Owner" && isNotLotOwner) {
+      setIsNotLotOwner(false);
+    }
+  }, [watchedValues.applicantCapacity]);
+
+  useEffect(() => {
     return () => {
       // Only revoke blob URLs when component unmounts, not on every step change
       if (step === 4) return; // Don't revoke while on review step
@@ -780,6 +787,7 @@ export default function ApplicationForm() {
                       <input
                         type="checkbox"
                         className="mt-1 w-4 h-4"
+                        disabled={watchedValues.applicantCapacity === "Owner"}
                         checked={isNotLotOwner || watchedValues.applicantCapacity === "Authorized Representative"}
                         onChange={(event) => {
                           const checked = event.currentTarget.checked;
