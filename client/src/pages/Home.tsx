@@ -176,7 +176,7 @@ export default function Home() {
             <div className="relative h-64 sm:h-80 lg:h-96 animate-slide-in-right">
               <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-shadow duration-500 bg-gradient-to-br from-white/8 via-white/5 to-transparent border border-white/20">
                 {/* Carousel Content Container */}
-                <div className="relative w-full h-full flex flex-col">
+                <div className="relative w-full h-full flex flex-col pb-16">
                   {/* Image Section - Cleaner */}
                   <div className="flex-1 bg-gradient-to-b from-white/8 to-white/4 flex items-center justify-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-radial from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
@@ -193,9 +193,9 @@ export default function Home() {
                   {/* Divider */}
                   <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-                  {/* Description Section */}
-                  <div className="px-6 py-5 bg-white/4 backdrop-blur-sm">
-                    <p key={`desc-${currentScreenshotIndex}`} className="text-sm text-white/80 text-center leading-relaxed animate-carousel-fade font-light">
+                  {/* Description Section - Moved up with padding */}
+                  <div className="px-6 py-4 bg-white/4 backdrop-blur-sm flex-shrink-0">
+                    <p key={`desc-${currentScreenshotIndex}`} className="text-xs sm:text-sm text-white/80 text-center leading-relaxed animate-carousel-fade font-light">
                       {pageScreenshots[currentScreenshotIndex].description}
                     </p>
                   </div>
@@ -217,8 +217,8 @@ export default function Home() {
                   <ChevronRight className="h-5 w-5 transition-transform group-hover:scale-110 duration-200" />
                 </button>
 
-                {/* Indicator Dots - Cleaner */}
-                <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-3 z-20 bg-white/5 px-4 py-2 rounded-full border border-white/20 backdrop-blur-sm">
+                {/* Indicator Dots - At Bottom */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-3 z-20">
                   {pageScreenshots.map((_, index) => (
                     <button
                       key={index}
