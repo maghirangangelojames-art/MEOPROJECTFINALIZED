@@ -27,25 +27,30 @@ export default function Home() {
   const handleMapReady = (map: google.maps.Map) => {
     mapRef.current = map;
     
-    // MEO Office marker
-    const marker = new (window as any).google.maps.marker.AdvancedMarkerElement({
-      map: mapRef.current,
+    // Create a simple marker
+    const marker = new (window as any).google.maps.Marker({
       position: sariayaCenter,
+      map: mapRef.current,
       title: "MEO Sariaya - Main Office",
+      icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
     });
 
     // Create info window
     const infoWindow = new (window as any).google.maps.InfoWindow({
-      content: `<div style="padding: 8px;">
-        <h3 style="margin: 0 0 4px 0; font-weight: bold;">Municipal Engineering Office</h3>
-        <p style="margin: 0 0 4px 0; font-size: 12px;">Sariaya, Quezon Province</p>
-        <p style="margin: 0; font-size: 12px;">📞 (042) 373 6190</p>
+      content: `<div style="padding: 10px; font-family: Arial, sans-serif;">
+        <h3 style="margin: 0 0 6px 0; font-weight: bold; color: #333;">Municipal Engineering Office</h3>
+        <p style="margin: 0 0 4px 0; font-size: 13px; color: #666;">Sariaya, Quezon Province</p>
+        <p style="margin: 0; font-size: 13px; color: #666;">📞 (042) 373 6190</p>
       </div>`,
     });
 
+    // Open info window on marker click
     marker.addListener("click", () => {
-      infoWindow.open(map, marker);
+      infoWindow.open(mapRef.current, marker);
     });
+
+    // Open info window by default
+    infoWindow.open(mapRef.current, marker);
   };
 
   const handleLogout = async () => {
