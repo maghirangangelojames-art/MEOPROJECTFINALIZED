@@ -145,7 +145,6 @@ export default function ApplicationForm() {
   const [, navigate] = useLocation();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<Partial<FormData>>({});
-  const [isNotLotOwner, setIsNotLotOwner] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File | null>>({});
   const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
   const [fileErrors, setFileErrors] = useState<Record<string, string>>({});
@@ -166,7 +165,7 @@ export default function ApplicationForm() {
   const uploadAttachmentMutation = trpc.applications.uploadAttachment.useMutation();
 
   const watchedValues = watch() as Partial<FormData>;
-  const shouldShowNonLotOwnerDocs = isNotLotOwner && watchedValues.applicantCapacity !== "Owner";
+  const shouldShowNonLotOwnerDocs = watchedValues.applicantCapacity === "Authorized Representative";
   const requiredDocuments = [
     ...baseRequiredDocuments,
     ...(shouldShowNonLotOwnerDocs ? nonLotOwnerDocuments : []),
@@ -781,31 +780,6 @@ export default function ApplicationForm() {
                       )}
                     </div>
                   ))}
-
-                  <div className="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-4 space-y-3">
-                    <label className="flex items-start gap-3 text-base font-medium cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="mt-1 w-4 h-4"
-                        disabled={watchedValues.applicantCapacity === "Owner"}
-                        checked={isNotLotOwner || watchedValues.applicantCapacity === "Authorized Representative"}
-                        onChange={(event) => {
-                          const checked = event.currentTarget.checked;
-                          setIsNotLotOwner(checked);
-                          if (!checked && watchedValues.applicantCapacity !== "Authorized Representative") {
-                            setFileErrors((prev) => {
-                              const next = { ...prev };
-                              nonLotOwnerDocuments.forEach((doc) => {
-                                delete next[doc.key];
-                              });
-                              return next;
-                            });
-                          }
-                        }}
-                      />
-                      <span>I am not the property/lot owner and need to upload additional documents</span>
-                    </label>
-                  </div>
 
                   {shouldShowNonLotOwnerDocs && (
                     <div className="border-2 border-orange-200 dark:border-orange-800 rounded-lg p-6 space-y-4 bg-orange-50 dark:bg-orange-950">
