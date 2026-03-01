@@ -5,11 +5,34 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy } from "lucide-react";
+import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useState } from "react";
+
+const pageScreenshots = [
+  {
+    id: "home",
+    title: "Home Page",
+    description: "Welcome to your building permit system with easy navigation and quick access to all features.",
+  },
+  {
+    id: "application-form",
+    title: "Application Form",
+    description: "Fill out your building permit application with our intuitive and guided form interface.",
+  },
+  {
+    id: "dashboard",
+    title: "Dashboard",
+    description: "Monitor your permits and manage your applications from a comprehensive dashboard.",
+  },
+  {
+    id: "track-status",
+    title: "Track Status",
+    description: "Real-time tracking of your application status and permit processing progress.",
+  },
+];
 
 export default function Home() {
   const { user, isAuthenticated, logout, loading } = useAuth();
@@ -17,7 +40,20 @@ export default function Home() {
   const [showPhoneNumber, setShowPhoneNumber] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const [emailCopied, setEmailCopied] = useState(false);
+  const [currentScreenshotIndex, setCurrentScreenshotIndex] = useState(0);
   const canStartApplication = isAuthenticated && user?.role === "user";
+
+  const goToPrevious = () => {
+    setCurrentScreenshotIndex(
+      currentScreenshotIndex === 0 ? pageScreenshots.length - 1 : currentScreenshotIndex - 1
+    );
+  };
+
+  const goToNext = () => {
+    setCurrentScreenshotIndex(
+      currentScreenshotIndex === pageScreenshots.length - 1 ? 0 : currentScreenshotIndex + 1
+    );
+  };
 
   const handleLogout = async () => {
     try {
@@ -136,12 +172,58 @@ export default function Home() {
               ) : null}
             </div>
 
-            {/* Hero Illustration */}
+            {/* Hero Carousel */}
             <div className="relative h-64 sm:h-80 lg:h-96 animate-slide-in-right">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-3xl backdrop-blur-sm border border-white/20 flex items-center justify-center shadow-2xl hover:shadow-3xl transition-all duration-300 group">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-white/5 rounded-2xl blur-2xl animate-pulse" />
-                  <FileText className="h-32 w-32 text-white/40 relative" />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-3xl backdrop-blur-sm border border-white/20 overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300">
+                {/* Carousel Container */}
+                <div className="relative w-full h-full flex flex-col">
+                  {/* Image Placeholder */}
+                  <div className="flex-1 bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center relative overflow-hidden groups">
+                    <div className="absolute inset-0 bg-white/5 rounded-lg blur-xl" />
+                    <div className="relative flex flex-col items-center justify-center h-full w-full text-white/60">
+                      <div className="text-6xl mb-4">📱</div>
+                      <span className="text-sm font-medium">{pageScreenshots[currentScreenshotIndex].title}</span>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div className="px-4 py-4 bg-white/5 border-t border-white/10">
+                    <p className="text-sm text-white/80 text-center leading-relaxed">
+                      {pageScreenshots[currentScreenshotIndex].description}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Navigation Buttons */}
+                <button
+                  onClick={goToPrevious}
+                  aria-label="Previous page screenshot"
+                  className="absolute left-3 top-1/3 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white border border-white/20 hover:border-white/40"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={goToNext}
+                  aria-label="Next page screenshot"
+                  className="absolute right-3 top-1/3 -translate-y-1/2 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white border border-white/20 hover:border-white/40"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+
+                {/* Indicator Dots */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                  {pageScreenshots.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentScreenshotIndex(index)}
+                      aria-label={`Go to page ${index + 1}`}
+                      className={`h-2 rounded-full transition-all ${
+                        index === currentScreenshotIndex
+                          ? "w-6 bg-white"
+                          : "w-2 bg-white/40 hover:bg-white/60"
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
