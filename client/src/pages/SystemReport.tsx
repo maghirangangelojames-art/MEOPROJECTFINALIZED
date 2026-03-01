@@ -143,9 +143,9 @@ const SystemReport = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <div className="bg-white border-b border-border sticky top-0 z-40">
+      <div className="bg-white dark:bg-gray-900 border-b border-border sticky top-0 z-40">
         <div className="container py-8">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -170,7 +170,7 @@ const SystemReport = () => {
             <Card key={idx} className="p-6">
               <p className="text-sm text-muted-foreground mb-2">{stat.label}</p>
               <p className="text-3xl font-bold text-foreground mb-2">{stat.value}</p>
-              <p className="text-xs text-green-600">{stat.change}</p>
+              <p className="text-xs text-green-600 dark:text-green-400">{stat.change}</p>
             </Card>
           ))}
         </div>
@@ -394,7 +394,7 @@ const SystemReport = () => {
       </div>
 
       {/* Footer */}
-      <div className="bg-white border-t border-border mt-12">
+      <div className="bg-white dark:bg-gray-900 border-t border-border mt-12">
         <div className="container py-8 text-center text-sm text-muted-foreground">
           <p>
             MEO Sariaya Digital Building Permit System | Enhanced & Modernized 2026
