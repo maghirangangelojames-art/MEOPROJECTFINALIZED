@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy } from "lucide-react";
+import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy, Building2, Layers } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -136,12 +136,65 @@ export default function Home() {
               ) : null}
             </div>
 
-            {/* Hero Illustration */}
-            <div className="relative h-64 sm:h-80 lg:h-96 animate-slide-in-right">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-3xl backdrop-blur-sm border border-white/20 flex items-center justify-center shadow-2xl hover:shadow-3xl transition-all duration-300 group">
+            {/* Hero Illustration - Professional Building */}
+            <div className="relative h-64 sm:h-80 lg:h-96 animate-slide-in-right flex items-center justify-center">
+              <div className="relative w-full h-full flex items-center justify-center">
+                {/* Building Visualization */}
                 <div className="relative">
-                  <div className="absolute inset-0 bg-white/5 rounded-2xl blur-2xl animate-pulse" />
-                  <FileText className="h-32 w-32 text-white/40 relative" />
+                  {/* Main Building Structure */}
+                  <div className="bg-gradient-to-b from-white/20 to-white/5 backdrop-blur-sm rounded-2xl border border-white/30 overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300 group"
+                    style={{
+                      width: '180px',
+                      aspectRatio: '2/3',
+                    }}>
+                    {/* Building Floors */}
+                    <div className="h-full flex flex-col justify-between p-3">
+                      {/* Floor 1 */}
+                      <div className="flex gap-2 mb-2">
+                        <div className="w-6 h-6 rounded bg-white/30 group-hover:bg-white/40 transition-colors" />
+                        <div className="w-6 h-6 rounded bg-white/30 group-hover:bg-white/40 transition-colors" />
+                      </div>
+                      {/* Floor 2 */}
+                      <div className="flex gap-2 mb-2">
+                        <div className="w-6 h-6 rounded bg-white/30 group-hover:bg-white/40 transition-colors" />
+                        <div className="w-6 h-6 rounded bg-white/30 group-hover:bg-white/40 transition-colors" />
+                      </div>
+                      {/* Floor 3 */}
+                      <div className="flex gap-2 mb-2">
+                        <div className="w-6 h-6 rounded bg-white/30 group-hover:bg-white/40 transition-colors" />
+                        <div className="w-6 h-6 rounded bg-white/30 group-hover:bg-white/40 transition-colors" />
+                      </div>
+                      {/* Floor 4 */}
+                      <div className="flex gap-2 mb-2">
+                        <div className="w-6 h-6 rounded bg-white/30 group-hover:bg-white/40 transition-colors" />
+                        <div className="w-6 h-6 rounded bg-white/30 group-hover:bg-white/40 transition-colors" />
+                      </div>
+                      {/* Floor 5 */}
+                      <div className="flex gap-2">
+                        <div className="w-6 h-6 rounded bg-white/30 group-hover:bg-white/40 transition-colors" />
+                        <div className="w-6 h-6 rounded bg-white/30 group-hover:bg-white/40 transition-colors" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Building Icon Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Building2 className="h-24 w-24 text-white/20 group-hover:text-white/30 transition-colors" />
+                  </div>
+
+                  {/* Decorative Elements */}
+                  <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-colors duration-300" />
+                  <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-colors duration-300" />
+                </div>
+
+                {/* Floating Badge */}
+                <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+                  <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-full px-4 py-2 shadow-lg border border-white/20">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-foreground">
+                      <Layers className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      Modern Infrastructure
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
