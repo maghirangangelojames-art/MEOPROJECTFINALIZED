@@ -166,7 +166,7 @@ export const appRouter = router({
     byStatus: protectedProcedure
       .input(
         z.object({
-          status: z.enum(["pending", "approved", "for_resubmission", "on_hold"]),
+          status: z.enum(["pending", "approved", "for_resubmission", "on_hold", "pending_resubmit"]),
           limit: z.number().default(50),
           offset: z.number().default(0),
         })
