@@ -8,6 +8,27 @@
       "when": 1771218786072,
       "tag": "0000_glamorous_marvel_apes",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1740960600000,
+      "tag": "0002_replace_cost_with_classification",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740960610000,
+      "tag": "0003_add_owner_name",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1740960620000,
+      "tag": "0004_add_pending_resubmit_status",
+      "breakpoints": true
     }
   ]
 }
