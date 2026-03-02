@@ -20,6 +20,7 @@ import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
 import { eq } from "drizzle-orm";
 import { applications } from "../drizzle/schema";
+import { sendApplicationApprovedNotification, sendApplicationResubmissionNotification } from "./_core/email";
 
 // Helper to generate reference number
 function generateReferenceNumber(): string {
@@ -336,6 +337,30 @@ export const appRouter = router({
           remarks: input.remarks,
         });
 
+        // Send email notification to applicant based on status
+        if (input.status === "approved") {
+          // Send approval notification
+          await sendApplicationApprovedNotification({
+            applicantEmail: app.applicantEmail,
+            applicantName: app.applicantName,
+            referenceNumber: app.referenceNumber,
+          }).catch(err => {
+            console.error("Failed to send approval email:", err);
+            // Don't throw - allow the status update to succeed even if email fails
+          });
+        } else if (input.status === "for_resubmission") {
+          // Send resubmission request notification
+          await sendApplicationResubmissionNotification({
+            applicantEmail: app.applicantEmail,
+            applicantName: app.applicantName,
+            referenceNumber: app.referenceNumber,
+            staffRemarks: input.remarks,
+          }).catch(err => {
+            console.error("Failed to send resubmission email:", err);
+            // Don't throw - allow the status update to succeed even if email fails
+          });
+        }
+
         // Return success with notification type for client-side notification
         return { 
           success: true,
@@ -498,8 +523,8 @@ export const appRouter = router({
           throw new TRPCError({ code: "FORBIDDEN" });
         }
 
-        // Verify application is in "for_resubmission" status
-        if (app.status !== "for_resubmission") {
+        // Verify application is in resubmission status (either "for_resubmission" or "pending_resubmit")
+        if (app.status !== "for_resubmission" && app.status !== "pending_resubmit") {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Application is not in resubmission status",
@@ -525,7 +550,7 @@ export const appRouter = router({
           }
         });
 
-        // Update application status back to pending and set updatedAt
+        // Update application status to pending_resubmit
         const db = await getDb();
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
@@ -579,8 +604,8 @@ export const appRouter = router({
           throw new TRPCError({ code: "FORBIDDEN" });
         }
 
-        // Verify application is in "for_resubmission" status
-        if (app.status !== "for_resubmission") {
+        // Verify application is in resubmission status (either "for_resubmission" or "pending_resubmit")
+        if (app.status !== "for_resubmission" && app.status !== "pending_resubmit") {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "Application is not in resubmission status",
