@@ -43,11 +43,11 @@
 }
 
 :root {
-  /* MEO Sariaya Brand Colors */
-  --meo-blue: #3D8AFF;
-  --meo-blue-light: #6292C9;
-  --meo-purple: #7865E8;
-  --meo-indigo: #062244;
+  /* Professional MEO Sariaya Brand Colors */
+  --meo-blue: #0D47A1;
+  --meo-blue-light: #1565C0;
+  --meo-teal: #00897B;
+  --meo-slate: #37474F;
   
   --primary: var(--color-blue-700);
   --primary-foreground: var(--color-blue-50);
@@ -59,29 +59,29 @@
   --chart-4: var(--color-blue-700);
   --chart-5: var(--color-blue-800);
   --radius: 0.65rem;
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.2 0.02 60);
+  --background: oklch(0.98 0.001 280);
+  --foreground: oklch(0.2 0.025 260);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.02 60);
+  --card-foreground: oklch(0.2 0.025 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.02 60);
-  --secondary: oklch(0.96 0.005 280);
-  --secondary-foreground: oklch(0.35 0.02 60);
-  --muted: oklch(0.94 0.002 280);
-  --muted-foreground: oklch(0.5 0.02 280);
-  --accent: oklch(0.94 0.002 280);
-  --accent-foreground: oklch(0.2 0.02 280);
-  --destructive: oklch(0.65 0.25 28);
+  --popover-foreground: oklch(0.2 0.025 260);
+  --secondary: oklch(0.94 0.008 260);
+  --secondary-foreground: oklch(0.25 0.025 260);
+  --muted: oklch(0.92 0.004 270);
+  --muted-foreground: oklch(0.5 0.015 270);
+  --accent: oklch(0.94 0.008 260);
+  --accent-foreground: oklch(0.15 0.025 260);
+  --destructive: oklch(0.62 0.22 28);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.9 0.01 280);
-  --input: oklch(0.98 0.002 280);
-  --ring: oklch(0.55 0.25 260);
-  --sidebar: oklch(0.995 0 0);
-  --sidebar-foreground: oklch(0.2 0.02 60);
-  --sidebar-accent: oklch(0.94 0.002 280);
-  --sidebar-accent-foreground: oklch(0.2 0.02 280);
-  --sidebar-border: oklch(0.9 0.01 280);
-  --sidebar-ring: oklch(0.55 0.25 260);
+  --border: oklch(0.88 0.008 270);
+  --input: oklch(0.97 0.003 270);
+  --ring: oklch(0.50 0.20 260);
+  --sidebar: oklch(0.98 0.001 280);
+  --sidebar-foreground: oklch(0.2 0.025 260);
+  --sidebar-accent: oklch(0.92 0.004 270);
+  --sidebar-accent-foreground: oklch(0.15 0.025 260);
+  --sidebar-border: oklch(0.88 0.008 270);
+  --sidebar-ring: oklch(0.50 0.20 260);
 }
 
 .dark {
@@ -89,34 +89,34 @@
   --primary-foreground: var(--color-blue-50);
   --sidebar-primary: var(--color-blue-400);
   --sidebar-primary-foreground: var(--color-blue-950);
-  --background: oklch(0.11 0.01 248);
-  --foreground: oklch(0.95 0.01 60);
-  --card: oklch(0.2 0.015 245);
-  --card-foreground: oklch(0.95 0.01 60);
-  --popover: oklch(0.2 0.015 245);
-  --popover-foreground: oklch(0.95 0.01 60);
-  --secondary: oklch(0.3 0.02 280);
-  --secondary-foreground: oklch(0.95 0.01 60);
-  --muted: oklch(0.35 0.015 270);
-  --muted-foreground: oklch(0.7 0.02 60);
-  --accent: oklch(0.35 0.02 280);
+  --background: oklch(0.12 0.01 260);
+  --foreground: oklch(0.93 0.015 260);
+  --card: oklch(0.18 0.012 260);
+  --card-foreground: oklch(0.93 0.015 260);
+  --popover: oklch(0.18 0.012 260);
+  --popover-foreground: oklch(0.93 0.015 260);
+  --secondary: oklch(0.25 0.015 260);
+  --secondary-foreground: oklch(0.93 0.015 260);
+  --muted: oklch(0.32 0.012 260);
+  --muted-foreground: oklch(0.7 0.015 260);
+  --accent: oklch(0.28 0.012 260);
   --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.7 0.2 25);
+  --destructive: oklch(0.65 0.20 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.35 0.08 270 / 60%);
-  --input: oklch(0.25 0.02 245);
-  --ring: oklch(0.55 0.25 260);
+  --border: oklch(0.32 0.08 260 / 60%);
+  --input: oklch(0.22 0.015 260);
+  --ring: oklch(0.50 0.20 260);
   --chart-1: var(--color-blue-300);
   --chart-2: var(--color-blue-400);
   --chart-3: var(--color-blue-500);
   --chart-4: var(--color-blue-600);
   --chart-5: var(--color-blue-700);
-  --sidebar: oklch(0.15 0.012 250);
-  --sidebar-foreground: oklch(0.95 0.01 60);
-  --sidebar-accent: oklch(0.35 0.02 245);
+  --sidebar: oklch(0.14 0.01 260);
+  --sidebar-foreground: oklch(0.93 0.015 260);
+  --sidebar-accent: oklch(0.28 0.012 260);
   --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.35 0.08 270 / 50%);
-  --sidebar-ring: oklch(0.55 0.25 260);
+  --sidebar-border: oklch(0.32 0.08 260 / 50%);
+  --sidebar-ring: oklch(0.50 0.20 260);
 }
 
 @layer base {
@@ -140,7 +140,7 @@
 }
 
 /* ============================================
-   ANIMATIONS & KEYFRAMES
+   ANIMATIONS & KEYFRAMES - Professional & Smooth
    ============================================ */
 @keyframes fadeIn {
   from {
@@ -154,7 +154,7 @@
 @keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -165,7 +165,7 @@
 @keyframes slideInDown {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-12px);
   }
   to {
     opacity: 1;
@@ -176,7 +176,7 @@
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateX(-12px);
   }
   to {
     opacity: 1;
@@ -187,7 +187,7 @@
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(12px);
   }
   to {
     opacity: 1;
@@ -198,7 +198,7 @@
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.98);
   }
   to {
     opacity: 1;
@@ -211,7 +211,7 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.7;
+    opacity: 0.8;
   }
 }
 
@@ -229,16 +229,16 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-6px);
   }
 }
 
 @keyframes glow {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(61, 138, 255, 0.3), 0 0 10px rgba(61, 138, 255, 0.1);
+    box-shadow: 0 0 8px rgba(13, 71, 161, 0.2), 0 0 16px rgba(13, 71, 161, 0.08);
   }
   50% {
-    box-shadow: 0 0 10px rgba(61, 138, 255, 0.5), 0 0 20px rgba(61, 138, 255, 0.2);
+    box-shadow: 0 0 16px rgba(13, 71, 161, 0.35), 0 0 24px rgba(13, 71, 161, 0.15);
   }
 }
 
@@ -259,17 +259,17 @@
     transform: translateX(0);
   }
   10%, 30%, 50%, 70%, 90% {
-    transform: translateX(-5px);
+    transform: translateX(-3px);
   }
   20%, 40%, 60%, 80% {
-    transform: translateX(5px);
+    transform: translateX(3px);
   }
 }
 
 @keyframes slide-down {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
@@ -328,112 +328,112 @@
   }
 
   /* ============================================
-     ANIMATION UTILITIES
+     ANIMATION UTILITIES - Professional Timing
      ============================================ */
   .animate-fade-in {
-    animation: fadeIn 0.5s ease-out;
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .animate-slide-in-up {
-    animation: slideInUp 0.6s ease-out;
+    animation: slideInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .animate-slide-in-down {
-    animation: slideInDown 0.6s ease-out;
+    animation: slideInDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .animate-slide-in-left {
-    animation: slideInLeft 0.6s ease-out;
+    animation: slideInLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .animate-slide-in-right {
-    animation: slideInRight 0.6s ease-out;
+    animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .animate-scale-in {
-    animation: scaleIn 0.4s ease-out;
+    animation: scaleIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .animate-carousel-fade {
-    animation: carouselFade 0.3s ease-out;
+    animation: carouselFade 0.25s ease-out;
   }
 
   .animate-boost {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .group:hover .animate-boost-on-hover {
-    animation: bounce-light 0.6s ease-in-out;
+    animation: bounce-light 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .animate-shake {
-    animation: shake 0.4s ease-in-out;
+    animation: shake 0.35s ease-in-out;
   }
 
   .animate-slide-down {
-    animation: slide-down 0.3s ease-out;
+    animation: slide-down 0.25s ease-out;
   }
 
   .animate-flip {
-    animation: flip 0.6s ease-in-out;
+    animation: flip 0.5s ease-in-out;
   }
 
   /* ============================================
-     MEO SARIAYA BRAND UTILITIES
+     MEO SARIAYA BRAND UTILITIES - Professional
      ============================================ */
   .gradient-meo {
-    @apply bg-gradient-to-br from-[#7865E8] via-[#6292C9] to-[#062244];
+    @apply bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800;
   }
 
   .gradient-meo-light {
-    @apply bg-gradient-to-br from-[#A498E5] to-[#062244];
+    @apply bg-gradient-to-br from-blue-600 to-blue-700;
   }
 
   .gradient-meo-animated {
     background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
-    @apply bg-gradient-to-br from-[#7865E8] via-[#6292C9] to-[#062244];
+    animation: gradient-shift 4s ease infinite;
+    @apply bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800;
   }
 
   /* ============================================
-     IMPROVED CARD STYLING
+     IMPROVED CARD STYLING - Professional
      ============================================ */
   .card-elevated {
-    @apply rounded-xl border border-border bg-background p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary/20;
+    @apply rounded-lg border border-border bg-background p-6 shadow-sm transition-all duration-250 hover:shadow-md hover:border-primary/30;
   }
 
   .card-hover {
-    @apply rounded-xl border border-border bg-background p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30;
+    @apply rounded-lg border border-border bg-background p-6 shadow-sm transition-all duration-250 hover:shadow-md hover:-translate-y-0.5 hover:border-primary/30;
   }
 
   .card-interactive {
-    @apply rounded-xl border border-border bg-background p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 cursor-pointer active:scale-95;
+    @apply rounded-lg border border-border bg-background p-6 shadow-sm transition-all duration-250 hover:shadow-md hover:-translate-y-0.5 hover:border-primary/30 cursor-pointer active:scale-98;
   }
 
   .card-glow {
-    @apply rounded-xl border border-border bg-background p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30;
-    animation: glow 2s ease-in-out infinite;
+    @apply rounded-lg border border-border bg-background p-6 shadow-sm transition-all duration-250 hover:shadow-md hover:-translate-y-0.5 hover:border-primary/30;
+    animation: glow 2.5s ease-in-out infinite;
   }
 
   /* ============================================
-     IMPROVED BUTTON STYLING
+     IMPROVED BUTTON STYLING - Professional
      ============================================ */
   button, [role="button"] {
-    @apply transition-all duration-300;
+    @apply transition-all duration-250;
   }
 
   /* Primary MEO Button */
   .btn-primary-meo {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#3D8AFF] to-[#6292C9] px-6 py-2.5 font-semibold text-white shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:from-[#4D9AFF] hover:to-[#72A2D9] active:translate-y-0 active:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-blue-700 px-5 py-2.5 font-semibold text-white shadow-sm transition-all duration-250 hover:shadow-md hover:bg-blue-800 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-sm disabled:hover:bg-blue-700;
   }
 
   .btn-primary-meo:focus-visible {
-    @apply outline-none ring-2 ring-offset-2 ring-offset-background ring-[#3D8AFF]/50;
+    @apply outline-none ring-2 ring-offset-2 ring-offset-background ring-blue-400/60;
   }
 
   /* Secondary MEO Button */
   .btn-secondary-meo {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-6 py-2.5 font-semibold text-foreground shadow-sm transition-all duration-300 hover:bg-muted hover:border-primary/50 hover:shadow-md active:bg-input disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-5 py-2.5 font-semibold text-foreground shadow-sm transition-all duration-250 hover:bg-muted hover:border-primary/50 hover:shadow-sm active:bg-input disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary-meo:focus-visible {
@@ -442,12 +442,12 @@
 
   /* Ghost Button with better hover */
   .btn-ghost-meo {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 font-medium text-foreground transition-all duration-200 hover:bg-muted hover:text-foreground active:bg-input;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 font-medium text-foreground transition-all duration-200 hover:bg-muted/50 hover:text-foreground active:bg-muted;
   }
 
   /* Large Primary Button */
   .btn-lg-primary-meo {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#3D8AFF] to-[#6292C9] px-8 py-3.5 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 hover:from-[#4D9AFF] hover:to-[#72A2D9] active:translate-y-0 active:shadow-md;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-blue-700 px-7 py-3.5 text-lg font-semibold text-white shadow-md transition-all duration-250 hover:shadow-lg hover:bg-blue-800 hover:-translate-y-1 active:translate-y-0 active:shadow-sm;
   }
 
   /* ============================================

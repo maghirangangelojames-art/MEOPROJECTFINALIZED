@@ -102,7 +102,7 @@ export default function StaffDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-800 dark:to-purple-800 border-b border-border sticky top-0 z-40 shadow-lg animate-slide-in-down">
+      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-slate-600 dark:from-blue-800 dark:via-blue-700 dark:to-slate-700 border-b border-border/20 sticky top-0 z-40 shadow-md animate-slide-in-down">
         <div className="container py-8">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
@@ -116,7 +116,7 @@ export default function StaffDashboard() {
                   <ArrowLeft className="h-5 w-5" />
                 </Link>
               </Button>
-              <div className="h-12 w-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+              <div className="h-12 w-12 bg-white/15 rounded-lg flex items-center justify-center backdrop-blur-sm">
                 <FileText className="h-6 w-6 text-white" />
               </div>
               <div>

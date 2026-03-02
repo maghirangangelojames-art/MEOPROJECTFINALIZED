@@ -70,7 +70,7 @@ export default function Home() {
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-slide-in-down">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg transition-all duration-300 shadow-md border border-white/20">
+            <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-blue-700 to-blue-800 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg transition-all duration-250 shadow-md border border-white/20">
               <FileText className="h-6 w-6 text-white drop-shadow-lg" />
             </div>
             <div className="hidden sm:block">
@@ -116,7 +116,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="gradient-meo relative overflow-hidden py-16 sm:py-24 lg:py-40">
+      <section className="bg-gradient-to-r from-blue-700 via-blue-600 to-slate-600 dark:from-blue-800 dark:via-blue-700 dark:to-slate-700 relative overflow-hidden py-16 sm:py-24 lg:py-40">
         <div className="container relative z-10">
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
             <div className="space-y-8 text-white animate-slide-in-left">
@@ -258,7 +258,7 @@ export default function Home() {
             {/* Feature 1 */}
             <Card className="card-hover group animate-slide-in-up" style={{ animationDelay: "0s" }}>
               <div className="space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center group-hover:scale-125 transition-transform duration-250 shadow-md">
                   <Zap className="h-6 w-6 text-white" />
                 </div>
                 <div className="space-y-2">
@@ -273,7 +273,7 @@ export default function Home() {
             {/* Feature 2 */}
             <Card className="card-hover group animate-slide-in-up" style={{ animationDelay: "0.1s" }}>
               <div className="space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center group-hover:scale-125 transition-transform duration-250 shadow-md">
                   <Clock className="h-6 w-6 text-white" />
                 </div>
                 <div className="space-y-2">
@@ -347,7 +347,7 @@ export default function Home() {
           </div>
 
           {/* Stats Section */}
-          <div className="mt-16 grid gap-8 sm:grid-cols-3 bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-950/40 dark:to-purple-950/40 rounded-2xl p-8 shadow-lg animate-scale-in border border-border dark:border-border/50">
+          <div className="mt-16 grid gap-8 sm:grid-cols-3 bg-gradient-to-r from-blue-50/50 to-slate-50/50 dark:from-blue-950/30 dark:to-slate-950/30 rounded-lg p-8 shadow-md animate-scale-in border border-border dark:border-border/50">
             <div className="text-center">
               <div className="text-4xl font-bold text-primary mb-2">1000+</div>
               <p className="text-muted-foreground font-medium">Applications Processed</p>
@@ -365,7 +365,7 @@ export default function Home() {
           {/* Action Buttons */}
           <div className="grid gap-6 sm:grid-cols-3 mt-12">
             <Card className="card-hover p-8 space-y-4 text-center animate-slide-in-up">
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 mx-auto mb-2 shadow-md">
+              <div className="inline-flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 mx-auto mb-2 shadow-md">
                 <FileText className="h-7 w-7 text-white" />
               </div>
               <h3 className="font-semibold text-xl">For Applicants</h3>
@@ -394,7 +394,7 @@ export default function Home() {
               )}
             </Card>
             <Card className="card-hover p-8 space-y-4 text-center animate-slide-in-up" style={{ animationDelay: "0.1s" }}>
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 mx-auto mb-2 shadow-md">
+              <div className="inline-flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-br from-teal-600 to-teal-700 mx-auto mb-2 shadow-md">
                 <LayoutDashboard className="h-7 w-7 text-white" />
               </div>
               <h3 className="font-semibold text-xl">For Staff</h3>
@@ -406,7 +406,7 @@ export default function Home() {
               </Button>
             </Card>
             <Card className="card-hover p-8 space-y-4 text-center animate-slide-in-up" style={{ animationDelay: "0.2s" }}>
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-br from-green-400 to-green-600 mx-auto mb-2 shadow-md">
+              <div className="inline-flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-700 mx-auto mb-2 shadow-md">
                 <TrendingUp className="h-7 w-7 text-white" />
               </div>
               <h3 className="font-semibold text-xl">System Report</h3>
@@ -422,7 +422,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-950/30 dark:to-purple-950/30 py-16 sm:py-20 lg:py-28 animate-fade-in border-t border-border">
+      <section className="bg-gradient-to-r from-blue-50/50 to-slate-50/50 dark:from-blue-950/20 dark:to-slate-950/20 py-16 sm:py-20 lg:py-28 animate-fade-in border-t border-border">
         <div className="container space-y-8 text-center">
           <div className="space-y-4 animate-slide-in-up">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
@@ -658,7 +658,7 @@ export default function Home() {
       </section>
 
       {/* Contact Us Section */}
-      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 animate-fade-in">
+      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-r from-blue-50 to-slate-50 dark:from-blue-950/20 dark:to-slate-950/20 animate-fade-in">
         <div className="container space-y-12">
           <div className="space-y-4 text-center animate-slide-in-up">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
@@ -672,7 +672,7 @@ export default function Home() {
           <div className="grid gap-8 sm:grid-cols-2 max-w-2xl mx-auto">
             {/* Email Card */}
             <Card className="card-hover group p-8 space-y-4 text-center flex flex-col items-center animate-slide-in-up dark:bg-muted/10" style={{ animationDelay: "0.1s" }}>
-              <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
+              <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center group-hover:scale-125 transition-transform duration-250 shadow-md">
                 <Mail className="h-7 w-7 text-white" />
               </div>
               <div className="space-y-2 flex-1">
@@ -728,7 +728,7 @@ export default function Home() {
 
             {/* Phone Card */}
             <Card className="card-hover group p-8 space-y-4 text-center flex flex-col items-center animate-slide-in-up dark:bg-muted/10" style={{ animationDelay: "0.2s" }}>
-              <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
+              <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-700 flex items-center justify-center group-hover:scale-125 transition-transform duration-250 shadow-md">
                 <Phone className="h-7 w-7 text-white" />
               </div>
               <div className="space-y-2 flex-1">
