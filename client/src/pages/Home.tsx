@@ -116,7 +116,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-700 via-blue-600 to-slate-600 dark:from-blue-800 dark:via-blue-700 dark:to-slate-700 relative overflow-hidden py-16 sm:py-24 lg:py-40">
+      <section className="bg-gradient-to-r from-blue-900 via-blue-800 to-slate-800 dark:from-blue-950 dark:via-blue-900 dark:to-slate-900 relative overflow-hidden py-16 sm:py-24 lg:py-40">
         <div className="container relative z-10">
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
             <div className="space-y-8 text-white animate-slide-in-left">

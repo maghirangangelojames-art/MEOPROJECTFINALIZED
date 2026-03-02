@@ -102,7 +102,7 @@ export default function StaffDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-slate-600 dark:from-blue-800 dark:via-blue-700 dark:to-slate-700 border-b border-border/20 sticky top-0 z-40 shadow-md animate-slide-in-down">
+      <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-slate-800 dark:from-blue-950 dark:via-blue-900 dark:to-slate-900 border-b border-border/20 sticky top-0 z-40 shadow-md animate-slide-in-down">
         <div className="container py-8">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
