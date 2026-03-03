@@ -226,6 +226,14 @@ export default function StaffDashboard() {
                       </div>
                     </div>
                     {getProcessingIndicator(app.statusIndicator, app.processingDays)}
+                    {app.approvalDays !== null && app.approvalDays !== undefined && (
+                      <div className="flex items-center gap-2 mt-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+                          Approved in {app.approvalDays} day{app.approvalDays !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Status */}

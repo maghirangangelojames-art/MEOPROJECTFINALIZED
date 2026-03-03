@@ -15,27 +15,24 @@ function generateReferenceNumber(): string {
 }
 
 // Helper to calculate processing days
-function getProcessingDays(submittedAt: Date, status?: string, processedAt?: Date | null): number {
-  // If approved, calculate days from submission to approval date
-  if (status === "approved" && processedAt) {
-    const diffMs = processedAt.getTime() - submittedAt.getTime();
-    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  }
-  
-  // Otherwise, calculate from submission to now
+function getProcessingDays(submittedAt: Date): number {
   const now = new Date();
   const diffMs = now.getTime() - submittedAt.getTime();
   return Math.floor(diffMs / (1000 * 60 * 60 * 24));
 }
 
-// Helper to get status indicator color
-function getStatusIndicator(submittedAt: Date, status?: string, processedAt?: Date | null): "green" | "yellow" | "red" {
-  // If approved, always show green since processing is complete
-  if (status === "approved") {
-    return "green";
+// Helper to calculate approval days (days from submission to approval)
+function getApprovalDays(submittedAt: Date, status: string, processedAt: Date | null): number | null {
+  if (status !== "approved" || !processedAt) {
+    return null;
   }
-  
-  const days = getProcessingDays(submittedAt, status, processedAt);
+  const diffMs = processedAt.getTime() - submittedAt.getTime();
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+}
+
+// Helper to get status indicator color
+function getStatusIndicator(submittedAt: Date): "green" | "yellow" | "red" {
+  const days = getProcessingDays(submittedAt);
   if (days <= 1) return "green";
   if (days === 2) return "yellow";
   return "red";

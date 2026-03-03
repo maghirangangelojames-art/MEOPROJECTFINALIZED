@@ -421,6 +421,12 @@ export default function TrackApplication() {
                 <p className="text-white/70 text-xs uppercase">Days In Review</p>
                 <p className="font-semibold">{app.processingDays}</p>
               </div>
+              {app.approvalDays !== null && app.approvalDays !== undefined && (
+                <div>
+                  <p className="text-white/70 text-xs uppercase">Approval Time</p>
+                  <p className="font-semibold text-green-400">{app.approvalDays} day{app.approvalDays !== 1 ? 's' : ''}</p>
+                </div>
+              )}
               <div>
                 <p className="text-white/70 text-xs uppercase">Processing</p>
                 <p className="font-semibold">
