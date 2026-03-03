@@ -32,15 +32,27 @@ function generateReferenceNumber(): string {
 }
 
 // Helper to calculate processing days
-function getProcessingDays(submittedAt: Date): number {
+function getProcessingDays(submittedAt: Date, status?: string, processedAt?: Date | null): number {
+  // If approved, calculate days from submission to approval date
+  if (status === "approved" && processedAt) {
+    const diffMs = processedAt.getTime() - submittedAt.getTime();
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  }
+  
+  // Otherwise, calculate from submission to now
   const now = new Date();
   const diffMs = now.getTime() - submittedAt.getTime();
   return Math.floor(diffMs / (1000 * 60 * 60 * 24));
 }
 
 // Helper to get status indicator color
-function getStatusIndicator(submittedAt: Date): "green" | "yellow" | "red" {
-  const days = getProcessingDays(submittedAt);
+function getStatusIndicator(submittedAt: Date, status?: string, processedAt?: Date | null): "green" | "yellow" | "red" {
+  // If approved, always show green since processing is complete
+  if (status === "approved") {
+    return "green";
+  }
+  
+  const days = getProcessingDays(submittedAt, status, processedAt);
   if (days <= 1) return "green";
   if (days === 2) return "yellow";
   return "red";
@@ -163,8 +175,8 @@ export const appRouter = router({
         const apps = await getApplicationsFIFO(input.limit, input.offset);
         return apps.map((app) => ({
           ...app,
-          processingDays: getProcessingDays(app.submittedAt),
-          statusIndicator: getStatusIndicator(app.submittedAt),
+          processingDays: getProcessingDays(app.submittedAt, app.status, app.processedAt),
+          statusIndicator: getStatusIndicator(app.submittedAt, app.status, app.processedAt),
         }));
       }),
 
@@ -185,8 +197,8 @@ export const appRouter = router({
         );
         return apps.map((app) => ({
           ...app,
-          processingDays: getProcessingDays(app.submittedAt),
-          statusIndicator: getStatusIndicator(app.submittedAt),
+          processingDays: getProcessingDays(app.submittedAt, app.status, app.processedAt),
+          statusIndicator: getStatusIndicator(app.submittedAt, app.status, app.processedAt),
         }));
       }),
 
@@ -207,8 +219,8 @@ export const appRouter = router({
         );
         return apps.map((app) => ({
           ...app,
-          processingDays: getProcessingDays(app.submittedAt),
-          statusIndicator: getStatusIndicator(app.submittedAt),
+          processingDays: getProcessingDays(app.submittedAt, app.status, app.processedAt),
+          statusIndicator: getStatusIndicator(app.submittedAt, app.status, app.processedAt),
         }));
       }),
 
@@ -220,8 +232,8 @@ export const appRouter = router({
         if (!app) throw new TRPCError({ code: "NOT_FOUND" });
         return {
           ...app,
-          processingDays: getProcessingDays(app.submittedAt),
-          statusIndicator: getStatusIndicator(app.submittedAt),
+          processingDays: getProcessingDays(app.submittedAt, app.status, app.processedAt),
+          statusIndicator: getStatusIndicator(app.submittedAt, app.status, app.processedAt),
         };
       }),
 
@@ -233,8 +245,8 @@ export const appRouter = router({
         if (!app) throw new TRPCError({ code: "NOT_FOUND" });
         return {
           ...app,
-          processingDays: getProcessingDays(app.submittedAt),
-          statusIndicator: getStatusIndicator(app.submittedAt),
+          processingDays: getProcessingDays(app.submittedAt, app.status, app.processedAt),
+          statusIndicator: getStatusIndicator(app.submittedAt, app.status, app.processedAt),
         };
       }),
 
@@ -246,8 +258,8 @@ export const appRouter = router({
         if (!app) throw new TRPCError({ code: "NOT_FOUND", message: "No application found" });
         return {
           ...app,
-          processingDays: getProcessingDays(app.submittedAt),
-          statusIndicator: getStatusIndicator(app.submittedAt),
+          processingDays: getProcessingDays(app.submittedAt, app.status, app.processedAt),
+          statusIndicator: getStatusIndicator(app.submittedAt, app.status, app.processedAt),
         };
       }),
 
