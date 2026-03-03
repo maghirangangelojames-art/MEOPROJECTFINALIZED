@@ -781,7 +781,7 @@ export default function Home() {
                 Digital Building Permit System for the Municipal Engineering Office of Sariaya, Quezon.
               </p>
             </div>
-            <div className="space-y-3 animate-slide-in-up" style={{ animationDelay: "0.1s" }}>
+            <div className="space-y-3 animate-slide-in-up">
               <h3 className="font-semibold text-lg">Quick Links</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/" className="hover:text-foreground transition-colors hover:underline">Home</Link></li>
@@ -795,7 +795,7 @@ export default function Home() {
                 <li><Link href="/report" className="hover:text-foreground transition-colors hover:underline">System Report</Link></li>
               </ul>
             </div>
-            <div className="space-y-3 animate-slide-in-up" style={{ animationDelay: "0.2s" }}>
+            <div className="space-y-3 animate-slide-in-up">
               <h3 className="font-semibold text-lg">Support</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#" className="hover:text-foreground transition-colors hover:underline">Help Center</a></li>
@@ -803,7 +803,7 @@ export default function Home() {
                 <li><a href="#" className="hover:text-foreground transition-colors hover:underline">Contact Us</a></li>
               </ul>
             </div>
-            <div className="space-y-3 animate-slide-in-up" style={{ animationDelay: "0.3s" }}>
+            <div className="space-y-3 animate-slide-in-up">
               <h3 className="font-semibold text-lg">Legal</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><a href="#" className="hover:text-foreground transition-colors hover:underline">Privacy Policy</a></li>
