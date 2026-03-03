@@ -6,10 +6,11 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { SkeletonPageHeader, SkeletonCard } from "@/components/SkeletonLoader";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
 import Papa from "papaparse";
+import html2canvas from "html2canvas";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +21,9 @@ import {
 const SystemReport = () => {
   const { user } = useAuth();
   const [isExporting, setIsExporting] = useState(false);
+  const trendsChartRef = useRef<HTMLDivElement>(null);
+  const statusChartRef = useRef<HTMLDivElement>(null);
+  const processingChartRef = useRef<HTMLDivElement>(null);
   
   // Fetch all applications for the report
   const applicationsQuery = trpc.applications.list.useQuery({ limit: 10000, offset: 0 });
@@ -59,6 +63,68 @@ const SystemReport = () => {
         pdf.text(stat, 25, yPosition);
         yPosition += 8;
       });
+      
+      yPosition += 5;
+      
+      // Capture and add charts
+      try {
+        // Trends Chart
+        if (trendsChartRef.current) {
+          const trendsCanvas = await html2canvas(trendsChartRef.current, { scale: 2 });
+          const trendsImage = trendsCanvas.toDataURL("image/png");
+          
+          if (yPosition > 200) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          
+          pdf.setFontSize(12);
+          pdf.text("Application Trends", 20, yPosition);
+          yPosition += 10;
+          
+          pdf.addImage(trendsImage, "PNG", 20, yPosition, 170, 60);
+          yPosition += 65;
+        }
+        
+        // Status Distribution Chart
+        if (statusChartRef.current) {
+          if (yPosition > 200) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          
+          const statusCanvas = await html2canvas(statusChartRef.current, { scale: 2 });
+          const statusImage = statusCanvas.toDataURL("image/png");
+          
+          pdf.setFontSize(12);
+          pdf.text("Application Status Distribution", 20, yPosition);
+          yPosition += 10;
+          
+          pdf.addImage(statusImage, "PNG", 20, yPosition, 170, 60);
+          yPosition += 65;
+        }
+        
+        // Processing Time Chart
+        if (processingChartRef.current) {
+          if (yPosition > 200) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          
+          const processingCanvas = await html2canvas(processingChartRef.current, { scale: 2 });
+          const processingImage = processingCanvas.toDataURL("image/png");
+          
+          pdf.setFontSize(12);
+          pdf.text("Processing Time Analysis", 20, yPosition);
+          yPosition += 10;
+          
+          pdf.addImage(processingImage, "PNG", 20, yPosition, 170, 60);
+          yPosition += 65;
+        }
+      } catch (chartError) {
+        console.warn("Could not capture charts:", chartError);
+        // Continue with PDF even if charts fail
+      }
       
       yPosition += 5;
       
@@ -393,7 +459,7 @@ const SystemReport = () => {
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Application Trends */}
-          <Card className="p-6">
+          <Card className="p-6" ref={trendsChartRef}>
             <h3 className="text-lg font-bold mb-4">Application Trends (6 Months)</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={applicationTrends}>
@@ -410,7 +476,7 @@ const SystemReport = () => {
           </Card>
 
           {/* Status Distribution */}
-          <Card className="p-6">
+          <Card className="p-6" ref={statusChartRef}>
             <h3 className="text-lg font-bold mb-4">Application Status Distribution</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -435,7 +501,7 @@ const SystemReport = () => {
         </div>
 
         {/* Processing Time Analysis */}
-        <Card className="p-6 mb-12">
+        <Card className="p-6 mb-12" ref={processingChartRef}>
           <h3 className="text-lg font-bold mb-4">Processing Time Analysis</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={processingTimeData}>
@@ -475,12 +541,12 @@ const SystemReport = () => {
         </div>
 
         {/* Key Improvements */}
-        <Card className="p-8 bg-gradient-meo text-white mb-12">
-          <h2 className="text-2xl font-bold mb-6">Key Improvements Over Previous System</h2>
+        <Card className="p-8 bg-gradient-meo mb-12">
+          <h2 className="text-2xl font-bold mb-6 text-black">Key Improvements Over Previous System</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold mb-2">✓ User Experience</h3>
-              <ul className="text-sm space-y-1 opacity-90">
+              <h3 className="font-semibold mb-2 text-black">✓ User Experience</h3>
+              <ul className="text-sm space-y-1 text-black">
                 <li>• Modernized, responsive design</li>
                 <li>• Mobile-first approach</li>
                 <li>• Intuitive multi-step forms</li>
@@ -488,8 +554,8 @@ const SystemReport = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-2">✓ Staff Efficiency</h3>
-              <ul className="text-sm space-y-1 opacity-90">
+              <h3 className="font-semibold mb-2 text-black">✓ Staff Efficiency</h3>
+              <ul className="text-sm space-y-1 text-black">
                 <li>• FIFO application queue</li>
                 <li>• Advanced search and filters</li>
                 <li>• Processing time indicators</li>
@@ -497,8 +563,8 @@ const SystemReport = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-2">✓ Communication</h3>
-              <ul className="text-sm space-y-1 opacity-90">
+              <h3 className="font-semibold mb-2 text-black">✓ Communication</h3>
+              <ul className="text-sm space-y-1 text-black">
                 <li>• Automated email notifications</li>
                 <li>• Status update tracking</li>
                 <li>• Reference number system</li>
@@ -506,8 +572,8 @@ const SystemReport = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-2">✓ Data Integrity</h3>
-              <ul className="text-sm space-y-1 opacity-90">
+              <h3 className="font-semibold mb-2 text-black">✓ Data Integrity</h3>
+              <ul className="text-sm space-y-1 text-black">
                 <li>• Complete activity logging</li>
                 <li>• User attribution tracking</li>
                 <li>• Timestamp recording</li>
