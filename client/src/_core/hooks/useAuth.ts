@@ -46,6 +46,7 @@ export function useAuth(options?: UseAuthOptions) {
       }
       throw error;
     } finally {
+      // Clear TRPC cache
       utils.auth.me.setData(undefined, null);
     }
   }, [logoutMutation, utils]);

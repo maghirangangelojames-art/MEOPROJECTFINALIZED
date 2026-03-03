@@ -124,6 +124,12 @@ export const appRouter = router({
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+      
+      // Prevent any caching of this response
+      ctx.res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+      ctx.res.setHeader('Pragma', 'no-cache');
+      ctx.res.setHeader('Expires', '0');
+      
       return {
         success: true,
       } as const;

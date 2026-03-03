@@ -58,9 +58,27 @@ export default function Home() {
   const handleLogout = async () => {
     try {
       await logout();
-      window.location.href = "/";
+      
+      // Clear ALL browser storage to prevent stale data
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Clear IndexedDB caches (used by service workers, TRPC)
+      if ('indexedDB' in window) {
+        const dbs = await window.indexedDB.databases();
+        dbs.forEach(db => {
+          window.indexedDB.deleteDatabase(db.name);
+        });
+      }
+      
+      // Redirect with cache-buster to force fresh load
+      window.location.href = "/?v=" + Date.now();
     } catch (error) {
       console.error("Logout failed", error);
+      // Even if logout errors, still clear everything
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = "/?v=" + Date.now();
     }
   };
 
