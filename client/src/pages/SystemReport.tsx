@@ -66,95 +66,62 @@ const SystemReport = () => {
       // Capture and add charts as images
       try {
         // Wait for charts to render
-        await new Promise(resolve => setTimeout(resolve, 2500));
+        await new Promise(resolve => setTimeout(resolve, 3000));
         
-        // Get all cards in the chart grid
-        const chartGrid = document.querySelector('.grid.grid-cols-1.lg\\:grid-cols-2');
-        const chartCards = chartGrid?.querySelectorAll(':scope > div > .p-6');
-        
-        console.log("Found chart cards:", chartCards?.length);
-        
-        if (chartCards && chartCards.length > 0) {
-          for (let i = 0; i < Math.min(chartCards.length, 3); i++) {
-            const card = chartCards[i] as HTMLElement;
-            const title = card.querySelector('h3')?.textContent || `Chart ${i + 1}`;
-            
-            if (yPosition > 210) {
-              pdf.addPage();
-              yPosition = 20;
-            }
-            
-            try {
-              console.log(`Capturing chart ${i + 1}: ${title}`);
-              
-              // Set explicit dimensions for html2canvas
-              const canvas = await html2canvas(card, {
-                scale: 1.5,
-                useCORS: true,
-                allowTaint: false,
-                backgroundColor: '#ffffff',
-                width: 500,
-                height: 350,
-                logging: true
-              });
-              
-              const imgData = canvas.toDataURL('image/png');
-              
-              // Add title
-              pdf.setFontSize(11);
-              pdf.setFont(undefined, 'bold');
-              pdf.text(title, 20, yPosition);
-              yPosition += 8;
-              
-              // Add image
-              pdf.addImage(imgData, 'PNG', 20, yPosition, 170, 75);
-              yPosition += 80;
-              
-              console.log(`✓ Added ${title} to PDF`);
-            } catch (err) {
-              console.error(`Failed to capture chart ${title}:`, err);
-            }
+        // Find all SVG elements (Recharts renders to SVG)
+        const chartParents = new Set<HTMLElement>();
+        document.querySelectorAll('svg').forEach(svg => {
+          // Find the closest card parent with p-6 class
+          const parent = svg.closest('.p-6');
+          if (parent && parent.querySelector('h3')) {
+            chartParents.add(parent as HTMLElement);
           }
-        }
+        });
         
-        // Also capture the Processing Time chart (outside the grid)
-        const processingCard = document.querySelector('.p-6.mb-12');
-        if (processingCard) {
+        console.log('Found chart containers:', chartParents.size);
+        
+        let chartCount = 0;
+        for (const chartParent of chartParents) {
           if (yPosition > 210) {
             pdf.addPage();
             yPosition = 20;
           }
           
           try {
-            const title = processingCard.querySelector('h3')?.textContent || 'Processing Time Analysis';
-            console.log(`Capturing chart: ${title}`);
+            const title = chartParent.querySelector('h3')?.textContent || `Chart ${chartCount + 1}`;
+            console.log(`Capturing: ${title}`);
             
-            const canvas = await html2canvas(processingCard as HTMLElement, {
-              scale: 1.5,
+            // Capture the chart container with all its content
+            const canvas = await html2canvas(chartParent, {
+              scale: 2,
               useCORS: true,
-              allowTaint: false,
+              allowTaint: true,
               backgroundColor: '#ffffff',
-              width: 500,
-              height: 350,
-              logging: true
+              logging: false
             });
             
             const imgData = canvas.toDataURL('image/png');
             
+            // Add title
             pdf.setFontSize(11);
             pdf.setFont(undefined, 'bold');
             pdf.text(title, 20, yPosition);
             yPosition += 8;
             
-            pdf.addImage(imgData, 'PNG', 20, yPosition, 170, 75);
+            // Add image
+            pdf.addImage(imgData, 'PNG', 15, yPosition, 180, 65);
+            yPosition += 70;
             
-            console.log(`✓ Added ${title} to PDF`);
+            chartCount++;
+            console.log(`✓ Added ${title}`);
           } catch (err) {
-            console.error(`Failed to capture Processing chart:`, err);
+            console.error(`Failed to capture chart:`, err);
           }
         }
+        
+        console.log(`Total charts added: ${chartCount}`);
       } catch (chartError) {
-        console.error("Chart capture error:", chartError);
+        console.error('Chart capture error:', chartError);
       }
       
       yPosition += 5;
@@ -516,7 +483,7 @@ const SystemReport = () => {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, value }) => `${name}: ${value}`}
+                  label={({ name }) => name}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
