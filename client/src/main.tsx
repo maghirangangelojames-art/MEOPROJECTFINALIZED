@@ -7,6 +7,27 @@ import superjson from "superjson";
 import App from "./App";
 import "./index.css";
 
+// CRITICAL: Unregister ALL service workers and clear caches on app startup
+// This prevents old broken code from being served from cache
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    registrations.forEach(reg => reg.unregister());
+  });
+}
+
+// Clear all IndexedDB and old caches
+if ('indexedDB' in window) {
+  window.indexedDB.databases().then(dbs => {
+    dbs.forEach(db => {
+      try {
+        window.indexedDB.deleteDatabase(db.name);
+      } catch (e) {
+        // Ignore errors
+      }
+    });
+  });
+}
+
 // Load analytics script if configured
 if (import.meta.env.VITE_ANALYTICS_ENDPOINT && import.meta.env.VITE_ANALYTICS_WEBSITE_ID) {
   const script = document.createElement('script');
