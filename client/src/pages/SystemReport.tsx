@@ -70,7 +70,14 @@ const SystemReport = () => {
       try {
         // Trends Chart
         if (trendsChartRef.current) {
-          const trendsCanvas = await html2canvas(trendsChartRef.current, { scale: 2 });
+          // Wait a moment for chart to fully render
+          await new Promise(resolve => setTimeout(resolve, 500));
+          const trendsCanvas = await html2canvas(trendsChartRef.current, { 
+            scale: 2,
+            allowTaint: true,
+            useCORS: true,
+            backgroundColor: '#ffffff'
+          });
           const trendsImage = trendsCanvas.toDataURL("image/png");
           
           if (yPosition > 200) {
@@ -93,7 +100,13 @@ const SystemReport = () => {
             yPosition = 20;
           }
           
-          const statusCanvas = await html2canvas(statusChartRef.current, { scale: 2 });
+          await new Promise(resolve => setTimeout(resolve, 500));
+          const statusCanvas = await html2canvas(statusChartRef.current, { 
+            scale: 2,
+            allowTaint: true,
+            useCORS: true,
+            backgroundColor: '#ffffff'
+          });
           const statusImage = statusCanvas.toDataURL("image/png");
           
           pdf.setFontSize(12);
@@ -111,7 +124,13 @@ const SystemReport = () => {
             yPosition = 20;
           }
           
-          const processingCanvas = await html2canvas(processingChartRef.current, { scale: 2 });
+          await new Promise(resolve => setTimeout(resolve, 500));
+          const processingCanvas = await html2canvas(processingChartRef.current, { 
+            scale: 2,
+            allowTaint: true,
+            useCORS: true,
+            backgroundColor: '#ffffff'
+          });
           const processingImage = processingCanvas.toDataURL("image/png");
           
           pdf.setFontSize(12);
@@ -542,11 +561,11 @@ const SystemReport = () => {
 
         {/* Key Improvements */}
         <Card className="p-8 bg-gradient-meo mb-12">
-          <h2 className="text-2xl font-bold mb-6 text-black">Key Improvements Over Previous System</h2>
+          <h2 className="text-2xl font-bold mb-6 text-black dark:text-white">Key Improvements Over Previous System</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold mb-2 text-black">✓ User Experience</h3>
-              <ul className="text-sm space-y-1 text-black">
+              <h3 className="font-semibold mb-2 text-black dark:text-white">✓ User Experience</h3>
+              <ul className="text-sm space-y-1 text-black dark:text-white">
                 <li>• Modernized, responsive design</li>
                 <li>• Mobile-first approach</li>
                 <li>• Intuitive multi-step forms</li>
@@ -554,8 +573,8 @@ const SystemReport = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-2 text-black">✓ Staff Efficiency</h3>
-              <ul className="text-sm space-y-1 text-black">
+              <h3 className="font-semibold mb-2 text-black dark:text-white">✓ Staff Efficiency</h3>
+              <ul className="text-sm space-y-1 text-black dark:text-white">
                 <li>• FIFO application queue</li>
                 <li>• Advanced search and filters</li>
                 <li>• Processing time indicators</li>
@@ -563,8 +582,8 @@ const SystemReport = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-2 text-black">✓ Communication</h3>
-              <ul className="text-sm space-y-1 text-black">
+              <h3 className="font-semibold mb-2 text-black dark:text-white">✓ Communication</h3>
+              <ul className="text-sm space-y-1 text-black dark:text-white">
                 <li>• Automated email notifications</li>
                 <li>• Status update tracking</li>
                 <li>• Reference number system</li>
@@ -572,8 +591,8 @@ const SystemReport = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-2 text-black">✓ Data Integrity</h3>
-              <ul className="text-sm space-y-1 text-black">
+              <h3 className="font-semibold mb-2 text-black dark:text-white">✓ Data Integrity</h3>
+              <ul className="text-sm space-y-1 text-black dark:text-white">
                 <li>• Complete activity logging</li>
                 <li>• User attribution tracking</li>
                 <li>• Timestamp recording</li>
