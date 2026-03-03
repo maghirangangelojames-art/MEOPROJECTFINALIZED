@@ -69,57 +69,83 @@ const SystemReport = () => {
         await new Promise(resolve => setTimeout(resolve, 3000));
         
         // Find all SVG elements (Recharts renders to SVG)
-        const chartParents = new Set<HTMLElement>();
-        document.querySelectorAll('svg').forEach(svg => {
-          // Find the closest card parent with p-6 class
-          const parent = svg.closest('.p-6');
-          if (parent && parent.querySelector('h3')) {
-            chartParents.add(parent as HTMLElement);
+        const allSvgs = Array.from(document.querySelectorAll('svg'));
+        console.log('Total SVG elements found:', allSvgs.length);
+        
+        let chartsAdded = 0;
+        
+        for (const svg of allSvgs) {
+          // Skip small SVGs (like icons)
+          if (svg.clientWidth < 300 || svg.clientHeight < 250) {
+            console.log('Skipping small SVG:', svg.clientWidth, 'x', svg.clientHeight);
+            continue;
           }
-        });
-        
-        console.log('Found chart containers:', chartParents.size);
-        
-        let chartCount = 0;
-        for (const chartParent of chartParents) {
+          
+          // Get the parent card to find the title
+          const cardParent = svg.closest('.p-6');
+          if (!cardParent) continue;
+          
+          const title = cardParent.querySelector('h3')?.textContent || `Chart ${chartsAdded + 1}`;
+          
           if (yPosition > 210) {
             pdf.addPage();
             yPosition = 20;
           }
           
           try {
-            const title = chartParent.querySelector('h3')?.textContent || `Chart ${chartCount + 1}`;
-            console.log(`Capturing: ${title}`);
+            console.log(`Processing chart: ${title}`);
             
-            // Capture the chart container with all its content
-            const canvas = await html2canvas(chartParent, {
-              scale: 2,
-              useCORS: true,
-              allowTaint: true,
-              backgroundColor: '#ffffff',
-              logging: false
+            // Convert SVG to image using a promise-based approach
+            const imgDataUrl = await new Promise<string>((resolve, reject) => {
+              const svgClone = svg.cloneNode(true) as SVGElement;
+              const svgString = new XMLSerializer().serializeToString(svgClone);
+              const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+              const url = URL.createObjectURL(blob);
+              
+              const img = new Image();
+              img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = svg.clientWidth * 2;
+                canvas.height = svg.clientHeight * 2;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                  reject(new Error('Cannot get canvas context'));
+                  return;
+                }
+                
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                const dataUrl = canvas.toDataURL('image/png');
+                URL.revokeObjectURL(url);
+                resolve(dataUrl);
+              };
+              
+              img.onerror = () => {
+                URL.revokeObjectURL(url);
+                reject(new Error(`Failed to load SVG image for ${title}`));
+              };
+              
+              img.src = url;
             });
             
-            const imgData = canvas.toDataURL('image/png');
-            
-            // Add title
             pdf.setFontSize(11);
             pdf.setFont(undefined, 'bold');
             pdf.text(title, 20, yPosition);
             yPosition += 8;
             
-            // Add image
-            pdf.addImage(imgData, 'PNG', 15, yPosition, 180, 65);
+            pdf.addImage(imgDataUrl, 'PNG', 15, yPosition, 180, 65);
             yPosition += 70;
             
-            chartCount++;
-            console.log(`✓ Added ${title}`);
+            chartsAdded++;
+            console.log(`✓ Added ${title} to PDF`);
           } catch (err) {
-            console.error(`Failed to capture chart:`, err);
+            console.error(`Error processing chart ${title}:`, err);
           }
         }
         
-        console.log(`Total charts added: ${chartCount}`);
+        console.log(`Total charts added: ${chartsAdded}`);
       } catch (chartError) {
         console.error('Chart capture error:', chartError);
       }
