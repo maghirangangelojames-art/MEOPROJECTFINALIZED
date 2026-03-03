@@ -49,8 +49,6 @@ export function useAuth(options?: UseAuthOptions) {
       utils.auth.me.setData(undefined, null);
     }
   }, [logoutMutation, utils]);
-    }
-  }, [logoutMutation, utils]);
 
   const state = useMemo(() => {
     const resolvedUser = isUnauthorizedError ? null : meQuery.data ?? null;
