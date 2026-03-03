@@ -424,7 +424,9 @@ export default function TrackApplication() {
               {app.approvalDays !== null && app.approvalDays !== undefined && (
                 <div>
                   <p className="text-white/70 text-xs uppercase">Approval Time</p>
-                  <p className="font-semibold text-green-400">{app.approvalDays} day{app.approvalDays !== 1 ? 's' : ''}</p>
+                  <p className="font-semibold text-green-400">
+                    {app.approvalDays === 0 ? 'Same day' : `${app.approvalDays} day${app.approvalDays !== 1 ? 's' : ''}`}
+                  </p>
                 </div>
               )}
               <div>
