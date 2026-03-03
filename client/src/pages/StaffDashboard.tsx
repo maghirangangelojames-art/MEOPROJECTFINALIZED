@@ -234,6 +234,7 @@ export default function StaffDashboard() {
                         </span>
                       </div>
                     )}
+                  </div>
 
                   {/* Status */}
                   <div className="space-y-2">
