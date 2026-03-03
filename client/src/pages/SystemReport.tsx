@@ -6,7 +6,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 import { SkeletonPageHeader, SkeletonCard } from "@/components/SkeletonLoader";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
 import Papa from "papaparse";
@@ -21,9 +21,6 @@ import {
 const SystemReport = () => {
   const { user } = useAuth();
   const [isExporting, setIsExporting] = useState(false);
-  const trendsChartRef = useRef<HTMLDivElement>(null);
-  const statusChartRef = useRef<HTMLDivElement>(null);
-  const processingChartRef = useRef<HTMLDivElement>(null);
   
   // Fetch all applications for the report
   const applicationsQuery = trpc.applications.list.useQuery({ limit: 10000, offset: 0 });
@@ -68,80 +65,69 @@ const SystemReport = () => {
       
       // Capture and add charts
       try {
-        // Trends Chart
-        if (trendsChartRef.current) {
-          // Wait a moment for chart to fully render
-          await new Promise(resolve => setTimeout(resolve, 500));
-          const trendsCanvas = await html2canvas(trendsChartRef.current, { 
-            scale: 2,
-            allowTaint: true,
-            useCORS: true,
-            backgroundColor: '#ffffff'
-          });
-          const trendsImage = trendsCanvas.toDataURL("image/png");
+        // Wait longer for all charts to fully render
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Find all chart containers with SVG elements
+        const parentDivs = document.querySelectorAll('.grid.grid-cols-1.lg\\:grid-cols-2 > div, .p-6.mb-12');
+        let chartsAdded = 0;
+        
+        for (const container of parentDivs) {
+          // Check if this container has a chart (SVG)
+          const svg = container.querySelector('svg');
+          if (!svg) continue;
           
-          if (yPosition > 200) {
+          if (yPosition > 220) {
             pdf.addPage();
             yPosition = 20;
           }
           
-          pdf.setFontSize(12);
-          pdf.text("Application Trends", 20, yPosition);
-          yPosition += 10;
-          
-          pdf.addImage(trendsImage, "PNG", 20, yPosition, 170, 60);
-          yPosition += 65;
+          try {
+            // Capture the chart container
+            const chartCanvas = await html2canvas(container, { 
+              scale: 2,
+              allowTaint: true,
+              useCORS: true,
+              backgroundColor: '#ffffff',
+              logging: false,
+              width: container.clientWidth,
+              height: container.clientHeight + 50
+            });
+            
+            if (!chartCanvas) {
+              console.warn("Canvas generation returned null");
+              continue;
+            }
+            
+            const chartImage = chartCanvas.toDataURL("image/png");
+            
+            // Get the title from the h3 element
+            const titleEl = container.querySelector('h3');
+            const chartTitle = titleEl?.textContent || `Chart ${chartsAdded + 1}`;
+            
+            pdf.setFontSize(12);
+            pdf.text(chartTitle, 20, yPosition);
+            yPosition += 10;
+            
+            // Adjust image size based on content
+            const imageHeight = 50;
+            pdf.addImage(chartImage, "PNG", 15, yPosition, 180, imageHeight);
+            yPosition += imageHeight + 10;
+            chartsAdded++;
+            
+            console.log(`Successfully added chart: ${chartTitle}`);
+          } catch (err) {
+            console.error("Failed to capture chart:", err);
+          }
         }
         
-        // Status Distribution Chart
-        if (statusChartRef.current) {
-          if (yPosition > 200) {
-            pdf.addPage();
-            yPosition = 20;
-          }
-          
-          await new Promise(resolve => setTimeout(resolve, 500));
-          const statusCanvas = await html2canvas(statusChartRef.current, { 
-            scale: 2,
-            allowTaint: true,
-            useCORS: true,
-            backgroundColor: '#ffffff'
-          });
-          const statusImage = statusCanvas.toDataURL("image/png");
-          
-          pdf.setFontSize(12);
-          pdf.text("Application Status Distribution", 20, yPosition);
-          yPosition += 10;
-          
-          pdf.addImage(statusImage, "PNG", 20, yPosition, 170, 60);
-          yPosition += 65;
-        }
-        
-        // Processing Time Chart
-        if (processingChartRef.current) {
-          if (yPosition > 200) {
-            pdf.addPage();
-            yPosition = 20;
-          }
-          
-          await new Promise(resolve => setTimeout(resolve, 500));
-          const processingCanvas = await html2canvas(processingChartRef.current, { 
-            scale: 2,
-            allowTaint: true,
-            useCORS: true,
-            backgroundColor: '#ffffff'
-          });
-          const processingImage = processingCanvas.toDataURL("image/png");
-          
-          pdf.setFontSize(12);
-          pdf.text("Processing Time Analysis", 20, yPosition);
-          yPosition += 10;
-          
-          pdf.addImage(processingImage, "PNG", 20, yPosition, 170, 60);
-          yPosition += 65;
+        if (chartsAdded === 0) {
+          console.warn("No charts were captured for PDF");
+        } else {
+          console.log(`Total charts added to PDF: ${chartsAdded}`);
         }
       } catch (chartError) {
-        console.warn("Could not capture charts:", chartError);
+        console.warn("Error in chart capture section:", chartError);
         // Continue with PDF even if charts fail
       }
       
@@ -478,7 +464,7 @@ const SystemReport = () => {
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Application Trends */}
-          <Card className="p-6" ref={trendsChartRef}>
+          <Card className="p-6">
             <h3 className="text-lg font-bold mb-4">Application Trends (6 Months)</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={applicationTrends}>
@@ -495,7 +481,7 @@ const SystemReport = () => {
           </Card>
 
           {/* Status Distribution */}
-          <Card className="p-6" ref={statusChartRef}>
+          <Card className="p-6">
             <h3 className="text-lg font-bold mb-4">Application Status Distribution</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -520,7 +506,7 @@ const SystemReport = () => {
         </div>
 
         {/* Processing Time Analysis */}
-        <Card className="p-6 mb-12" ref={processingChartRef}>
+        <Card className="p-6 mb-12">
           <h3 className="text-lg font-bold mb-4">Processing Time Analysis</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={processingTimeData}>
