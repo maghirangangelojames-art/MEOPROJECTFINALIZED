@@ -194,62 +194,67 @@ export default function Home() {
               ) : null}
             </div>
 
-            {/* Hero Carousel */}
-            <div className="relative h-64 sm:h-80 lg:h-96 animate-slide-in-right">
-              <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-shadow duration-500 bg-gradient-to-br from-white/8 via-white/5 to-transparent border border-white/20">
-                {/* Carousel Content Container */}
-                <div className="relative w-full h-full flex flex-col pb-16">
-                  {/* Image Section - Cleaner */}
-                  <div className="flex-1 bg-gradient-to-b from-white/8 to-white/4 flex items-center justify-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-radial from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
-                    
-                    {/* Image with smooth fade */}
-                    <img
-                      key={currentScreenshotIndex}
-                      src={pageScreenshots[currentScreenshotIndex].image}
-                      alt={pageScreenshots[currentScreenshotIndex].title}
-                      className="w-full h-full object-cover animate-carousel-fade"
-                    />
-                  </div>
+            {/* Hero Carousel - Professional Design */}
+            <div className="relative w-full h-96 lg:h-[500px] animate-slide-in-right group">
+              {/* Main carousel container */}
+              <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black">
+                {/* Image with proper scaling */}
+                <img
+                  key={`img-${currentScreenshotIndex}`}
+                  src={pageScreenshots[currentScreenshotIndex].image}
+                  alt={pageScreenshots[currentScreenshotIndex].title}
+                  className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+                />
+                
+                {/* Dark overlay gradient at bottom for text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                  {/* Divider */}
-                  <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
-                  {/* Description Section - Moved up with padding */}
-                  <div className="px-6 py-4 bg-white/4 backdrop-blur-sm flex-shrink-0">
-                    <p key={`desc-${currentScreenshotIndex}`} className="text-xs sm:text-sm text-white/80 text-center leading-relaxed animate-carousel-fade font-light">
+                {/* Content overlay - Bottom positioned */}
+                <div className="absolute inset-x-0 bottom-0 p-8 text-white">
+                  <div className="max-w-2xl">
+                    <h3 
+                      key={`title-${currentScreenshotIndex}`}
+                      className="text-3xl sm:text-4xl font-bold mb-3 animate-fade-in"
+                    >
+                      {pageScreenshots[currentScreenshotIndex].title}
+                    </h3>
+                    <p 
+                      key={`desc-${currentScreenshotIndex}`}
+                      className="text-base sm:text-lg text-white/90 leading-relaxed animate-fade-in max-w-lg"
+                    >
                       {pageScreenshots[currentScreenshotIndex].description}
                     </p>
                   </div>
                 </div>
 
-                {/* Navigation Buttons - Smoother */}
+                {/* Navigation - Cleaner, more subtle */}
                 <button
                   onClick={goToPrevious}
-                  aria-label="Previous page screenshot"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/10 hover:bg-white/25 active:bg-white/30 transition-all duration-200 text-white border border-white/30 hover:border-white/50 shadow-lg hover:shadow-xl group"
+                  aria-label="Previous screenshot"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm transition-all duration-300 text-white border border-white/20 hover:border-white/40 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <ChevronLeft className="h-5 w-5 transition-transform group-hover:scale-110 duration-200" />
-                </button>
-                <button
-                  onClick={goToNext}
-                  aria-label="Next page screenshot"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/10 hover:bg-white/25 active:bg-white/30 transition-all duration-200 text-white border border-white/30 hover:border-white/50 shadow-lg hover:shadow-xl group"
-                >
-                  <ChevronRight className="h-5 w-5 transition-transform group-hover:scale-110 duration-200" />
+                  <ChevronLeft className="h-6 w-6" />
                 </button>
 
-                {/* Indicator Dots - At Bottom */}
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+                <button
+                  onClick={goToNext}
+                  aria-label="Next screenshot"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm transition-all duration-300 text-white border border-white/20 hover:border-white/40 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+
+                {/* Indicator dots - Now at the bottom */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
                   {pageScreenshots.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentScreenshotIndex(index)}
-                      aria-label={`Go to page ${index + 1}`}
-                      className={`transition-all duration-300 rounded-full ${
+                      aria-label={`Go to screenshot ${index + 1}`}
+                      className={`transition-all duration-300 rounded-full backdrop-blur-sm ${
                         index === currentScreenshotIndex
-                          ? "w-8 h-2.5 bg-white/90 shadow-lg"
-                          : "w-2.5 h-2.5 bg-white/40 hover:bg-white/60 hover:scale-125"
+                          ? "w-10 h-3 bg-white/90 shadow-lg"
+                          : "w-3 h-3 bg-white/40 hover:bg-white/60"
                       }`}
                     />
                   ))}
