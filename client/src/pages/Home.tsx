@@ -200,7 +200,7 @@ export default function Home() {
               <div className="w-full h-full" style={{ perspective: "1200px" }}>
                 {/* Angled carousel container */}
                 <div 
-                  className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-black transition-transform duration-500"
+                  className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl transition-transform duration-500"
                   style={{ 
                     transform: "rotateX(8deg) rotateY(-5deg) rotateZ(2deg)",
                     transformStyle: "preserve-3d",
@@ -214,12 +214,10 @@ export default function Home() {
                     className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
                   />
                   
-                  {/* Fade gradient overlay - edges to transparent */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/40" />
-                  <div className="absolute inset-0 bg-gradient-to-l from-black/20 via-transparent to-transparent" />
-                  
-                  {/* Dark overlay gradient at bottom for text readability */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  {/* Fade gradient overlay - edges fade to transparent then to hero background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-blue-900/60 dark:to-blue-950/60" />
+                  <div className="absolute inset-0 bg-gradient-to-l from-blue-800/40 dark:from-blue-900/40 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/80 dark:from-blue-950/80 via-black/20 to-transparent" />
 
                   {/* Content overlay - Bottom positioned */}
                   <div className="absolute inset-x-0 bottom-0 p-8 text-white">
