@@ -457,7 +457,7 @@ export default function TrackApplication() {
                     )}
                   </div>
                   <div className="flex items-center gap-2 ml-2">
-                    {app.status === "for_resubmission" && attachment.isLocked === false && (
+                    {(app.status === "for_resubmission" || app.status === "pending_resubmit") && attachment.isLocked === false && (
                       <Button
                         variant="ghost"
                         size="sm"
