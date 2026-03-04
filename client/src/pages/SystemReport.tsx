@@ -255,51 +255,6 @@ const SystemReport = () => {
     }
   };
 
-  // Export to CSV
-  const exportToCSV = () => {
-    setIsExporting(true);
-    try {
-      const applications = applicationsQuery.data || [];
-      
-      if (applications.length === 0) {
-        alert("No data to export.");
-        setIsExporting(false);
-        return;
-      }
-      
-      const data = applications.map((app) => ({
-        "Reference Number": app.referenceNumber || "",
-        "Applicant Name": app.applicantName || "",
-        "Email": app.applicantEmail || "",
-        "Status": app.status || "",
-        "Submitted Date": new Date(app.submittedAt).toLocaleDateString(),
-        "Processing Days": app.processingDays || 0,
-        "Project Type": app.projectType || "",
-        "Barangay": app.barangay || "",
-      }));
-      
-      const csv = Papa.unparse(data);
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      
-      link.setAttribute("href", url);
-      link.setAttribute("download", "System_Report_" + new Date().toISOString().split("T")[0] + ".csv");
-      link.style.visibility = "hidden";
-      
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error exporting CSV:", error);
-      alert("Failed to export CSV. Please try again.");
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
   // Check if user is staff or admin
   if (!user || (user.role !== "staff" && user.role !== "admin")) {
     return (
@@ -464,10 +419,6 @@ const SystemReport = () => {
                   <FileText className="h-4 w-4 mr-2" />
                   Export as Excel
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={exportToCSV} disabled={isExporting}>
-                  <FileText className="h-4 w-4 mr-2" />
-                  Export as CSV
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -561,7 +512,7 @@ const SystemReport = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, idx) => (
               <Card key={idx} className="p-6 hover:shadow-lg transition-shadow">
-                <div className="h-12 w-12 rounded-lg bg-gradient-meo flex items-center justify-center mb-4 text-white">
+                <div className="h-12 w-12 rounded-lg bg-gradient-meo flex items-center justify-center mb-4 text-black dark:text-white">
                   {feature.icon}
                 </div>
                 <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
