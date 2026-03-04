@@ -454,19 +454,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-gradient-to-r from-blue-50/50 to-slate-50/50 dark:from-blue-950/20 dark:to-slate-950/20 py-16 sm:py-20 lg:py-28 animate-fade-in border-t border-border">
-        <div className="container space-y-8 text-center">
-          <div className="space-y-4 animate-slide-in-up">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+      {/* CTA Section - Improved */}
+      <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-slate-800 dark:from-blue-950 dark:via-blue-900 dark:to-slate-950 relative overflow-hidden py-20 sm:py-28 lg:py-40 animate-fade-in">
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 right-0 -mt-20 -mr-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
+        </div>
+        <div className="container relative z-10 space-y-10 text-center">
+          <div className="space-y-6 animate-slide-in-up max-w-3xl mx-auto">
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl text-white">
               Ready to Get Started?
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
-              Submit your building permit application today and track its progress in real-time.
+            <p className="text-lg text-white/90 max-w-2xl mx-auto font-light leading-relaxed">
+              Submit your building permit application today and track its progress in real-time. Fast, secure, and transparent.
             </p>
           </div>
           {canStartApplication ? (
-            <Button asChild size="lg" className="btn-lg-primary-meo animate-scale-in">
+            <Button asChild size="lg" className="btn-lg-primary-meo animate-scale-in shadow-xl text-base h-13 px-8">
               <Link href="/apply">Start Your Application Now</Link>
             </Button>
           ) : (
