@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Download, FileText, Users, Clock, CheckCircle2, AlertCircle, TrendingUp } from "lucide-react";
+import { Download, FileText, Users, Clock, CheckCircle2, AlertCircle, TrendingUp, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
@@ -435,11 +435,18 @@ const SystemReport = () => {
       <div className="bg-white dark:bg-gray-900 border-b border-border sticky top-0 z-40">
         <div className="container py-8">
           <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-4xl font-bold text-foreground">System Report & Analytics</h1>
-              <p className="text-muted-foreground mt-2">
-                MEO Sariaya Digital Building Permit System - Performance Overview
-              </p>
+            <div className="flex items-center gap-4">
+              <Link href="/">
+                <Button variant="ghost" size="icon" className="hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-4xl font-bold text-foreground">System Report & Analytics</h1>
+                <p className="text-muted-foreground mt-2">
+                  MEO Sariaya Digital Building Permit System - Performance Overview
+                </p>
+              </div>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

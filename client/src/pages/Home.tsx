@@ -367,11 +367,11 @@ export default function Home() {
           {/* Stats Section */}
           <div className="mt-16 grid gap-8 sm:grid-cols-3 bg-gradient-to-r from-blue-50/50 to-slate-50/50 dark:from-blue-950/30 dark:to-slate-950/30 rounded-lg p-8 shadow-md animate-scale-in border border-border dark:border-border/50">
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">1000+</div>
+              <div className="text-4xl font-bold text-primary mb-2">N/A</div>
               <p className="text-muted-foreground font-medium">Applications Processed</p>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">98%</div>
+              <div className="text-4xl font-bold text-primary mb-2">N/A</div>
               <p className="text-muted-foreground font-medium">Satisfaction Rate</p>
             </div>
             <div className="text-center">
