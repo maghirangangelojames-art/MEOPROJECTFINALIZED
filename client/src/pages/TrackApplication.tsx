@@ -2,11 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, CheckCircle2, Clock, AlertCircle, FileText, Download, Home, Lock, Edit2 } from "lucide-react";
 import { SkeletonPageHeader, SkeletonCard } from "@/components/SkeletonLoader";
 import { trpc } from "@/lib/trpc";
@@ -42,27 +38,12 @@ export default function TrackApplication() {
   const [editingFileIndex, setEditingFileIndex] = useState<number | null>(null);
   const [editingFileName, setEditingFileName] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showResubmitForm, setShowResubmitForm] = useState(false);
-  const [resubmitFormData, setResubmitFormData] = useState({
-    applicantName: "",
-    applicantEmail: "",
-    applicantPhone: "",
-    applicantCapacity: "",
-    ownerName: "",
-    barangay: "",
-    propertyLocation: "",
-    propertyAddress: "",
-    projectType: "",
-    projectScope: "",
-    buildingClassification: "",
-  });
 
   const applicationQuery = trpc.applications.getMyApplication.useQuery(undefined, {
     retry: false,
   });
   const uploadAttachmentMutation = trpc.applications.uploadAttachment.useMutation();
   const resubmitApplicationMutation = trpc.applications.resubmitApplication.useMutation();
-  const updateApplicationInfoMutation = trpc.applications.updateApplicationInfoDuringResubmission.useMutation();
   
   const app = applicationQuery.data;
 
@@ -281,57 +262,6 @@ export default function TrackApplication() {
         error?.message || "Failed to update file. Please try again.";
       toast.error(message);
       console.error(error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleResubmitFormOpen = () => {
-    if (app) {
-      setResubmitFormData({
-        applicantName: app.applicantName || "",
-        applicantEmail: app.applicantEmail || "",
-        applicantPhone: app.applicantPhone || "",
-        applicantCapacity: app.applicantCapacity || "",
-        ownerName: app.ownerName || "",
-        barangay: app.barangay || "",
-        propertyLocation: app.propertyLocation || "",
-        propertyAddress: app.propertyAddress || "",
-        projectType: app.projectType || "",
-        projectScope: app.projectScope || "",
-        buildingClassification: app.buildingClassification || "",
-      });
-      setShowResubmitForm(true);
-    }
-  };
-
-  const handleResubmitFormSubmit = async () => {
-    if (!app) return;
-
-    try {
-      setIsSubmitting(true);
-
-      // Update application info and change status to pending_resubmit
-      await updateApplicationInfoMutation.mutateAsync({
-        applicationId: app.id,
-        applicantName: resubmitFormData.applicantName,
-        applicantEmail: resubmitFormData.applicantEmail,
-        applicantPhone: resubmitFormData.applicantPhone,
-        applicantCapacity: resubmitFormData.applicantCapacity,
-        ownerName: resubmitFormData.ownerName,
-        barangay: resubmitFormData.barangay,
-        propertyLocation: resubmitFormData.propertyLocation,
-        propertyAddress: resubmitFormData.propertyAddress,
-        projectType: resubmitFormData.projectType,
-        projectScope: resubmitFormData.projectScope,
-        buildingClassification: resubmitFormData.buildingClassification,
-      });
-
-      setShowResubmitForm(false);
-      toast.success("Application submitted for review!");
-      applicationQuery.refetch();
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to resubmit application");
     } finally {
       setIsSubmitting(false);
     }
@@ -601,180 +531,6 @@ export default function TrackApplication() {
             </Link>
           </Button>
         </div>
-
-        {/* Resubmit Form Dialog */}
-        {app && (
-          <Dialog open={showResubmitForm} onOpenChange={setShowResubmitForm}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Modify Your Application</DialogTitle>
-                <DialogDescription>
-                  Review your application details and unlock files. Update any information as needed based on staff remarks.
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="space-y-6">
-                {/* Info Alert */}
-                <Card className="p-4 bg-blue-50 border-blue-200">
-                  <p className="text-sm text-blue-900">
-                    <span className="font-semibold">Note:</span> Only modify the fields and files that the staff has indicated need to be changed. 
-                  </p>
-                </Card>
-
-                {/* Applicant Information */}
-                <div className="space-y-4">
-                  <h3 className="font-semibold">Applicant Information</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="applicantName" className="text-xs font-medium">Full Name</Label>
-                      <Input
-                        id="applicantName"
-                        value={resubmitFormData.applicantName}
-                        onChange={(e) => setResubmitFormData({ ...resubmitFormData, applicantName: e.target.value })}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="applicantCapacity" className="text-xs font-medium">Capacity</Label>
-                      <Select value={resubmitFormData.applicantCapacity} onValueChange={(value) => setResubmitFormData({ ...resubmitFormData, applicantCapacity: value })}>
-                        <SelectTrigger id="applicantCapacity" className="mt-1">
-                          <SelectValue placeholder="Select capacity" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Owner">Owner</SelectItem>
-                          <SelectItem value="Contractor">Contractor</SelectItem>
-                          <SelectItem value="Architect">Architect</SelectItem>
-                          <SelectItem value="Engineer">Engineer</SelectItem>
-                          <SelectItem value="Authorized Representative">Authorized Representative</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    {resubmitFormData.applicantCapacity === "Authorized Representative" && (
-                      <div>
-                        <Label htmlFor="ownerName" className="text-xs font-medium">Property/Lot Owner Name</Label>
-                        <Input
-                          id="ownerName"
-                          value={resubmitFormData.ownerName}
-                          onChange={(e) => setResubmitFormData({ ...resubmitFormData, ownerName: e.target.value })}
-                          className="mt-1"
-                        />
-                      </div>
-                    )}
-                    <div>
-                      <Label htmlFor="applicantEmail" className="text-xs font-medium">Email</Label>
-                      <Input
-                        id="applicantEmail"
-                        type="email"
-                        value={resubmitFormData.applicantEmail}
-                        onChange={(e) => setResubmitFormData({ ...resubmitFormData, applicantEmail: e.target.value })}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="applicantPhone" className="text-xs font-medium">Phone</Label>
-                      <Input
-                        id="applicantPhone"
-                        value={resubmitFormData.applicantPhone}
-                        onChange={(e) => setResubmitFormData({ ...resubmitFormData, applicantPhone: e.target.value })}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="barangay" className="text-xs font-medium">Barangay</Label>
-                      <Input
-                        id="barangay"
-                        value={resubmitFormData.barangay}
-                        onChange={(e) => setResubmitFormData({ ...resubmitFormData, barangay: e.target.value })}
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Property Information */}
-                <div className="space-y-4">
-                  <h3 className="font-semibold">Property Information</h3>
-                  <div>
-                    <Label htmlFor="propertyLocation" className="text-xs font-medium">Location</Label>
-                    <Input
-                      id="propertyLocation"
-                      value={resubmitFormData.propertyLocation}
-                      onChange={(e) => setResubmitFormData({ ...resubmitFormData, propertyLocation: e.target.value })}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="propertyAddress" className="text-xs font-medium">Complete Address</Label>
-                    <Input
-                      id="propertyAddress"
-                      value={resubmitFormData.propertyAddress}
-                      onChange={(e) => setResubmitFormData({ ...resubmitFormData, propertyAddress: e.target.value })}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="projectType" className="text-xs font-medium">Project Type</Label>
-                      <Input
-                        id="projectType"
-                        value={resubmitFormData.projectType}
-                        onChange={(e) => setResubmitFormData({ ...resubmitFormData, projectType: e.target.value })}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="buildingClassification" className="text-xs font-medium">Building Classification</Label>
-                      <Input
-                        id="buildingClassification"
-                        value={resubmitFormData.buildingClassification}
-                        onChange={(e) => setResubmitFormData({ ...resubmitFormData, buildingClassification: e.target.value })}
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Project Scope */}
-                <div className="space-y-4">
-                  <h3 className="font-semibold">Project Scope</h3>
-                  <div>
-                    <Label htmlFor="projectScope" className="text-xs font-medium">Description</Label>
-                    <Textarea
-                      id="projectScope"
-                      value={resubmitFormData.projectScope}
-                      onChange={(e) => setResubmitFormData({ ...resubmitFormData, projectScope: e.target.value })}
-                      className="mt-1 min-h-32"
-                    />
-                  </div>
-                </div>
-
-                {/* Locked Files Info */}
-                <Card className="p-4 bg-amber-50 border-amber-200">
-                  <p className="text-sm text-amber-900">
-                    <span className="font-semibold">Files:</span> You can only modify files that the staff has unlocked. Locked files cannot be changed.
-                  </p>
-                </Card>
-              </div>
-
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowResubmitForm(false)}
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleResubmitFormSubmit}
-                  disabled={isSubmitting}
-                  className="btn-primary-meo"
-                >
-                  {isSubmitting ? "Submitting..." : "Submit Changes"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
       </div>
     </DashboardLayout>
   );

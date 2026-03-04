@@ -40,6 +40,13 @@ export default function FileEditDialog({
     setError("");
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type (only PDF, JPEG, JPG)
+      const allowedTypes = ["application/pdf", "image/jpeg", "image/jpg"];
+      if (!allowedTypes.includes(file.type)) {
+        setError("Only PDF, JPEG, and JPG files are allowed");
+        return;
+      }
+
       // Validate file size (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
         setError("File size exceeds 10MB limit");
@@ -105,6 +112,9 @@ export default function FileEditDialog({
                   </label>
                   <p className="text-xs text-muted-foreground mt-1">
                     or drag and drop your file here
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Supported: PDF, JPEG, JPG
                   </p>
                   <p className="text-xs text-muted-foreground">
                     Max file size: 10MB
