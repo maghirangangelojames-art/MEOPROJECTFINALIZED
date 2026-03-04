@@ -433,4 +433,14 @@ export async function updateNotificationStatus(id: number, status: string, sentA
     .where(eq(notifications.id, id));
 }
 
+/**
+ * Delete an application by ID
+ */
+export async function deleteApplication(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return db.delete(applications).where(eq(applications.id, id));
+}
+
 

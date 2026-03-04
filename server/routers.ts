@@ -15,6 +15,7 @@ import {
   createActivityLog,
   getActivityLogsByApplicationId,
   getDb,
+  deleteApplication,
 } from "./db";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
@@ -670,6 +671,38 @@ export const appRouter = router({
         });
 
         return { success: true };
+      }),
+
+    // Delete application (staff only)
+    delete: protectedProcedure
+      .input(z.object({ applicationId: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user?.role !== "staff" && ctx.user?.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Only staff can delete applications" });
+        }
+
+        const app = await getApplicationById(input.applicationId);
+        if (!app) throw new TRPCError({ code: "NOT_FOUND", message: "Application not found" });
+
+        // Log the deletion activity before deleting
+        await createActivityLog({
+          applicationId: input.applicationId,
+          staffId: ctx.user.id,
+          staffName: ctx.user.name || "Unknown",
+          staffEmail: ctx.user.email || "unknown@example.com",
+          action: "viewed",
+          remarks: `Application deleted by staff member ${ctx.user.name}`,
+        });
+
+        // Delete the application
+        await deleteApplication(input.applicationId);
+
+        return { 
+          success: true, 
+          message: "Application deleted successfully",
+          referenceNumber: app.referenceNumber,
+          applicantEmail: app.applicantEmail,
+        };
       }),
   }),
 

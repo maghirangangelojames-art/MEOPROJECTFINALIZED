@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Search, Clock, CheckCircle2, AlertCircle, Pause, FileText, TrendingUp, Zap, ArrowLeft } from "lucide-react";
+import { Calendar, Search, Clock, CheckCircle2, AlertCircle, Pause, FileText, TrendingUp, Zap, ArrowLeft, Trash2 } from "lucide-react";
 import { SkeletonAppCard } from "@/components/SkeletonLoader";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -19,6 +19,22 @@ export default function StaffDashboard() {
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "for_resubmission" | "resubmitted">("pending");
   const [limit] = useState(20);
   const [offset, setOffset] = useState(0);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ id: number; refNumber: string } | null>(null);
+  const utils = trpc.useUtils();
+
+  const deleteApplicationMutation = trpc.applications.delete.useMutation({
+    onSuccess: (data) => {
+      toast.success(`Application ${data.referenceNumber} deleted successfully`);
+      setDeleteConfirmation(null);
+      // Refresh the applications list
+      utils.applications.list.invalidate();
+      utils.applications.byStatus.invalidate();
+      utils.applications.search.invalidate();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to delete application");
+    },
+  });
 
   // Check if user is staff
   if (user?.role !== "staff" && user?.role !== "admin") {
@@ -245,16 +261,30 @@ export default function StaffDashboard() {
                   {/* Action */}
                   <div className="space-y-2 flex flex-col justify-between">
                     <div />
-                    <Button
-                      size="sm"
-                      className="btn-primary-meo w-full group-hover:shadow-lg transition-all"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/application/${app.id}`);
-                      }}
-                    >
-                      Review →
-                    </Button>
+                    <div className="space-y-2">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="w-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteConfirmation({ id: app.id, refNumber: app.referenceNumber });
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Delete
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="btn-primary-meo w-full group-hover:shadow-lg transition-all"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/application/${app.id}`);
+                        }}
+                      >
+                        Review →
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -287,6 +317,45 @@ export default function StaffDashboard() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {deleteConfirmation && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center animate-fade-in">
+          <Card className="p-6 max-w-md mx-4 card-hover shadow-xl animate-slide-in-up">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+                  <AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
+                </div>
+                <h2 className="text-xl font-bold">Delete Application?</h2>
+              </div>
+              <p className="text-muted-foreground">
+                Are you sure you want to delete application <span className="font-mono font-semibold text-foreground">{deleteConfirmation.refNumber}</span>? 
+                <br /><br />
+                This action cannot be undone, and the applicant will be able to submit a new application.
+              </p>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setDeleteConfirmation(null)}
+                  disabled={deleteApplicationMutation.isPending}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="flex-1"
+                  onClick={() => deleteApplicationMutation.mutate({ applicationId: deleteConfirmation.id })}
+                  disabled={deleteApplicationMutation.isPending}
+                >
+                  {deleteApplicationMutation.isPending ? "Deleting..." : "Delete"}
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
