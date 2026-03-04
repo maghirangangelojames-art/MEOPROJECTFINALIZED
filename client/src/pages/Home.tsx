@@ -16,21 +16,25 @@ const pageScreenshots = [
     id: "home",
     title: "Home Page",
     description: "Welcome to your building permit system with easy navigation and quick access to all features.",
+    image: "/IMAGES/homepage.jpg",
   },
   {
     id: "application-form",
     title: "Application Form",
     description: "Fill out your building permit application with our intuitive and guided form interface.",
+    image: "/IMAGES/application page.jpg",
   },
   {
     id: "dashboard",
     title: "Dashboard",
     description: "Monitor your permits and manage your applications from a comprehensive dashboard.",
+    image: "/IMAGES/dashboard page.jpg",
   },
   {
     id: "track-status",
     title: "Track Status",
     description: "Real-time tracking of your application status and permit processing progress.",
+    image: "/IMAGES/track page.jpg",
   },
 ];
 
@@ -199,13 +203,13 @@ export default function Home() {
                   <div className="flex-1 bg-gradient-to-b from-white/8 to-white/4 flex items-center justify-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-radial from-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
                     
-                    {/* Content with smooth fade */}
-                    <div key={currentScreenshotIndex} className="relative flex flex-col items-center justify-center h-full w-full text-white/70 animate-carousel-fade">
-                      <div className="text-7xl sm:text-8xl mb-6 transition-transform duration-300">📱</div>
-                      <h3 className="text-lg sm:text-xl font-semibold text-white/90 drop-shadow-sm">
-                        {pageScreenshots[currentScreenshotIndex].title}
-                      </h3>
-                    </div>
+                    {/* Image with smooth fade */}
+                    <img
+                      key={currentScreenshotIndex}
+                      src={pageScreenshots[currentScreenshotIndex].image}
+                      alt={pageScreenshots[currentScreenshotIndex].title}
+                      className="w-full h-full object-cover animate-carousel-fade"
+                    />
                   </div>
 
                   {/* Divider */}
