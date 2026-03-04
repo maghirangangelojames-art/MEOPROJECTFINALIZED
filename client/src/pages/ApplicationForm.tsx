@@ -163,7 +163,6 @@ export default function ApplicationForm() {
 
   const createApplicationMutation = trpc.applications.create.useMutation();
   const uploadAttachmentMutation = trpc.applications.uploadAttachment.useMutation();
-  const checkEmailAvailabilityMutation = trpc.applications.checkEmailAvailability.useMutation();
 
   const watchedValues = watch() as Partial<FormData>;
   const shouldShowNonLotOwnerDocs = watchedValues.applicantCapacity === "Authorized Representative";
@@ -294,24 +293,6 @@ export default function ApplicationForm() {
     try {
       const applicantEmail = formData.applicantEmail || data.applicantEmail || "";
       
-      // Check email availability BEFORE uploading files
-      toast.loading("Checking email availability...");
-      try {
-        const emailCheckResult = await checkEmailAvailabilityMutation.mutateAsync({ 
-          email: applicantEmail 
-        });
-        
-        if (!emailCheckResult.available) {
-          toast.dismiss();
-          toast.error(emailCheckResult.message);
-          return;
-        }
-      } catch (error) {
-        toast.dismiss();
-        throw new Error("Failed to verify email. Please try again.");
-      }
-      
-      toast.dismiss();
       toast.loading("Uploading documents...");
 
       const completeData = {
