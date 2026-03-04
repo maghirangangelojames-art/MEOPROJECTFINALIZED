@@ -365,6 +365,21 @@ export const appRouter = router({
         const app = await getApplicationById(input.applicationId);
         if (!app) throw new TRPCError({ code: "NOT_FOUND" });
 
+        // If approving an application that was marked for resubmission,
+        // verify all files that required resubmission have been resubmitted
+        if (input.status === "approved" && 
+            (app.status === "for_resubmission" || app.status === "pending_resubmit")) {
+          const attachments = (app.attachments as any[]) || [];
+          const filesWithRemarks = attachments.filter((att: any) => att.remarks);
+          
+          if (filesWithRemarks.length > 0) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: `Cannot approve application. ${filesWithRemarks.length} file(s) still require resubmission. All files must be resubmitted before approval.`,
+            });
+          }
+        }
+
         await updateApplicationStatus(
           input.applicationId,
           input.status,
@@ -583,13 +598,15 @@ export const appRouter = router({
             update.fileIndex >= 0 &&
             update.fileIndex < currentAttachments.length
           ) {
-            // Preserve locked status and remarks, update file data
+            // Preserve locked status but CLEAR remarks when file is resubmitted
+            // This indicates the file has been successfully resubmitted
             const existingAttachment = currentAttachments[update.fileIndex];
             currentAttachments[update.fileIndex] = {
               ...existingAttachment,
               name: update.name,
               url: update.url,
               type: update.type,
+              remarks: "", // Clear remarks to mark file as resubmitted
             };
           }
         });
