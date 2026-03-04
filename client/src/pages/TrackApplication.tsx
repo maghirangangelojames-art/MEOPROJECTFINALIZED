@@ -394,7 +394,7 @@ export default function TrackApplication() {
         </div>
 
         {/* Status Card */}
-        <Card className="p-6 bg-gradient-to-r from-meo-600 to-meo-700 text-white">
+        <Card className="p-6 bg-gradient-to-r from-meo-600 to-meo-700 dark:text-white text-black">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -405,32 +405,32 @@ export default function TrackApplication() {
                 {app.status.replace(/_/g, " ").toUpperCase()}
               </Badge>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-white/20">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t dark:border-white/20 border-black/20">
               <div>
-                <p className="text-white/70 text-xs uppercase">Reference Number</p>
+                <p className="dark:text-white/70 text-black/70 text-xs uppercase">Reference Number</p>
                 <p className="font-mono font-semibold text-sm">{app.referenceNumber}</p>
               </div>
               <div>
-                <p className="text-white/70 text-xs uppercase">Submitted Date & Time</p>
+                <p className="dark:text-white/70 text-black/70 text-xs uppercase">Submitted Date & Time</p>
                 <p className="font-semibold text-sm">
                   {new Date(app.submittedAt).toLocaleDateString()}<br />
                   {new Date(app.submittedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
               <div>
-                <p className="text-white/70 text-xs uppercase">Days In Review</p>
+                <p className="dark:text-white/70 text-black/70 text-xs uppercase">Days In Review</p>
                 <p className="font-semibold">{app.processingDays}</p>
               </div>
               {app.approvalDays !== null && app.approvalDays !== undefined && (
                 <div>
-                  <p className="text-white/70 text-xs uppercase">Approval Time</p>
-                  <p className="font-semibold text-green-400">
+                  <p className="dark:text-white/70 text-black/70 text-xs uppercase">Approval Time</p>
+                  <p className="font-semibold dark:text-green-400 text-green-600">
                     {app.approvalDays === 0 ? 'Same day' : `${app.approvalDays} day${app.approvalDays !== 1 ? 's' : ''}`}
                   </p>
                 </div>
               )}
               <div>
-                <p className="text-white/70 text-xs uppercase">Processing</p>
+                <p className="dark:text-white/70 text-black/70 text-xs uppercase">Processing</p>
                 <p className="font-semibold">
                   {app.statusIndicator === "green" && "0-1 day"}
                   {app.statusIndicator === "yellow" && "2 days"}
