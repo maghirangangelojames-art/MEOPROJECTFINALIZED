@@ -516,14 +516,6 @@ export default function TrackApplication() {
 
         {/* Action Buttons */}
         <div className="flex gap-3">
-          {app.status === "for_resubmission" && (
-            <Button 
-              className="btn-primary-meo"
-              onClick={handleResubmitFormOpen}
-            >
-              Modify & Resubmit Application
-            </Button>
-          )}
           <Button asChild variant="outline">
             <Link href="/">
               <Home className="h-4 w-4 mr-2" />
