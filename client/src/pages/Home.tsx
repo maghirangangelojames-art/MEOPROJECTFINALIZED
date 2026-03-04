@@ -214,6 +214,10 @@ export default function Home() {
                     className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
                   />
                   
+                  {/* Fade gradient overlay - edges to transparent */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/40" />
+                  <div className="absolute inset-0 bg-gradient-to-l from-black/20 via-transparent to-transparent" />
+                  
                   {/* Dark overlay gradient at bottom for text readability */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
