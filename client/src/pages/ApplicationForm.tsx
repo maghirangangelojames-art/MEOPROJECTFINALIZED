@@ -163,6 +163,7 @@ export default function ApplicationForm() {
 
   const createApplicationMutation = trpc.applications.create.useMutation();
   const uploadAttachmentMutation = trpc.applications.uploadAttachment.useMutation();
+  const checkEmailAvailabilityMutation = trpc.applications.checkEmailAvailability.useMutation();
 
   const watchedValues = watch() as Partial<FormData>;
   const shouldShowNonLotOwnerDocs = watchedValues.applicantCapacity === "Authorized Representative";
@@ -291,9 +292,31 @@ export default function ApplicationForm() {
     }
 
     try {
+      const applicantEmail = formData.applicantEmail || data.applicantEmail || "";
+      
+      // Check email availability BEFORE uploading files
+      toast.loading("Checking email availability...");
+      try {
+        const emailCheckResult = await checkEmailAvailabilityMutation.mutateAsync({ 
+          email: applicantEmail 
+        });
+        
+        if (!emailCheckResult.available) {
+          toast.dismiss();
+          toast.error(emailCheckResult.message);
+          return;
+        }
+      } catch (error) {
+        toast.dismiss();
+        throw new Error("Failed to verify email. Please try again.");
+      }
+      
+      toast.dismiss();
+      toast.loading("Uploading documents...");
+
       const completeData = {
         applicantName: formData.applicantName || data.applicantName || "",
-        applicantEmail: formData.applicantEmail || data.applicantEmail || "",
+        applicantEmail: applicantEmail,
         applicantPhone: formData.applicantPhone || data.applicantPhone || "",
         applicantCapacity: formData.applicantCapacity || data.applicantCapacity || "",
         barangay: formData.barangay || data.barangay || "",
@@ -328,14 +351,19 @@ export default function ApplicationForm() {
         })
       );
 
+      toast.dismiss();
+      toast.loading("Creating application...");
+
       const result = await createApplicationMutation.mutateAsync({
         ...completeData,
         attachments,
       });
 
+      toast.dismiss();
       toast.success("Application submitted successfully!");
       navigate(`/submission-confirmation?refNumber=${result.referenceNumber}`);
     } catch (error: any) {
+      toast.dismiss();
       const message = error?.message || "Failed to submit application. Please try again.";
       toast.error(message);
       console.error(error);

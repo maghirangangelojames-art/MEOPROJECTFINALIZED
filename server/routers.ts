@@ -267,6 +267,37 @@ export const appRouter = router({
         };
       }),
 
+    // Check if email is available for submission
+    checkEmailAvailability: protectedProcedure
+      .input(
+        z.object({
+          email: z.string().email(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        // Check if user's email matches the submitted email
+        if (ctx.user?.email !== input.email) {
+          return {
+            available: false,
+            message: "You can only submit applications with your registered email address",
+          };
+        }
+
+        // Check if user has already submitted an application
+        const existingApp = await getApplicationByEmail(input.email);
+        if (existingApp) {
+          return {
+            available: false,
+            message: `This email already has an active application (${existingApp.status.replace(/_/g, " ").toUpperCase()}). Staff can delete it to allow resubmission.`,
+          };
+        }
+
+        return {
+          available: true,
+          message: "Email is available",
+        };
+      }),
+
     // Create new application
     create: protectedProcedure
       .input(
