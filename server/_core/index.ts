@@ -39,9 +39,29 @@ async function startServer() {
   console.log(`[Server] Current working directory: ${process.cwd()}`);
   console.log(`[Server] Expected dist path: ${path.join(process.cwd(), "dist", "public")}`);
   
-  // Configure body parser with larger size limit for file uploads
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  // Configure body parser with very large size limit for file uploads
+  // Base64 encoding increases file size by ~33%, so we need a generous limit
+  // This supports multiple large files (up to 100MB total)
+  app.use(express.json({ limit: "100mb" }));
+  app.use(express.urlencoded({ limit: "100mb", extended: true }));
+
+  // Increase timeout for large file uploads
+  app.use((req, res, next) => {
+    req.setTimeout(300000); // 5 minutes
+    res.setTimeout(300000); // 5 minutes
+    next();
+  });
+
+  // Error handling for payload too large
+  app.use((err: any, _req: any, res: any, next: any) => {
+    if (err.status === 413) {
+      return res.status(413).json({
+        error: "Payload too large",
+        message: "The request body is too large. Maximum file size is 100MB.",
+      });
+    }
+    next(err);
+  });
 
   app.get("/api/health", (_req, res) => {
     res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });

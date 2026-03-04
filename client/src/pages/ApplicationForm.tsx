@@ -236,6 +236,19 @@ export default function ApplicationForm() {
       return;
     }
 
+    // Validate file size (max 10MB per file)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      const sizeMB = (selectedFile.size / (1024 * 1024)).toFixed(1);
+      setFileErrors((prev) => ({
+        ...prev,
+        [documentKey]: `File is too large (${sizeMB}MB). Maximum file size is 10MB.`,
+      }));
+      setUploadedFiles((prev) => ({ ...prev, [documentKey]: null }));
+      event.target.value = "";
+      return;
+    }
+
     const objectUrl = URL.createObjectURL(selectedFile);
 
     setPreviewUrls((prev) => {
