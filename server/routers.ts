@@ -158,7 +158,18 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input }) => {
-        return uploadToSupabaseStorage(input);
+        try {
+          return await uploadToSupabaseStorage(input);
+        } catch (error) {
+          console.error("[Server] Upload attachment error:", error);
+          if (error instanceof TRPCError) {
+            throw error;
+          }
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: error instanceof Error ? error.message : "Failed to upload attachment",
+          });
+        }
       }),
 
     // Get all applications in FIFO order
@@ -290,40 +301,51 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input, ctx }) => {
-        // Check if user's email matches the applicant email
-        if (ctx.user?.email !== input.applicantEmail) {
+        try {
+          // Check if user's email matches the applicant email
+          if (ctx.user?.email !== input.applicantEmail) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "You can only submit applications with your registered email address",
+            });
+          }
+
+          // Check if user has already submitted an application
+          const existingApp = await getApplicationByEmail(input.applicantEmail);
+          if (existingApp) {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: "You have already submitted an application. Only one application per email is allowed.",
+            });
+          }
+
+          const referenceNumber = generateReferenceNumber();
+          await createApplication({
+            referenceNumber,
+            ...input,
+            attachments: input.attachments || [],
+            status: "pending",
+          });
+
+          // Get the created application to get its ID
+          const app = await getApplicationByRefNumber(referenceNumber);
+          if (!app) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to retrieve created application" });
+
+          return {
+            success: true,
+            referenceNumber,
+            applicationId: app.id,
+          };
+        } catch (error) {
+          console.error("[Server] Create application error:", error);
+          if (error instanceof TRPCError) {
+            throw error;
+          }
           throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "You can only submit applications with your registered email address",
+            code: "INTERNAL_SERVER_ERROR",
+            message: error instanceof Error ? error.message : "Failed to create application",
           });
         }
-
-        // Check if user has already submitted an application
-        const existingApp = await getApplicationByEmail(input.applicantEmail);
-        if (existingApp) {
-          throw new TRPCError({
-            code: "CONFLICT",
-            message: "You have already submitted an application. Only one application per email is allowed.",
-          });
-        }
-
-        const referenceNumber = generateReferenceNumber();
-        await createApplication({
-          referenceNumber,
-          ...input,
-          attachments: input.attachments || [],
-          status: "pending",
-        });
-
-        // Get the created application to get its ID
-        const app = await getApplicationByRefNumber(referenceNumber);
-        if (!app) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-
-        return {
-          success: true,
-          referenceNumber,
-          applicationId: app.id,
-        };
       }),
 
     // Update application status (staff only)
