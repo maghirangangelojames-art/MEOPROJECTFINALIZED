@@ -389,58 +389,64 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="grid gap-6 sm:grid-cols-3 mt-12">
-            <Card className="card-hover p-8 space-y-4 text-center animate-slide-in-up">
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 mx-auto mb-2 shadow-md">
-                <FileText className="h-7 w-7 text-white" />
+          {/* Action Buttons - Professional Grid */}
+          <div className="grid gap-6 sm:grid-cols-3 mt-16">
+            <Card className="card-hover group border-blue-200/50 dark:border-blue-400/20 bg-gradient-to-br from-white/80 to-blue-50/50 dark:from-slate-800/50 dark:to-blue-950/20 p-8 space-y-6 text-center animate-slide-in-up backdrop-blur-sm h-full flex flex-col">
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 mx-auto shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                <FileText className="h-8 w-8 text-white" />
               </div>
-              <h3 className="font-semibold text-xl">For Applicants</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Start your building permit application process today
-              </p>
+              <div className="space-y-2 flex-1">
+                <h3 className="font-semibold text-xl text-foreground">For Applicants</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Submit your building permit application with our guided process.
+                </p>
+              </div>
               {canStartApplication ? (
-                <Button asChild className="btn-primary-meo w-full">
+                <Button asChild className="btn-primary-meo w-full h-11 font-semibold">
                   <Link href="/apply">Start Application</Link>
                 </Button>
               ) : (
-                <div className="space-y-3">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="block w-full">
-                        <Button className="btn-primary-meo w-full disabled:opacity-100" disabled>
-                          Start Application
-                        </Button>
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      Sign in first to start an application.
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="block w-full">
+                      <Button className="btn-primary-meo w-full h-11 disabled:opacity-100 font-semibold" disabled>
+                        Start Application
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Sign in first to start an application.
+                  </TooltipContent>
+                </Tooltip>
               )}
             </Card>
-            <Card className="card-hover p-8 space-y-4 text-center animate-slide-in-up" style={{ animationDelay: "0.1s" }}>
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-br from-teal-600 to-teal-700 mx-auto mb-2 shadow-md">
-                <LayoutDashboard className="h-7 w-7 text-white" />
+
+            <Card className="card-hover group border-teal-200/50 dark:border-teal-400/20 bg-gradient-to-br from-white/80 to-teal-50/50 dark:from-slate-800/50 dark:to-teal-950/20 p-8 space-y-6 text-center animate-slide-in-up backdrop-blur-sm h-full flex flex-col" style={{ animationDelay: "0.1s" }}>
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 mx-auto shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                <LayoutDashboard className="h-8 w-8 text-white" />
               </div>
-              <h3 className="font-semibold text-xl">For Staff</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Access the staff dashboard to manage applications
-              </p>
-              <Button asChild className="btn-secondary-meo w-full">
+              <div className="space-y-2 flex-1">
+                <h3 className="font-semibold text-xl text-foreground">For Staff</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Manage applications and review submissions efficiently.
+                </p>
+              </div>
+              <Button asChild className="btn-secondary-meo w-full h-11 font-semibold">
                 <Link href="/dashboard">Staff Dashboard</Link>
               </Button>
             </Card>
-            <Card className="card-hover p-8 space-y-4 text-center animate-slide-in-up" style={{ animationDelay: "0.2s" }}>
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-700 mx-auto mb-2 shadow-md">
-                <TrendingUp className="h-7 w-7 text-white" />
+
+            <Card className="card-hover group border-emerald-200/50 dark:border-emerald-400/20 bg-gradient-to-br from-white/80 to-emerald-50/50 dark:from-slate-800/50 dark:to-emerald-950/20 p-8 space-y-6 text-center animate-slide-in-up backdrop-blur-sm h-full flex flex-col" style={{ animationDelay: "0.2s" }}>
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 mx-auto shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                <TrendingUp className="h-8 w-8 text-white" />
               </div>
-              <h3 className="font-semibold text-xl">System Report</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                View analytics and system performance metrics
-              </p>
-              <Button asChild className="btn-secondary-meo w-full">
+              <div className="space-y-2 flex-1">
+                <h3 className="font-semibold text-xl text-foreground">System Report</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  View detailed analytics and system performance metrics.
+                </p>
+              </div>
+              <Button asChild className="btn-secondary-meo w-full h-11 font-semibold">
                 <Link href="/report">View Report</Link>
               </Button>
             </Card>
