@@ -373,19 +373,19 @@ export default function Home() {
             </Card>
           </div>
 
-          {/* Stats Section */}
-          <div className="mt-16 grid gap-8 sm:grid-cols-3 bg-gradient-to-r from-blue-50/50 to-slate-50/50 dark:from-blue-950/30 dark:to-slate-950/30 rounded-lg p-8 shadow-md animate-scale-in border border-border dark:border-border/50">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">N/A</div>
-              <p className="text-muted-foreground font-medium">Applications Processed</p>
+          {/* Stats Section - Improved */}
+          <div className="mt-20 grid gap-8 sm:grid-cols-3 bg-gradient-to-r from-blue-600/10 via-blue-500/5 to-slate-600/10 dark:from-blue-500/20 dark:via-blue-400/10 dark:to-slate-500/20 rounded-2xl p-12 shadow-lg animate-scale-in border border-blue-200/30 dark:border-blue-400/20">
+            <div className="text-center space-y-3">
+              <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">N/A</div>
+              <p className="text-muted-foreground font-semibold text-sm uppercase tracking-wide">Applications Processed</p>
             </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">N/A</div>
-              <p className="text-muted-foreground font-medium">Satisfaction Rate</p>
+            <div className="text-center space-y-3">
+              <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">N/A</div>
+              <p className="text-muted-foreground font-semibold text-sm uppercase tracking-wide">Satisfaction Rate</p>
             </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">2-3 days</div>
-              <p className="text-muted-foreground font-medium">Average Processing Time</p>
+            <div className="text-center space-y-3">
+              <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">2-3</div>
+              <p className="text-muted-foreground font-semibold text-sm uppercase tracking-wide">Days Processing</p>
             </div>
           </div>
 
