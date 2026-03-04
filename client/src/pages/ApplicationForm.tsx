@@ -345,9 +345,12 @@ export default function ApplicationForm() {
       navigate(`/submission-confirmation?refNumber=${result.referenceNumber}`);
     } catch (error: any) {
       toast.dismiss();
+      console.error("[ApplicationForm] Full error object:", error);
+      console.error("[ApplicationForm] Error message:", error?.message);
+      console.error("[ApplicationForm] Error code:", error?.code);
+      console.error("[ApplicationForm] Error data:", error?.data);
       const message = error?.message || "Failed to submit application. Please try again.";
       toast.error(message);
-      console.error(error);
     }
   });
 
