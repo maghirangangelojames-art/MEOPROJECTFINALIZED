@@ -253,7 +253,7 @@ export default function ApplicationDetail() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Status Card */}
-            <Card className="p-6 bg-gradient-meo dark:text-white text-slate-900">
+            <Card className="p-6 bg-gradient-meo dark:text-white text-black">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold">Application Status</h2>
                 <Badge className={`${getStatusColor(app.status)} text-xs`}>
@@ -262,7 +262,7 @@ export default function ApplicationDetail() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm dark:opacity-90 opacity-75">Submitted</p>
+                  <p className="text-sm dark:opacity-90 opacity-100">Submitted</p>
                   <p className="text-lg font-semibold">
                     {new Date(app.submittedAt).toLocaleString('en-US', {
                       month: 'short',
@@ -275,7 +275,7 @@ export default function ApplicationDetail() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm dark:opacity-90 opacity-75">Processing Time</p>
+                  <p className="text-sm dark:opacity-90 opacity-100">Processing Time</p>
                   <div className="mt-1">
                     {getProcessingIndicator(app.statusIndicator)}
                   </div>
