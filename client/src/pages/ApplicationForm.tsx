@@ -303,11 +303,11 @@ export default function ApplicationForm() {
       return;
     }
 
+    const toastId = toast.loading("Submitting your application...");
+
     try {
       const applicantEmail = formData.applicantEmail || data.applicantEmail || "";
       
-      toast.loading("Uploading documents...");
-
       const completeData = {
         applicantName: formData.applicantName || data.applicantName || "",
         applicantEmail: applicantEmail,
@@ -322,6 +322,7 @@ export default function ApplicationForm() {
         ownerName: (formData.applicantCapacity || data.applicantCapacity) === "Authorized Representative" ? (formData.ownerName || data.ownerName || "") : undefined,
       };
 
+      // Upload all files in parallel for speed
       const attachments = await Promise.all(
         requiredDocuments.map(async (document) => {
           const file = uploadedFiles[document.key];
@@ -345,25 +346,28 @@ export default function ApplicationForm() {
         })
       );
 
-      toast.dismiss();
-      toast.loading("Creating application...");
-
+      // Create application with all attachments
       const result = await createApplicationMutation.mutateAsync({
         ...completeData,
         attachments,
       });
 
-      toast.dismiss();
-      toast.success("Application submitted successfully!");
-      navigate(`/submission-confirmation?refNumber=${result.referenceNumber}`);
+      // Dismiss loading and show success with a short delay for UX
+      toast.dismiss(toastId);
+      toast.success("✓ Application submitted successfully!", { duration: 3000 });
+      
+      // Navigate immediately after success (don't wait for toast)
+      setTimeout(() => {
+        navigate(`/submission-confirmation?refNumber=${result.referenceNumber}`);
+      }, 500);
     } catch (error: any) {
-      toast.dismiss();
+      toast.dismiss(toastId);
       console.error("[ApplicationForm] Full error object:", error);
       console.error("[ApplicationForm] Error message:", error?.message);
       console.error("[ApplicationForm] Error code:", error?.code);
       console.error("[ApplicationForm] Error data:", error?.data);
       const message = error?.message || "Failed to submit application. Please try again.";
-      toast.error(message);
+      toast.error(message, { duration: 5000 });
     }
   });
 
