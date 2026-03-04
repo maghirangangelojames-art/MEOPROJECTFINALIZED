@@ -295,6 +295,21 @@
   }
 }
 
+@keyframes drift {
+  0%, 100% {
+    transform: translate(-50%, 0px);
+  }
+  25% {
+    transform: translate(-40%, -20px);
+  }
+  50% {
+    transform: translate(-50%, -10px);
+  }
+  75% {
+    transform: translate(-60%, -15px);
+  }
+}
+
 @layer components {
   /**
    * Custom container utility that centers content and adds responsive padding.
