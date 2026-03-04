@@ -9,7 +9,7 @@ import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe,
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 
 const pageScreenshots = [
   {
@@ -45,28 +45,7 @@ export default function Home() {
   const [showEmail, setShowEmail] = useState(false);
   const [emailCopied, setEmailCopied] = useState(false);
   const [currentScreenshotIndex, setCurrentScreenshotIndex] = useState(0);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const heroRef = useRef<HTMLDivElement>(null);
   const canStartApplication = isAuthenticated && user?.role === "user";
-
-  // Track mouse movement for interactive background
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!heroRef.current) return;
-      
-      const rect = heroRef.current.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      const y = (e.clientY - rect.top) / rect.height;
-      
-      setMousePosition({ x, y });
-    };
-
-    const heroElement = heroRef.current;
-    if (heroElement) {
-      heroElement.addEventListener("mousemove", handleMouseMove);
-      return () => heroElement.removeEventListener("mousemove", handleMouseMove);
-    }
-  }, []);
 
   const goToPrevious = () => {
     setCurrentScreenshotIndex(
@@ -159,57 +138,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section 
-        ref={heroRef}
-        className="relative overflow-hidden py-16 sm:py-24 lg:py-40 bg-gradient-to-br from-blue-900 via-slate-800 to-slate-900 dark:from-blue-950 dark:via-slate-900 dark:to-black"
-      >
-        {/* Interactive Animated Background */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Animated blob 1 - responds to mouse */}
-          <div
-            className="absolute w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse"
-            style={{
-              top: "-10%",
-              left: "-10%",
-              transform: `translate(${mousePosition.x * 40}px, ${mousePosition.y * 40}px)`,
-              transition: "transform 0.3s ease-out",
-            }}
-          />
-          
-          {/* Animated blob 2 - responds inversely to mouse */}
-          <div
-            className="absolute w-80 h-80 bg-purple-600/15 rounded-full blur-3xl animate-pulse"
-            style={{
-              top: "20%",
-              right: "-5%",
-              transform: `translate(${-mousePosition.x * 30}px, ${-mousePosition.y * 30}px)`,
-              transition: "transform 0.3s ease-out",
-              animationDelay: "0.5s",
-            }}
-          />
-          
-          {/* Animated blob 3 - slow drift */}
-          <div
-            className="absolute w-72 h-72 bg-cyan-600/10 rounded-full blur-3xl"
-            style={{
-              bottom: "-10%",
-              left: "50%",
-              transform: `translate(${mousePosition.x * 20 - 50}%, ${mousePosition.y * 20}px)`,
-              transition: "transform 0.4s ease-out",
-              animation: "drift 8s infinite",
-            }}
-          />
-          
-          {/* Gradient overlay for depth */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/0 to-black/30 dark:to-black/50" />
-          
-          {/* Grid pattern for subtle texture */}
-          <div className="absolute inset-0 opacity-5 dark:opacity-10" style={{
-            backgroundImage: "linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)",
-            backgroundSize: "50px 50px",
-          }} />
-        </div>
-
+      <section className="bg-gradient-to-r from-blue-900 via-blue-800 to-slate-800 dark:from-blue-950 dark:via-blue-900 dark:to-slate-900 relative overflow-hidden py-16 sm:py-24 lg:py-40">
         <div className="container relative z-10">
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
             <div className="space-y-8 text-white animate-slide-in-left">
