@@ -269,27 +269,27 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 -z-10 h-96 w-96 bg-white/5 rounded-full blur-3xl" />
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-16 sm:py-24 lg:py-32 animate-fade-in">
+      {/* Features Section - Improved */}
+      <section id="features" className="py-20 sm:py-28 lg:py-40 bg-white/40 dark:bg-slate-900/20 animate-fade-in">
         <div className="container space-y-16">
-          <div className="space-y-4 text-center animate-slide-in-up">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+          <div className="space-y-6 text-center animate-slide-in-up max-w-3xl mx-auto">
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
               Why Choose Our System?
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
-              Experience a streamlined permit application process designed for efficiency, transparency, and ease of use.
+            <p className="text-lg text-muted-foreground font-light leading-relaxed">
+              Experience a streamlined permit application process designed for efficiency, transparency, and ease of use. Built for both applicants and staff.
             </p>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {/* Feature 1 */}
-            <Card className="card-hover group animate-slide-in-up" style={{ animationDelay: "0s" }}>
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center group-hover:scale-125 transition-transform duration-250 shadow-md">
+            <Card className="card-hover group h-full border-blue-200/50 dark:border-blue-400/20 bg-gradient-to-br from-white/80 to-blue-50/50 dark:from-slate-800/50 dark:to-blue-950/20 animate-slide-in-up backdrop-blur-sm" style={{ animationDelay: "0s" }}>
+              <div className="space-y-4 h-full flex flex-col">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <Zap className="h-6 w-6 text-white" />
                 </div>
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg">Quick Setup</h3>
+                <div className="space-y-3 flex-1">
+                  <h3 className="font-semibold text-lg text-foreground">Quick Setup</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     Complete your application in minutes with our intuitive guided process.
                   </p>
@@ -298,13 +298,13 @@ export default function Home() {
             </Card>
 
             {/* Feature 2 */}
-            <Card className="card-hover group animate-slide-in-up" style={{ animationDelay: "0.1s" }}>
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center group-hover:scale-125 transition-transform duration-250 shadow-md">
+            <Card className="card-hover group h-full border-teal-200/50 dark:border-teal-400/20 bg-gradient-to-br from-white/80 to-teal-50/50 dark:from-slate-800/50 dark:to-teal-950/20 animate-slide-in-up backdrop-blur-sm" style={{ animationDelay: "0.1s" }}>
+              <div className="space-y-4 h-full flex flex-col">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <Clock className="h-6 w-6 text-white" />
                 </div>
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg">Real-time Tracking</h3>
+                <div className="space-y-3 flex-1">
+                  <h3 className="font-semibold text-lg text-foreground">Real-time Tracking</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     Monitor your application status with live updates and transparent timelines.
                   </p>
@@ -313,13 +313,13 @@ export default function Home() {
             </Card>
 
             {/* Feature 3 */}
-            <Card className="card-hover group animate-slide-in-up" style={{ animationDelay: "0.2s" }}>
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
+            <Card className="card-hover group h-full border-green-200/50 dark:border-green-400/20 bg-gradient-to-br from-white/80 to-green-50/50 dark:from-slate-800/50 dark:to-green-950/20 animate-slide-in-up backdrop-blur-sm" style={{ animationDelay: "0.2s" }}>
+              <div className="space-y-4 h-full flex flex-col">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <Shield className="h-6 w-6 text-white" />
                 </div>
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg">Secure & Encrypted</h3>
+                <div className="space-y-3 flex-1">
+                  <h3 className="font-semibold text-lg text-foreground">Secure & Encrypted</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     Your data is protected with enterprise-grade encryption and security.
                   </p>
@@ -328,13 +328,13 @@ export default function Home() {
             </Card>
 
             {/* Feature 4 */}
-            <Card className="card-hover group animate-slide-in-up" style={{ animationDelay: "0.3s" }}>
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
+            <Card className="card-hover group h-full border-amber-200/50 dark:border-amber-400/20 bg-gradient-to-br from-white/80 to-amber-50/50 dark:from-slate-800/50 dark:to-amber-950/20 animate-slide-in-up backdrop-blur-sm" style={{ animationDelay: "0.3s" }}>
+              <div className="space-y-4 h-full flex flex-col">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <Globe className="h-6 w-6 text-white" />
                 </div>
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg">24/7 Access</h3>
+                <div className="space-y-3 flex-1">
+                  <h3 className="font-semibold text-lg text-foreground">24/7 Access</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     Access your applications anytime, anywhere from any device.
                   </p>
@@ -343,13 +343,13 @@ export default function Home() {
             </Card>
 
             {/* Feature 5 */}
-            <Card className="card-hover group animate-slide-in-up" style={{ animationDelay: "0.4s" }}>
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
+            <Card className="card-hover group h-full border-red-200/50 dark:border-red-400/20 bg-gradient-to-br from-white/80 to-red-50/50 dark:from-slate-800/50 dark:to-red-950/20 animate-slide-in-up backdrop-blur-sm" style={{ animationDelay: "0.4s" }}>
+              <div className="space-y-4 h-full flex flex-col">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <TrendingUp className="h-6 w-6 text-white" />
                 </div>
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg">Analytics & Insights</h3>
+                <div className="space-y-3 flex-1">
+                  <h3 className="font-semibold text-lg text-foreground">Analytics & Insights</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     View detailed system metrics and application processing analytics.
                   </p>
@@ -358,13 +358,13 @@ export default function Home() {
             </Card>
 
             {/* Feature 6 */}
-            <Card className="card-hover group animate-slide-in-up" style={{ animationDelay: "0.5s" }}>
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-md">
+            <Card className="card-hover group h-full border-indigo-200/50 dark:border-indigo-400/20 bg-gradient-to-br from-white/80 to-indigo-50/50 dark:from-slate-800/50 dark:to-indigo-950/20 animate-slide-in-up backdrop-blur-sm" style={{ animationDelay: "0.5s" }}>
+              <div className="space-y-4 h-full flex flex-col">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <CheckCircle className="h-6 w-6 text-white" />
                 </div>
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg">Verified & Certified</h3>
+                <div className="space-y-3 flex-1">
+                  <h3 className="font-semibold text-lg text-foreground">Verified & Certified</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     Official municipal government system for permit processing.
                   </p>
