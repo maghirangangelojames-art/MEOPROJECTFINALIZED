@@ -599,9 +599,20 @@ export default function TrackApplication() {
                       variant="ghost"
                       size="sm"
                       asChild
-                      title="Download document"
+                      title="View document"
                     >
                       <a href={attachment.url} target="_blank" rel="noopener noreferrer">
+                        <FileText className="h-4 w-4 text-green-600" />
+                        <span className="sr-only">View</span>
+                      </a>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      asChild
+                      title="Download document"
+                    >
+                      <a href={attachment.url} download target="_blank" rel="noopener noreferrer">
                         <Download className="h-4 w-4" />
                         <span className="sr-only">Download</span>
                       </a>
