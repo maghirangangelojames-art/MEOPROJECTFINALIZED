@@ -21,7 +21,12 @@ import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
 import { eq } from "drizzle-orm";
 import { applications } from "../drizzle/schema";
-import { sendApplicationApprovedNotification, sendApplicationResubmissionNotification } from "./_core/email";
+import { 
+  sendApplicationApprovedNotification, 
+  sendApplicationResubmissionNotification,
+  sendApplicationSubmissionNotificationToStaff,
+  sendApplicationResubmissionNotificationToStaff,
+} from "./_core/email";
 
 // Helper to generate reference number
 function generateReferenceNumber(): string {
@@ -331,6 +336,21 @@ export const appRouter = router({
           const app = await getApplicationByRefNumber(referenceNumber);
           if (!app) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to retrieve created application" });
 
+          // Send notification to staff about new submission
+          await sendApplicationSubmissionNotificationToStaff({
+            applicantName: input.applicantName,
+            applicantEmail: input.applicantEmail,
+            applicantPhone: input.applicantPhone,
+            referenceNumber: referenceNumber,
+            propertyAddress: input.propertyAddress,
+            projectType: input.projectType,
+            buildingClassification: input.buildingClassification,
+            barangay: input.barangay,
+          }).catch(err => {
+            console.error("Failed to send submission notification to staff:", err);
+            // Don't throw - allow the application creation to succeed even if email fails
+          });
+
           return {
             success: true,
             referenceNumber,
@@ -635,6 +655,19 @@ export const appRouter = router({
           remarks: `Applicant submitted revised files for ${input.updatedAttachments.length} document(s)`,
         });
 
+        // Send notification to staff about resubmission
+        await sendApplicationResubmissionNotificationToStaff({
+          applicantName: app.applicantName,
+          applicantEmail: app.applicantEmail,
+          referenceNumber: app.referenceNumber,
+          filesResubmitted: input.updatedAttachments.length,
+          barangay: app.barangay,
+          projectType: app.projectType,
+        }).catch(err => {
+          console.error("Failed to send resubmission notification to staff:", err);
+          // Don't throw - allow the resubmission to succeed even if email fails
+        });
+
         return { success: true };
       }),
 
@@ -707,6 +740,19 @@ export const appRouter = router({
           staffEmail: ctx.user?.email || "unknown@example.com",
           action: "submitted",
           remarks: "Applicant updated application information during resubmission",
+        });
+
+        // Send notification to staff about application information updates
+        await sendApplicationResubmissionNotificationToStaff({
+          applicantName: app.applicantName,
+          applicantEmail: app.applicantEmail,
+          referenceNumber: app.referenceNumber,
+          filesResubmitted: 0, // No files updated, just information
+          barangay: input.barangay || app.barangay,
+          projectType: input.projectType || app.projectType,
+        }).catch(err => {
+          console.error("Failed to send information update notification to staff:", err);
+          // Don't throw - allow the update to succeed even if email fails
         });
 
         return { success: true };
