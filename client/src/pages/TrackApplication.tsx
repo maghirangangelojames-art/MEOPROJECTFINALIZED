@@ -3,8 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, CheckCircle2, Clock, AlertCircle, FileText, Download, Home, Lock, Edit2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock, AlertCircle, FileText, Download, Home, Lock, Edit2, Edit3 } from "lucide-react";
 import { SkeletonPageHeader, SkeletonCard } from "@/components/SkeletonLoader";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Link, useLocation } from "wouter";
@@ -29,6 +33,69 @@ async function fileToBase64(file: File): Promise<string> {
   return btoa(binary);
 }
 
+const barangays = [
+  "Antipolo",
+  "Balubal",
+  "Barangay 1 (Pob.)",
+  "Barangay 2 (Pob.)",
+  "Barangay 3 (Pob.)",
+  "Barangay 4 (Pob.)",
+  "Barangay 5 (Pob.)",
+  "Barangay 6 (Pob.)",
+  "Bignay 1",
+  "Bignay 2",
+  "Bucal",
+  "Canda",
+  "Castañas",
+  "Concepcion 1",
+  "Concepcion Banahaw",
+  "Concepcion Palasan",
+  "Concepcion Pinagbakuran",
+  "Gibanga",
+  "Guisguis San Roque",
+  "Guisguis Talon",
+  "Janagdong 1",
+  "Janagdong 2",
+  "Limbon",
+  "Lutucan 1",
+  "Lutucan Bata",
+  "Lutucan Malabag",
+  "Mamala 1",
+  "Mamala 2",
+  "Manggalang 1",
+  "Manggalang Bantilan",
+  "Manggalang Kiling",
+  "Manggalang Tulo-Tulo",
+  "Montecillo",
+  "Morong",
+  "Pili",
+  "Sampaloc 1",
+  "Sampaloc 2",
+  "Sampaloc Bogon",
+  "Sampaloc Santo Cristo",
+  "Talaan Aplaya",
+  "Talaan Pantoc",
+  "Tumbaga 1",
+  "Tumbaga 2",
+];
+
+const capacities = ["Owner", "Authorized Representative"];
+
+const projectTypes = [
+  "Dwellings",
+  "Buildings/Structures",
+  "Hotels",
+  "Apartments",
+];
+
+const buildingClassifications = [
+  "Type 1 - Wood",
+  "Type 2 - Wood with Non-combustible Roof",
+  "Type 3 - Ordinary Masonry/Concrete",
+  "Type 4 - Incombustible",
+  "Type 5 - Fire Resistive",
+];
+
 export default function TrackApplication() {
   const { user } = useAuth({
     redirectOnUnauthenticated: true,
@@ -38,14 +105,36 @@ export default function TrackApplication() {
   const [editingFileIndex, setEditingFileIndex] = useState<number | null>(null);
   const [editingFileName, setEditingFileName] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showResubmissionDialog, setShowResubmissionDialog] = useState(false);
+  const [resubmissionFormData, setResubmissionFormData] = useState<any>({});
 
   const applicationQuery = trpc.applications.getMyApplication.useQuery(undefined, {
     retry: false,
   });
   const uploadAttachmentMutation = trpc.applications.uploadAttachment.useMutation();
   const resubmitApplicationMutation = trpc.applications.resubmitApplication.useMutation();
+  const updateAppInfoMutation = trpc.applications.updateApplicationInfoDuringResubmission.useMutation();
   
   const app = applicationQuery.data;
+
+  // Initialize resubmission form when dialog opens
+  useEffect(() => {
+    if (showResubmissionDialog && app) {
+      setResubmissionFormData({
+        applicantName: app.applicantName || "",
+        applicantEmail: app.applicantEmail || "",
+        applicantPhone: app.applicantPhone || "",
+        applicantCapacity: app.applicantCapacity || "",
+        ownerName: app.ownerName || "",
+        barangay: app.barangay || "",
+        propertyLocation: app.propertyLocation || "",
+        propertyAddress: app.propertyAddress || "",
+        projectType: app.projectType || "",
+        projectScope: app.projectScope || "",
+        buildingClassification: app.buildingClassification || "",
+      });
+    }
+  }, [showResubmissionDialog, app]);
 
   // Create notifications when application status changes
   useEffect(() => {
@@ -260,6 +349,41 @@ export default function TrackApplication() {
     } catch (error: any) {
       const message =
         error?.message || "Failed to update file. Please try again.";
+      toast.error(message);
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleResubmissionSubmit = async () => {
+    if (!app) return;
+
+    try {
+      setIsSubmitting(true);
+
+      // Submit the updated application information
+      await updateAppInfoMutation.mutateAsync({
+        applicationId: app.id,
+        applicantName: resubmissionFormData.applicantName || undefined,
+        applicantEmail: resubmissionFormData.applicantEmail || undefined,
+        applicantPhone: resubmissionFormData.applicantPhone || undefined,
+        applicantCapacity: resubmissionFormData.applicantCapacity || undefined,
+        ownerName: resubmissionFormData.ownerName || undefined,
+        barangay: resubmissionFormData.barangay || undefined,
+        propertyLocation: resubmissionFormData.propertyLocation || undefined,
+        propertyAddress: resubmissionFormData.propertyAddress || undefined,
+        projectType: resubmissionFormData.projectType || undefined,
+        projectScope: resubmissionFormData.projectScope || undefined,
+        buildingClassification: resubmissionFormData.buildingClassification || undefined,
+      });
+
+      toast.success("✓ Application information updated and resubmitted for review!");
+      setShowResubmissionDialog(false);
+      applicationQuery.refetch();
+    } catch (error: any) {
+      const message =
+        error?.message || "Failed to update application. Please try again.";
       toast.error(message);
       console.error(error);
     } finally {
@@ -522,7 +646,300 @@ export default function TrackApplication() {
               Back to Home
             </Link>
           </Button>
+          {(app.status === "for_resubmission" || app.status === "pending_resubmit") && (
+            <Button 
+              onClick={() => setShowResubmissionDialog(true)}
+              className="btn-primary-meo"
+            >
+              <Edit3 className="h-4 w-4 mr-2" />
+              Resubmit & Edit Application
+            </Button>
+          )}
         </div>
+
+        {/* Resubmission Dialog */}
+        <Dialog open={showResubmissionDialog} onOpenChange={setShowResubmissionDialog}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Resubmit Application & Edit Information</DialogTitle>
+              <DialogDescription>
+                Update your application information before resubmitting. All fields are optional - only update what needs to be changed.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-6 py-4">
+              {/* Applicant Information */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-base">Applicant Information</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="applicantName" className="text-sm">
+                      Full Name
+                    </Label>
+                    <Input
+                      id="applicantName"
+                      value={resubmissionFormData.applicantName || ""}
+                      onChange={(e) =>
+                        setResubmissionFormData({
+                          ...resubmissionFormData,
+                          applicantName: e.target.value,
+                        })
+                      }
+                      placeholder="Your full name"
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="applicantCapacity" className="text-sm">
+                      Your Capacity
+                    </Label>
+                    <Select
+                      value={resubmissionFormData.applicantCapacity || ""}
+                      onValueChange={(value) =>
+                        setResubmissionFormData({
+                          ...resubmissionFormData,
+                          applicantCapacity: value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="mt-2">
+                        <SelectValue placeholder="Select capacity" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {capacities.map((cap) => (
+                          <SelectItem key={cap} value={cap}>
+                            {cap}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {resubmissionFormData.applicantCapacity === "Authorized Representative" && (
+                    <div>
+                      <Label htmlFor="ownerName" className="text-sm">
+                        Property Owner Name
+                      </Label>
+                      <Input
+                        id="ownerName"
+                        value={resubmissionFormData.ownerName || ""}
+                        onChange={(e) =>
+                          setResubmissionFormData({
+                            ...resubmissionFormData,
+                            ownerName: e.target.value,
+                          })
+                        }
+                        placeholder="Owner's full name"
+                        className="mt-2"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <Label htmlFor="applicantEmail" className="text-sm">
+                      Email
+                    </Label>
+                    <Input
+                      id="applicantEmail"
+                      type="email"
+                      value={resubmissionFormData.applicantEmail || ""}
+                      onChange={(e) =>
+                        setResubmissionFormData({
+                          ...resubmissionFormData,
+                          applicantEmail: e.target.value,
+                        })
+                      }
+                      placeholder="your.email@example.com"
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="applicantPhone" className="text-sm">
+                      Phone Number
+                    </Label>
+                    <Input
+                      id="applicantPhone"
+                      value={resubmissionFormData.applicantPhone || ""}
+                      onChange={(e) =>
+                        setResubmissionFormData({
+                          ...resubmissionFormData,
+                          applicantPhone: e.target.value,
+                        })
+                      }
+                      placeholder="+639123456789"
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="barangay" className="text-sm">
+                      Barangay
+                    </Label>
+                    <Select
+                      value={resubmissionFormData.barangay || ""}
+                      onValueChange={(value) =>
+                        setResubmissionFormData({
+                          ...resubmissionFormData,
+                          barangay: value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="mt-2">
+                        <SelectValue placeholder="Select barangay" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {barangays.map((barangay) => (
+                          <SelectItem key={barangay} value={barangay}>
+                            {barangay}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Property Information */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-base">Property Information</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="propertyLocation" className="text-sm">
+                      Location
+                    </Label>
+                    <Input
+                      id="propertyLocation"
+                      value={resubmissionFormData.propertyLocation || ""}
+                      onChange={(e) =>
+                        setResubmissionFormData({
+                          ...resubmissionFormData,
+                          propertyLocation: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., Downtown, Poblacion"
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="propertyAddress" className="text-sm">
+                      Complete Address
+                    </Label>
+                    <Input
+                      id="propertyAddress"
+                      value={resubmissionFormData.propertyAddress || ""}
+                      onChange={(e) =>
+                        setResubmissionFormData({
+                          ...resubmissionFormData,
+                          propertyAddress: e.target.value,
+                        })
+                      }
+                      placeholder="Street, Barangay, Municipality"
+                      className="mt-2"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="projectType" className="text-sm">
+                        Project Type
+                      </Label>
+                      <Select
+                        value={resubmissionFormData.projectType || ""}
+                        onValueChange={(value) =>
+                          setResubmissionFormData({
+                            ...resubmissionFormData,
+                            projectType: value,
+                          })
+                        }
+                      >
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Select project type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {projectTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="buildingClassification" className="text-sm">
+                        Building Classification
+                      </Label>
+                      <Select
+                        value={resubmissionFormData.buildingClassification || ""}
+                        onValueChange={(value) =>
+                          setResubmissionFormData({
+                            ...resubmissionFormData,
+                            buildingClassification: value,
+                          })
+                        }
+                      >
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Select classification" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {buildingClassifications.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Project Scope */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-base">Project Scope</h3>
+                <Label htmlFor="projectScope" className="text-sm">
+                  Description
+                </Label>
+                <Textarea
+                  id="projectScope"
+                  value={resubmissionFormData.projectScope || ""}
+                  onChange={(e) =>
+                    setResubmissionFormData({
+                      ...resubmissionFormData,
+                      projectScope: e.target.value,
+                    })
+                  }
+                  placeholder="Describe the scope of your project..."
+                  rows={4}
+                  className="mt-2"
+                />
+              </div>
+            </div>
+
+            {/* Dialog Actions */}
+            <div className="flex gap-3 justify-end border-t pt-6">
+              <Button
+                variant="outline"
+                onClick={() => setShowResubmissionDialog(false)}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleResubmissionSubmit}
+                disabled={isSubmitting}
+                className="btn-primary-meo"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Edit3 className="h-4 w-4 mr-2" />
+                    Resubmit Application
+                  </>
+                )}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
