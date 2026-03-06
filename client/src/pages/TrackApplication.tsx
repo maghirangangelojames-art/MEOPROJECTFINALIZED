@@ -96,6 +96,20 @@ const buildingClassifications = [
   "Type 5 - Fire Resistive",
 ];
 
+// Document label mapping for display
+const documentLabels: Record<string, string> = {
+  buildPlans: "Build plans, structural analysis, bill of materials, and specification signed by a duly licensed civil engineer/architect",
+  electricalPermit: "Electrical permit/plan signed by a duly licensed professional electrical engineer",
+  sanitaryPermit: "Sanitary/plumbing permit signed by a duly licensed master plumber/sanitary engineer",
+  taxDeclaration: "Tax declaration",
+  transferTitle: "Transfer certificate of title",
+  taxReceipt: "Tax receipt of current year",
+  barangayClearance: "Barangay clearance",
+  doleApplication: "DOLE application (CHSP) - Grand Central",
+  lotOwnerAuthorization: "Authorization from the lot owner",
+  constructAuthorization: "Authorization to erect/construct building",
+};
+
 export default function TrackApplication() {
   const { user } = useAuth({
     redirectOnUnauthenticated: true,
@@ -566,8 +580,10 @@ export default function TrackApplication() {
                     <FileText className="h-5 w-5 text-muted-foreground" />
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm truncate">{attachment.name}</p>
-                      {attachment.label && (
-                        <p className="text-xs text-blue-600 dark:text-blue-400">{attachment.label}</p>
+                      {(attachment.label || (attachment.documentKey && documentLabels[attachment.documentKey as keyof typeof documentLabels])) && (
+                        <p className="text-xs text-blue-600 dark:text-blue-400">
+                          {attachment.label || documentLabels[attachment.documentKey as keyof typeof documentLabels]}
+                        </p>
                       )}
                       <p className="text-xs text-muted-foreground">{attachment.type}</p>
                       {attachment.remarks && (

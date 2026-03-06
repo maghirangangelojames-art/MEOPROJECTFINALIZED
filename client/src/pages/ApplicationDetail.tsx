@@ -13,6 +13,20 @@ import { useLocation } from "wouter";
 import { Link } from "wouter";
 import { toast } from "sonner";
 
+// Document label mapping for display
+const documentLabels: Record<string, string> = {
+  buildPlans: "Build plans, structural analysis, bill of materials, and specification signed by a duly licensed civil engineer/architect",
+  electricalPermit: "Electrical permit/plan signed by a duly licensed professional electrical engineer",
+  sanitaryPermit: "Sanitary/plumbing permit signed by a duly licensed master plumber/sanitary engineer",
+  taxDeclaration: "Tax declaration",
+  transferTitle: "Transfer certificate of title",
+  taxReceipt: "Tax receipt of current year",
+  barangayClearance: "Barangay clearance",
+  doleApplication: "DOLE application (CHSP) - Grand Central",
+  lotOwnerAuthorization: "Authorization from the lot owner",
+  constructAuthorization: "Authorization to erect/construct building",
+};
+
 export default function ApplicationDetail() {
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
@@ -373,8 +387,10 @@ export default function ApplicationDetail() {
                               </Tooltip>
                             )}
                           </div>
-                          {attachment.label && (
-                            <p className="text-xs text-blue-600 dark:text-blue-400 mb-1">{attachment.label}</p>
+                          {(attachment.label || (attachment.documentKey && documentLabels[attachment.documentKey as keyof typeof documentLabels])) && (
+                            <p className="text-xs text-blue-600 dark:text-blue-400 mb-1">
+                              {attachment.label || documentLabels[attachment.documentKey as keyof typeof documentLabels]}
+                            </p>
                           )}
                           <p className="text-xs text-muted-foreground">
                             {attachment.type === "application/pdf" ? "PDF" : "Image"}
