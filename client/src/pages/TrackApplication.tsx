@@ -566,6 +566,9 @@ export default function TrackApplication() {
                     <FileText className="h-5 w-5 text-muted-foreground" />
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm truncate">{attachment.name}</p>
+                      {attachment.label && (
+                        <p className="text-xs text-blue-600 dark:text-blue-400">{attachment.label}</p>
+                      )}
                       <p className="text-xs text-muted-foreground">{attachment.type}</p>
                       {attachment.remarks && (
                         <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">

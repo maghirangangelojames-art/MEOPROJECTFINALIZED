@@ -302,6 +302,8 @@ export const appRouter = router({
             name: z.string(),
             url: z.string(),
             type: z.string(),
+            documentKey: z.string().optional(),
+            label: z.string().optional(),
           })).optional(),
         })
       )

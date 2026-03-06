@@ -342,6 +342,8 @@ export default function ApplicationForm() {
             name: file.name,
             url: uploaded.url,
             type: file.type,
+            documentKey: document.key,
+            label: document.label,
           };
         })
       );

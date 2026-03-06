@@ -373,6 +373,9 @@ export default function ApplicationDetail() {
                               </Tooltip>
                             )}
                           </div>
+                          {attachment.label && (
+                            <p className="text-xs text-blue-600 dark:text-blue-400 mb-1">{attachment.label}</p>
+                          )}
                           <p className="text-xs text-muted-foreground">
                             {attachment.type === "application/pdf" ? "PDF" : "Image"}
                           </p>
