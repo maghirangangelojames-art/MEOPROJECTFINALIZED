@@ -10,6 +10,8 @@ const createGmailTransporter = () => {
 
   return nodemailer.createTransport({
     service: "gmail",
+    port: 587,
+    secure: false, // Use TLS instead of SSL
     auth: {
       user: ENV.gmailUser,
       pass: ENV.gmailPassword,
