@@ -45,10 +45,10 @@ export default function SubmissionConfirmation() {
 
           {/* Title and Message */}
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold text-foreground">
+            <h1 className="text-4xl font-bold text-black dark:text-white">
               Application Submitted!
             </h1>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-lg text-black dark:text-white">
               Your building permit application has been successfully submitted and is now being processed.
             </p>
           </div>
