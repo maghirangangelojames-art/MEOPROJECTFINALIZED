@@ -564,15 +564,17 @@ export default function TrackApplication() {
           <Card className="p-6">
             <h2 className="text-xl font-bold mb-4">Uploaded Documents</h2>
             <div className="space-y-3">
-              {attachments.map((attachment: any, idx: number) => (
+              {attachments.map((attachment: any, idx: number) => {
+                console.log(`[DEBUG] Attachment ${idx}:`, { documentKey: attachment.documentKey, label: attachment.label, name: attachment.name });
+                return (
                 <div key={idx} className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 transition">
                   <div className="flex items-center gap-3 flex-1">
                     <FileText className="h-5 w-5 text-muted-foreground" />
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm truncate">{attachment.name}</p>
-                      {attachment.documentKey && (
+                      {(attachment.documentKey || attachment.label) && (
                         <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-1">
-                          {getFormattedDocumentLabel(attachment.documentKey)}
+                          {attachment.documentKey ? getFormattedDocumentLabel(attachment.documentKey) : attachment.label}
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground">{attachment.type}</p>
@@ -628,7 +630,8 @@ export default function TrackApplication() {
                     </Button>
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           </Card>
         )}
