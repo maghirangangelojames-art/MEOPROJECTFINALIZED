@@ -4,6 +4,7 @@ import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { ENV } from "./env";
 import { sdk } from "./sdk";
+import { sendLoginNotification } from "./email";
 
 // Helper to get client IP address
 function getClientIP(req: Request): string {
@@ -131,6 +132,18 @@ export function registerOAuthRoutes(app: Express) {
         expiresInMs: ONE_YEAR_MS,
       });
 
+      // Send login notification email
+      await sendLoginNotification({
+        email,
+        name,
+        loginTime: new Date(),
+        ipAddress: getClientIP(req),
+        userAgent: req.get("user-agent"),
+      }).catch(err => {
+        console.error("Failed to send login email:", err);
+        // Don't fail the login if email fails
+      });
+
       const cookieOptions = getSessionCookieOptions(req);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 
@@ -230,6 +243,20 @@ export function registerOAuthRoutes(app: Express) {
         expiresInMs: ONE_YEAR_MS,
       });
 
+      // Send login notification email
+      if (userInfo.email) {
+        await sendLoginNotification({
+          email: userInfo.email,
+          name: name || "User",
+          loginTime: new Date(),
+          ipAddress: getClientIP(req),
+          userAgent: req.get("user-agent"),
+        }).catch(err => {
+          console.error("Failed to send login email:", err);
+          // Don't fail the login if email fails
+        });
+      }
+
       const cookieOptions = getSessionCookieOptions(req);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 
@@ -272,6 +299,20 @@ export function registerOAuthRoutes(app: Express) {
         name: userInfo.name || "",
         expiresInMs: ONE_YEAR_MS,
       });
+
+      // Send login notification email
+      if (userInfo.email) {
+        await sendLoginNotification({
+          email: userInfo.email,
+          name: userInfo.name || "User",
+          loginTime: new Date(),
+          ipAddress: getClientIP(req),
+          userAgent: req.get("user-agent"),
+        }).catch(err => {
+          console.error("Failed to send login email:", err);
+          // Don't fail the login if email fails
+        });
+      }
 
       const cookieOptions = getSessionCookieOptions(req);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });

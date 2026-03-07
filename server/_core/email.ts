@@ -805,3 +805,267 @@ This is an automated message. Please do not reply to this email.
     return false;
   }
 }
+
+/**
+ * Application submission confirmation data
+ */
+export type ApplicationSubmissionNotificationData = {
+  applicantEmail: string;
+  applicantName: string;
+  referenceNumber: string;
+  projectType: string;
+  propertyLocation: string;
+};
+
+/**
+ * Send application submission confirmation email to applicant
+ */
+export async function sendApplicationSubmissionNotification(data: ApplicationSubmissionNotificationData): Promise<boolean> {
+  console.log("[Email] sendApplicationSubmissionNotification called for:", data.applicantEmail);
+  
+  if (!resend) {
+    console.log("[Email] Skipping submission notification - Resend not configured");
+    return false;
+  }
+
+  const emailOptions = {
+    from: `Sariaya Building Permit System <${ENV.emailFrom}>`,
+    to: data.applicantEmail,
+    subject: `📋 Application Received - Reference: ${data.referenceNumber}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+          <tr>
+            <td align="center">
+              <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                <!-- Header -->
+                <tr>
+                  <td style="background: linear-gradient(135deg, #10b981, #059669); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                    <h1 style="color: white; margin: 0; font-size: 24px;">✅ Application Received</h1>
+                    <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 14px;">Sariaya Building Permit System</p>
+                  </td>
+                </tr>
+                
+                <!-- Content -->
+                <tr>
+                  <td style="padding: 40px 30px;">
+                    <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 20px;">Hello ${data.applicantName},</h2>
+                    
+                    <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                      Thank you for submitting your building permit application. We have successfully received your submission and it is now in our system for review.
+                    </p>
+                    
+                    <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #10b981;">
+                      <h3 style="color: #065f46; margin: 0 0 15px 0; font-size: 16px;">📋 Application Details:</h3>
+                      <table style="width: 100%; font-size: 14px; color: #1f2937;">
+                        <tr>
+                          <td style="padding: 8px 0; font-weight: 600;">Reference Number:</td>
+                          <td style="padding: 8px 0; font-family: monospace; color: #059669;"><strong>${data.referenceNumber}</strong></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; font-weight: 600;">Project Type:</td>
+                          <td style="padding: 8px 0;">${data.projectType}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; font-weight: 600;">Property Location:</td>
+                          <td style="padding: 8px 0;">${data.propertyLocation}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; font-weight: 600;">Submission Date:</td>
+                          <td style="padding: 8px 0;">${new Date().toLocaleDateString("en-PH")}</td>
+                        </tr>
+                      </table>
+                    </div>
+                    
+                    <div style="background-color: #eff6ff; border-radius: 8px; padding: 15px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+                      <h3 style="color: #1e40af; margin: 0 0 10px 0; font-size: 14px; font-weight: 600;">📌 What's Next?</h3>
+                      <ul style="color: #1e3a8a; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+                        <li>Our Engineering Office will review your application</li>
+                        <li>You will receive updates via email as your application progresses</li>
+                        <li>You can track your application status at any time by logging into your account</li>
+                      </ul>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track" style="display: inline-block; background-color: #10b981; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                        Track Your Application
+                      </a>
+                    </div>
+                    
+                    <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 20px 0 0 0;">
+                      Keep your reference number safe - you'll need it to track your application. If you have any questions, please contact the Engineering Office.
+                    </p>
+                  </td>
+                </tr>
+                
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #f9fafb; padding: 20px 30px; border-radius: 0 0 12px 12px; text-align: center; border-top: 1px solid #e5e7eb;">
+                    <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+                      This is an automated message from the Sariaya Building Permit System.<br>
+                      Please do not reply to this email.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `,
+  };
+
+  try {
+    const response = await resend.emails.send(emailOptions);
+    if (!response.error) {
+      console.log(`[Email] Submission notification sent to ${data.applicantEmail}`);
+      return true;
+    } else {
+      console.error("[Email] Submission notification failed to send:", response.error);
+      return false;
+    }
+  } catch (error) {
+    console.error("[Email] Failed to send submission notification:", error);
+    return false;
+  }
+}
+
+/**
+ * Application on-hold notification data
+ */
+export type ApplicationOnHoldNotificationData = {
+  applicantEmail: string;
+  applicantName: string;
+  referenceNumber: string;
+  staffRemarks?: string;
+};
+
+/**
+ * Send application on-hold notification email to applicant
+ */
+export async function sendApplicationOnHoldNotification(data: ApplicationOnHoldNotificationData): Promise<boolean> {
+  console.log("[Email] sendApplicationOnHoldNotification called for:", data.applicantEmail);
+  
+  if (!resend) {
+    console.log("[Email] Skipping on-hold notification - Resend not configured");
+    return false;
+  }
+
+  const emailOptions = {
+    from: `Sariaya Building Permit System <${ENV.emailFrom}>`,
+    to: data.applicantEmail,
+    subject: `⏸️ Building Permit Application Placed on Hold - ${data.referenceNumber}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+          <tr>
+            <td align="center">
+              <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                <!-- Header -->
+                <tr>
+                  <td style="background: linear-gradient(135deg, #6366f1, #4f46e5); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                    <h1 style="color: white; margin: 0; font-size: 24px;">⏸️ Application On Hold</h1>
+                    <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 14px;">Sariaya Building Permit System</p>
+                  </td>
+                </tr>
+                
+                <!-- Content -->
+                <tr>
+                  <td style="padding: 40px 30px;">
+                    <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 20px;">Hello ${data.applicantName},</h2>
+                    
+                    <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                      Your building permit application has been placed on hold by the Engineering Office. This means the review process has been temporarily paused.
+                    </p>
+                    
+                    <div style="background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #6366f1;">
+                      <h3 style="color: #3730a3; margin: 0 0 15px 0; font-size: 16px;">📋 Application Details:</h3>
+                      <table style="width: 100%; font-size: 14px; color: #1f2937;">
+                        <tr>
+                          <td style="padding: 8px 0; font-weight: 600;">Reference Number:</td>
+                          <td style="padding: 8px 0; font-family: monospace; color: #4f46e5;"><strong>${data.referenceNumber}</strong></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; font-weight: 600;">Status:</td>
+                          <td style="padding: 8px 0;"><strong style="color: #6366f1;">⏸️ ON HOLD</strong></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; font-weight: 600;">Status Date:</td>
+                          <td style="padding: 8px 0;">${new Date().toLocaleDateString("en-PH")}</td>
+                        </tr>
+                      </table>
+                    </div>
+                    
+                    ${data.staffRemarks ? `
+                    <div style="background-color: #eff6ff; border-radius: 8px; padding: 15px; margin: 20px 0; border-left: 4px solid #3b82f6;">
+                      <h3 style="color: #1e40af; margin: 0 0 10px 0; font-size: 14px; font-weight: 600;">Staff Comments:</h3>
+                      <p style="color: #1e3a8a; font-size: 14px; line-height: 1.6; margin: 0; white-space: pre-wrap;">${data.staffRemarks}</p>
+                    </div>
+                    ` : ""}
+                    
+                    <div style="background-color: #fef3c7; border-radius: 8px; padding: 15px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                      <h3 style="color: #92400e; margin: 0 0 10px 0; font-size: 14px; font-weight: 600;">ℹ️ What This Means:</h3>
+                      <ul style="color: #92400e; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+                        <li>Your application is still under review but has been temporarily placed on hold</li>
+                        <li>You will be notified when your application is resumed</li>
+                        <li>In the meantime, you can log in to check your application details</li>
+                      </ul>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track" style="display: inline-block; background-color: #6366f1; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                        View Application Details
+                      </a>
+                    </div>
+                    
+                    <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 20px 0 0 0;">
+                      If you have questions about why your application was placed on hold, please contact the Engineering Office.
+                    </p>
+                  </td>
+                </tr>
+                
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #f9fafb; padding: 20px 30px; border-radius: 0 0 12px 12px; text-align: center; border-top: 1px solid #e5e7eb;">
+                    <p style="color: #9ca3af; font-size: 12px; margin: 0;">
+                      This is an automated message from the Sariaya Building Permit System.<br>
+                      Please do not reply to this email.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `,
+  };
+
+  try {
+    const response = await resend.emails.send(emailOptions);
+    if (!response.error) {
+      console.log(`[Email] On-hold notification sent to ${data.applicantEmail}`);
+      return true;
+    } else {
+      console.error("[Email] On-hold notification failed to send:", response.error);
+      return false;
+    }
+  } catch (error) {
+    console.error("[Email] Failed to send on-hold notification:", error);
+    return false;
+  }
+}

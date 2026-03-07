@@ -434,6 +434,33 @@ export async function updateNotificationStatus(id: number, status: string, sentA
 }
 
 /**
+ * Log a sent notification
+ */
+export async function logNotification(data: {
+  applicationId: number;
+  recipientEmail: string;
+  type: "submitted" | "approved" | "on_hold" | "resubmission_requested";
+  subject: string;
+  body: string;
+  sent: boolean;
+  sentAt?: Date;
+}) {
+  const db = await getDb();
+  if (!db) return null;
+
+  return db.insert(notifications).values({
+    applicationId: data.applicationId,
+    recipientEmail: data.recipientEmail,
+    type: data.type,
+    subject: data.subject,
+    body: data.body,
+    sent: data.sent,
+    sentAt: data.sentAt || (data.sent ? new Date() : null),
+    deliveryStatus: data.sent ? "sent" : "failed",
+  });
+}
+
+/**
  * Delete an application by ID
  */
 export async function deleteApplication(id: number) {

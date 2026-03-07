@@ -16,6 +16,7 @@ import {
   getActivityLogsByApplicationId,
   getDb,
   deleteApplication,
+  logNotification,
 } from "./db";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
@@ -26,6 +27,8 @@ import {
   sendApplicationResubmissionNotification,
   sendApplicationSubmissionNotificationToStaff,
   sendApplicationResubmissionNotificationToStaff,
+  sendApplicationSubmissionNotification,
+  sendApplicationOnHoldNotification,
 } from "./_core/email";
 
 // Helper to generate reference number
@@ -435,6 +438,31 @@ export const appRouter = router({
             // Don't throw - allow the application creation to succeed even if email fails
           });
 
+          // Send confirmation notification to applicant
+          await sendApplicationSubmissionNotification({
+            applicantEmail: input.applicantEmail,
+            applicantName: input.applicantName,
+            referenceNumber: referenceNumber,
+            projectType: input.projectType,
+            propertyLocation: input.propertyLocation,
+          }).then(async (sent) => {
+            // Log the notification in database
+            await logNotification({
+              applicationId: app.id,
+              recipientEmail: input.applicantEmail,
+              type: "submitted",
+              subject: `📋 Application Received - Reference: ${referenceNumber}`,
+              body: `Your application ${referenceNumber} has been received and is in our system for review.`,
+              sent: sent,
+              sentAt: sent ? new Date() : undefined,
+            }).catch(err => {
+              console.error("Failed to log submission notification:", err);
+            });
+          }).catch(err => {
+            console.error("Failed to send submission confirmation to applicant:", err);
+            // Don't throw - allow the application creation to succeed even if email fails
+          });
+
           return {
             success: true,
             referenceNumber,
@@ -507,6 +535,19 @@ export const appRouter = router({
             applicantEmail: app.applicantEmail,
             applicantName: app.applicantName,
             referenceNumber: app.referenceNumber,
+          }).then(async (sent) => {
+            // Log the notification
+            await logNotification({
+              applicationId: app.id,
+              recipientEmail: app.applicantEmail,
+              type: "approved",
+              subject: `✅ Your Building Permit Application (${app.referenceNumber}) is Approved!`,
+              body: `Your application has been approved.`,
+              sent: sent,
+              sentAt: sent ? new Date() : undefined,
+            }).catch(err => {
+              console.error("Failed to log approval notification:", err);
+            });
           }).catch(err => {
             console.error("Failed to send approval email:", err);
             // Don't throw - allow the status update to succeed even if email fails
@@ -518,8 +559,45 @@ export const appRouter = router({
             applicantName: app.applicantName,
             referenceNumber: app.referenceNumber,
             staffRemarks: input.remarks,
+          }).then(async (sent) => {
+            // Log the notification
+            await logNotification({
+              applicationId: app.id,
+              recipientEmail: app.applicantEmail,
+              type: "resubmission_requested",
+              subject: `📝 Your Building Permit Application (${app.referenceNumber}) Requires Modifications`,
+              body: `Your application requires modifications. Please resubmit with the requested changes.`,
+              sent: sent,
+              sentAt: sent ? new Date() : undefined,
+            }).catch(err => {
+              console.error("Failed to log resubmission notification:", err);
+            });
           }).catch(err => {
             console.error("Failed to send resubmission email:", err);
+            // Don't throw - allow the status update to succeed even if email fails
+          });
+        } else if (input.status === "on_hold") {
+          // Send on-hold notification
+          await sendApplicationOnHoldNotification({
+            applicantEmail: app.applicantEmail,
+            applicantName: app.applicantName,
+            referenceNumber: app.referenceNumber,
+            staffRemarks: input.remarks,
+          }).then(async (sent) => {
+            // Log the notification
+            await logNotification({
+              applicationId: app.id,
+              recipientEmail: app.applicantEmail,
+              type: "on_hold",
+              subject: `⏸️ Building Permit Application Placed on Hold - ${app.referenceNumber}`,
+              body: `Your application has been placed on hold.`,
+              sent: sent,
+              sentAt: sent ? new Date() : undefined,
+            }).catch(err => {
+              console.error("Failed to log on-hold notification:", err);
+            });
+          }).catch(err => {
+            console.error("Failed to send on-hold email:", err);
             // Don't throw - allow the status update to succeed even if email fails
           });
         }
@@ -527,7 +605,7 @@ export const appRouter = router({
         // Return success with notification type for client-side notification
         return { 
           success: true,
-          notificationType: input.status === "approved" ? "approved" : input.status === "for_resubmission" ? "resubmission_requested" : "on_hold",
+          notificationType: input.status === "approved" ? "approved" : input.status === "for_resubmission" ? "resubmission_requested" : input.status === "on_hold" ? "on_hold" : "status_updated",
           referenceNumber: app.referenceNumber,
         };
       }),
