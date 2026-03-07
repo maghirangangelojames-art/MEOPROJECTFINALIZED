@@ -15,6 +15,7 @@ import { Link, useLocation } from "wouter";
 import DashboardLayout from "@/components/DashboardLayout";
 import FileEditDialog from "@/components/FileEditDialog";
 import { toast } from "sonner";
+import { getFormattedDocumentLabel } from "@/lib/documentLabels";
 
 // Helper to convert file to base64
 async function fileToBase64(file: File): Promise<string> {
@@ -97,18 +98,7 @@ const buildingClassifications = [
 ];
 
 // Document label mapping for display
-const documentLabels: Record<string, string> = {
-  buildPlans: "Build plans, structural analysis, bill of materials, and specification signed by a duly licensed civil engineer/architect",
-  electricalPermit: "Electrical permit/plan signed by a duly licensed professional electrical engineer",
-  sanitaryPermit: "Sanitary/plumbing permit signed by a duly licensed master plumber/sanitary engineer",
-  taxDeclaration: "Tax declaration",
-  transferTitle: "Transfer certificate of title",
-  taxReceipt: "Tax receipt of current year",
-  barangayClearance: "Barangay clearance",
-  doleApplication: "DOLE application (CHSP) - Grand Central",
-  lotOwnerAuthorization: "Authorization from the lot owner",
-  constructAuthorization: "Authorization to erect/construct building",
-};
+// Document labels are now imported from @/lib/documentLabels
 
 export default function TrackApplication() {
   const { user } = useAuth({
@@ -580,9 +570,9 @@ export default function TrackApplication() {
                     <FileText className="h-5 w-5 text-muted-foreground" />
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-sm truncate">{attachment.name}</p>
-                      {(attachment.label || (attachment.documentKey && documentLabels[attachment.documentKey as keyof typeof documentLabels])) && (
-                        <p className="text-xs text-blue-600 dark:text-blue-400">
-                          {attachment.label || documentLabels[attachment.documentKey as keyof typeof documentLabels]}
+                      {attachment.label && (
+                        <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-1">
+                          {getFormattedDocumentLabel(attachment.documentKey, idx)}
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground">{attachment.type}</p>
