@@ -283,6 +283,47 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 -z-10 h-96 w-96 bg-white/5 rounded-full blur-3xl" />
       </section>
 
+      {/* Logos Section - Trusted By */}
+      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-b from-white/60 to-white/30 dark:from-slate-800/40 dark:to-slate-900/30 border-y border-slate-200/50 dark:border-slate-700/50 backdrop-blur-sm">
+        <div className="container">
+          <div className="space-y-12 animate-fade-in">
+            {/* Heading */}
+            <div className="text-center space-y-3">
+              <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-widest">
+                Official Partners
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+                Trusted by Local Government Units
+              </h2>
+            </div>
+
+            {/* Logos Grid */}
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-12 sm:gap-16 lg:gap-20">
+              {/* MEO Logo */}
+              <div className="animate-slide-in-up flex items-center justify-center p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-700/50 shadow-lg border border-slate-100/50 dark:border-slate-600/50 hover:shadow-xl hover:border-slate-200/80 dark:hover:border-slate-500/80 transition-all duration-300 group">
+                <img
+                  src="/IMAGES/MEO LOGO.png"
+                  alt="MEO Logo"
+                  className="h-20 sm:h-24 lg:h-28 w-auto object-contain group-hover:scale-110 transition-transform duration-300"
+                />
+              </div>
+
+              {/* SARIAYA Logo */}
+              <div className="animate-slide-in-up flex items-center justify-center p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-700/50 shadow-lg border border-slate-100/50 dark:border-slate-600/50 hover:shadow-xl hover:border-slate-200/80 dark:hover:border-slate-500/80 transition-all duration-300 group" style={{ animationDelay: "0.1s" }}>
+                <img
+                  src="/IMAGES/SARIAYA LOGO.png"
+                  alt="Sariaya Logo"
+                  className="h-20 sm:h-24 lg:h-28 w-auto object-contain group-hover:scale-110 transition-transform duration-300"
+                />
+              </div>
+            </div>
+
+            {/* Divider Line */}
+            <div className="h-px bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-600 to-transparent" />
+          </div>
+        </div>
+      </section>
+
       {/* Features Section - Improved */}
       <section id="features" className="py-20 sm:py-28 lg:py-40 bg-white/40 dark:bg-slate-900/20 animate-fade-in">
         <div className="container space-y-16">
