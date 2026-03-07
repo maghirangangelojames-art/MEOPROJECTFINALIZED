@@ -325,7 +325,12 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    await sendgrid.send(emailOptions);
+    await sendgrid.send({
+      to: emailOptions.to,
+      from: emailOptions.from,
+      subject: emailOptions.subject,
+      html: emailOptions.html,
+    });
     console.log(`[Email] Approval notification sent to ${data.applicantEmail}`);
     return true;
   } catch (error) {
@@ -473,7 +478,12 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    await sendgrid.send(emailOptions);
+    await sendgrid.send({
+      to: emailOptions.to,
+      from: emailOptions.from,
+      subject: emailOptions.subject,
+      html: emailOptions.html,
+    });
     console.log(`[Email] Resubmission notification sent to ${data.applicantEmail}`);
     return true;
   } catch (error) {
@@ -957,7 +967,12 @@ export async function sendApplicationSubmissionNotification(data: ApplicationSub
   };
 
   try {
-    await sendgrid.send(emailOptions);
+    await sendgrid.send({
+      to: emailOptions.to,
+      from: emailOptions.from,
+      subject: emailOptions.subject,
+      html: emailOptions.html,
+    });
     console.log(`[Email] Submission notification sent to ${data.applicantEmail}`);
     return true;
   } catch (error) {
