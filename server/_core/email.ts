@@ -217,7 +217,7 @@ export async function sendApplicationApprovedNotification(data: ApplicationAppro
   }
 
   const emailOptions = {
-    from: ENV.gmailUser,
+    from: ENV.emailFrom,
     to: data.applicantEmail,
     subject: `✅ Your Building Permit Application (${data.referenceNumber}) Has Been Approved!`,
     html: `
@@ -353,7 +353,7 @@ export async function sendApplicationResubmissionNotification(data: ApplicationR
   }
 
   const emailOptions = {
-    from: ENV.gmailUser,
+    from: ENV.emailFrom,
     to: data.applicantEmail,
     subject: `📝 Your Building Permit Application (${data.referenceNumber}) Requires Modifications`,
     html: `
@@ -704,7 +704,7 @@ export async function sendApplicationResubmissionNotificationToStaff(data: Appli
   });
 
   const emailOptions = {
-    from: ENV.gmailUser,
+    from: ENV.emailFrom,
     to: staffEmailRecipients,
     subject: `📝 Application Resubmitted With Changes (${data.referenceNumber})`,
     html: `
@@ -863,7 +863,7 @@ export async function sendApplicationSubmissionNotification(data: ApplicationSub
   }
 
   const emailOptions = {
-    from: ENV.gmailUser,
+    from: ENV.emailFrom,
     to: data.applicantEmail,
     subject: `📋 Application Received - Reference: ${data.referenceNumber}`,
     html: `
