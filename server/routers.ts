@@ -96,12 +96,12 @@ async function uploadToSupabaseStorage(input: {
   const authKey = supabaseServiceRoleKey || supabaseAnonKey;
 
   try {
-    // Validate file size before processing (max 50MB)
+    // Validate file size before processing (max 75MB)
     const fileSizeInMb = Buffer.byteLength(input.fileBase64, 'base64') / (1024 * 1024);
-    if (fileSizeInMb > 50) {
+    if (fileSizeInMb > 75) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: `File is too large (${fileSizeInMb.toFixed(2)}MB). Maximum allowed is 50MB.`,
+        message: `File is too large (${fileSizeInMb.toFixed(2)}MB). Maximum allowed is 75MB.`,
       });
     }
 
@@ -127,9 +127,9 @@ async function uploadToSupabaseStorage(input: {
       });
     }
 
-    // Add timeout for the fetch request (30 seconds)
+    // Add timeout for the fetch request (60 seconds for larger files)
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
 
     let uploadResponse;
     try {
