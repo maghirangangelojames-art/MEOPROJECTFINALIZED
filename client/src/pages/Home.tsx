@@ -300,26 +300,38 @@ export default function Home() {
             {/* Logos Grid - Cleaner Design */}
             <div className="flex flex-col sm:flex-row justify-center items-center gap-16 sm:gap-24 lg:gap-32">
               {/* MEO Logo */}
-              <div className="animate-slide-in-up group flex items-center justify-center">
-                <img
-                  src="/IMAGES/MEO LOGO.png"
-                  alt="MEO Logo"
-                  loading="eager"
-                  className="h-32 sm:h-40 lg:h-48 w-auto object-contain hover:scale-105 transition-transform duration-500 opacity-90 hover:opacity-100"
-                />
+              <div className="animate-slide-in-up group flex flex-col items-center justify-center gap-4">
+                <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-800 shadow-md dark:shadow-lg border border-slate-100 dark:border-slate-700">
+                  <img
+                    src="/IMAGES/MEO LOGO.png"
+                    alt="MEO Logo"
+                    loading="eager"
+                    className="h-32 sm:h-40 lg:h-48 w-auto object-contain hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div className="text-center space-y-1">
+                  <p className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">Municipal Engineering Office</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">MEO Sariaya</p>
+                </div>
               </div>
 
               {/* Divider */}
-              <div className="hidden sm:block w-px h-32 sm:h-40 lg:h-48 bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-600 to-transparent" />
+              <div className="hidden sm:block w-px h-56 lg:h-64 bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-600 to-transparent" />
 
               {/* SARIAYA Logo */}
-              <div className="animate-slide-in-up group flex items-center justify-center" style={{ animationDelay: "0.1s" }}>
-                <img
-                  src="/IMAGES/SARIAYA LOGO.png"
-                  alt="Sariaya Logo"
-                  loading="eager"
-                  className="h-32 sm:h-40 lg:h-48 w-auto object-contain hover:scale-105 transition-transform duration-500 opacity-90 hover:opacity-100"
-                />
+              <div className="animate-slide-in-up group flex flex-col items-center justify-center gap-4" style={{ animationDelay: "0.1s" }}>
+                <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-800 shadow-md dark:shadow-lg border border-slate-100 dark:border-slate-700">
+                  <img
+                    src="/IMAGES/SARIAYA LOGO.png"
+                    alt="Sariaya Logo"
+                    loading="eager"
+                    className="h-32 sm:h-40 lg:h-48 w-auto object-contain hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div className="text-center space-y-1">
+                  <p className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">Municipality of Sariaya</p>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Quezon Province</p>
+                </div>
               </div>
             </div>
           </div>
