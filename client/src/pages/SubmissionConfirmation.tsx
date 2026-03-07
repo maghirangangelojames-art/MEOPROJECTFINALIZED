@@ -55,9 +55,9 @@ export default function SubmissionConfirmation() {
 
           {/* Reference Number Section */}
           <div className="bg-gradient-meo rounded-lg p-6 text-white space-y-3">
-            <p className="text-sm font-medium opacity-90">Your Reference Number</p>
+            <p className="text-sm font-medium opacity-90 text-black dark:text-white">Your Reference Number</p>
             <div className="flex items-center justify-center gap-3">
-              <code className="text-2xl font-bold tracking-wider">{refNumber}</code>
+              <code className="text-2xl font-bold tracking-wider text-black dark:text-white">{refNumber}</code>
               <button
                 onClick={copyToClipboard}
                 className="p-2 hover:bg-white/20 rounded-lg transition-colors"
@@ -66,24 +66,28 @@ export default function SubmissionConfirmation() {
                 <Copy className="h-5 w-5" />
               </button>
             </div>
-            <p className="text-xs opacity-75">
+            <p className="text-xs opacity-75 text-black dark:text-white">
               {copied ? "✓ Copied to clipboard" : "Click to copy"}
             </p>
             
             {/* Date and Time Submitted */}
-            {submissionTime ? (
+            {applicationQuery.isLoading ? (
+              <div className="border-t border-white/20 pt-4 mt-4 animate-pulse">
+                <p className="text-xs opacity-50 text-center text-black dark:text-white">Loading submission time...</p>
+              </div>
+            ) : submissionTime ? (
               <div className="border-t border-white/20 pt-4 mt-4 space-y-2">
-                <div className="flex items-center justify-center gap-2 text-sm">
+                <div className="flex items-center justify-center gap-2 text-sm text-black dark:text-white">
                   <Calendar className="h-4 w-4" />
-                  <span>{submissionTime.toLocaleDateString('en-US', { 
+                  <span>{submissionTime.toLocaleDateString('en-PH', { 
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric' 
                   })}</span>
                 </div>
-                <div className="flex items-center justify-center gap-2 text-sm">
+                <div className="flex items-center justify-center gap-2 text-sm text-black dark:text-white">
                   <Clock className="h-4 w-4" />
-                  <span>{submissionTime.toLocaleTimeString('en-US', { 
+                  <span>{submissionTime.toLocaleTimeString('en-PH', { 
                     hour: '2-digit', 
                     minute: '2-digit',
                     second: '2-digit',
@@ -92,8 +96,8 @@ export default function SubmissionConfirmation() {
                 </div>
               </div>
             ) : (
-              <div className="border-t border-white/20 pt-4 mt-4 animate-pulse">
-                <p className="text-xs opacity-50 text-center">Loading submission time...</p>
+              <div className="border-t border-white/20 pt-4 mt-4">
+                <p className="text-xs opacity-75 text-center text-black dark:text-white">Submission time unavailable</p>
               </div>
             )}
           </div>
