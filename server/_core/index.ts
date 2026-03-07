@@ -99,7 +99,20 @@ async function startServer() {
     })
   );
   
+  console.log(`[Server] About to setup routes, NODE_ENV=${process.env.NODE_ENV}`);
+  
+  // development mode uses Vite, production mode uses static files
+  // MUST be setup BEFORE global error handlers
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[Server] Setting up development mode with Vite`);
+    await setupVite(app, server);
+  } else {
+    console.log(`[Server] Setting up production mode with static files`);
+    serveStatic(app);
+  }
+  
   // Global error handler for unhandled errors in async routes
+  // MUST be after static file serving
   app.use((err: any, _req: any, res: any, _next: any) => {
     console.error("[Server] Unhandled error:", err);
     // Return proper JSON error response instead of HTML error page
@@ -109,25 +122,6 @@ async function startServer() {
       code: "INTERNAL_ERROR",
     });
   });
-
-  // 404 handler
-  app.use((_req: any, res: any) => {
-    res.status(404).json({
-      error: "Not Found",
-      code: "NOT_FOUND",
-    });
-  });
-  
-  console.log(`[Server] About to setup routes, NODE_ENV=${process.env.NODE_ENV}`);
-  
-  // development mode uses Vite, production mode uses static files
-  if (process.env.NODE_ENV === "development") {
-    console.log(`[Server] Setting up development mode with Vite`);
-    await setupVite(app, server);
-  } else {
-    console.log(`[Server] Setting up production mode with static files`);
-    serveStatic(app);
-  }
 
   const preferredPort = parseInt(process.env.PORT || "3000");
   const port = await findAvailablePort(preferredPort);
