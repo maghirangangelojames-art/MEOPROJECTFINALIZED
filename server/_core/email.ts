@@ -1,18 +1,23 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { ENV } from "./env";
 
-// v2 - Using Resend API for email sending (fixed cache issue)
-// Create Resend client for sending emails
-const createResendClient = () => {
-  if (!ENV.resendApiKey) {
-    console.warn("[Email] RESEND_API_KEY not configured. Email sending is disabled.");
+// Create Gmail transporter for sending emails
+const createGmailTransporter = () => {
+  if (!ENV.gmailUser || !ENV.gmailPassword) {
+    console.warn("[Email] Gmail credentials not configured. Email sending is disabled.");
     return null;
   }
 
-  return new Resend(ENV.resendApiKey);
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: ENV.gmailUser,
+      pass: ENV.gmailPassword,
+    },
+  });
 };
 
-const resend = createResendClient();
+const transporter = createGmailTransporter();
 
 export type LoginNotificationData = {
   email: string;
@@ -28,12 +33,12 @@ export type LoginNotificationData = {
 export async function sendLoginNotification(data: LoginNotificationData): Promise<boolean> {
   console.log("[Email] sendLoginNotification called for:", data.email);
   
-  if (!resend) {
-    console.log("[Email] Skipping login notification - Resend not configured");
+  if (!transporter) {
+    console.log("[Email] Skipping login notification - Gmail not configured");
     return false;
   }
   
-  console.log("[Email] Resend client is available, preparing email...");
+  console.log("[Email] Transporter is available, preparing email...");
 
   const formattedTime = data.loginTime.toLocaleString("en-PH", {
     timeZone: "Asia/Manila",
@@ -42,7 +47,7 @@ export async function sendLoginNotification(data: LoginNotificationData): Promis
   });
 
   const emailOptions = {
-    from: `Sariaya Building Permit System <${ENV.emailFrom}>`,
+    from: ENV.gmailUser,
     to: data.email,
     subject: "New Login to Building Permit System",
     html: `
@@ -146,11 +151,7 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    const { error } = await resend.emails.send(emailOptions);
-    if (error) {
-      console.error("[Email] Failed to send login notification:", error);
-      return false;
-    }
+    await transporter.sendMail(emailOptions);
     console.log(`[Email] Login notification sent to ${data.email}`);
     return true;
   } catch (error) {
@@ -171,13 +172,13 @@ export type ApplicationApprovedNotificationData = {
 export async function sendApplicationApprovedNotification(data: ApplicationApprovedNotificationData): Promise<boolean> {
   console.log("[Email] sendApplicationApprovedNotification called for:", data.applicantEmail);
   
-  if (!resend) {
-    console.log("[Email] Skipping approval notification - Resend not configured");
+  if (!transporter) {
+    console.log("[Email] Skipping approval notification - Gmail not configured");
     return false;
   }
 
   const emailOptions = {
-    from: `Sariaya Building Permit System <${ENV.emailFrom}>`,
+    from: ENV.gmailUser,
     to: data.applicantEmail,
     subject: `✅ Your Building Permit Application (${data.referenceNumber}) Has Been Approved!`,
     html: `
@@ -285,11 +286,7 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    const { error } = await resend.emails.send(emailOptions);
-    if (error) {
-      console.error("[Email] Failed to send approval notification:", error);
-      return false;
-    }
+    await transporter.sendMail(emailOptions);
     console.log(`[Email] Approval notification sent to ${data.applicantEmail}`);
     return true;
   } catch (error) {
@@ -311,13 +308,13 @@ export type ApplicationResubmissionNotificationData = {
 export async function sendApplicationResubmissionNotification(data: ApplicationResubmissionNotificationData): Promise<boolean> {
   console.log("[Email] sendApplicationResubmissionNotification called for:", data.applicantEmail);
   
-  if (!resend) {
-    console.log("[Email] Skipping resubmission notification - Resend not configured");
+  if (!transporter) {
+    console.log("[Email] Skipping resubmission notification - Gmail not configured");
     return false;
   }
 
   const emailOptions = {
-    from: `Sariaya Building Permit System <${ENV.emailFrom}>`,
+    from: ENV.gmailUser,
     to: data.applicantEmail,
     subject: `📝 Your Building Permit Application (${data.referenceNumber}) Requires Modifications`,
     html: `
@@ -437,11 +434,7 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    const { error } = await resend.emails.send(emailOptions);
-    if (error) {
-      console.error("[Email] Failed to send resubmission notification:", error);
-      return false;
-    }
+    await transporter.sendMail(emailOptions);
     console.log(`[Email] Resubmission notification sent to ${data.applicantEmail}`);
     return true;
   } catch (error) {
@@ -467,8 +460,8 @@ export type ApplicationSubmissionNotificationToStaffData = {
 export async function sendApplicationSubmissionNotificationToStaff(data: ApplicationSubmissionNotificationToStaffData): Promise<boolean> {
   console.log("[Email] sendApplicationSubmissionNotificationToStaff called");
   
-  if (!resend) {
-    console.log("[Email] Skipping staff submission notification - Resend not configured");
+  if (!transporter) {
+    console.log("[Email] Skipping staff submission notification - Gmail not configured");
     return false;
   }
 
@@ -485,7 +478,7 @@ export async function sendApplicationSubmissionNotificationToStaff(data: Applica
   });
 
   const emailOptions = {
-    from: `Sariaya Building Permit System <${ENV.emailFrom}>`,
+    from: ENV.gmailUser,
     to: staffEmailRecipients,
     subject: `🆕 New Building Permit Application Submitted (${data.referenceNumber})`,
     html: `
@@ -625,11 +618,7 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    const { error } = await resend.emails.send(emailOptions);
-    if (error) {
-      console.error("[Email] Failed to send submission notification to staff:", error);
-      return false;
-    }
+    await transporter.sendMail(emailOptions);
     console.log(`[Email] Submission notification sent to staff: ${staffEmailRecipients}`);
     return true;
   } catch (error) {
@@ -653,8 +642,8 @@ export type ApplicationResubmissionNotificationToStaffData = {
 export async function sendApplicationResubmissionNotificationToStaff(data: ApplicationResubmissionNotificationToStaffData): Promise<boolean> {
   console.log("[Email] sendApplicationResubmissionNotificationToStaff called");
   
-  if (!resend) {
-    console.log("[Email] Skipping staff resubmission notification - Resend not configured");
+  if (!transporter) {
+    console.log("[Email] Skipping staff resubmission notification - Gmail not configured");
     return false;
   }
 
@@ -671,7 +660,7 @@ export async function sendApplicationResubmissionNotificationToStaff(data: Appli
   });
 
   const emailOptions = {
-    from: `Sariaya Building Permit System <${ENV.emailFrom}>`,
+    from: ENV.gmailUser,
     to: staffEmailRecipients,
     subject: `📝 Application Resubmitted With Changes (${data.referenceNumber})`,
     html: `
@@ -793,11 +782,7 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    const { error } = await resend.emails.send(emailOptions);
-    if (error) {
-      console.error("[Email] Failed to send resubmission notification to staff:", error);
-      return false;
-    }
+    await transporter.sendMail(emailOptions);
     console.log(`[Email] Resubmission notification sent to staff: ${staffEmailRecipients}`);
     return true;
   } catch (error) {
@@ -823,13 +808,13 @@ export type ApplicationSubmissionNotificationData = {
 export async function sendApplicationSubmissionNotification(data: ApplicationSubmissionNotificationData): Promise<boolean> {
   console.log("[Email] sendApplicationSubmissionNotification called for:", data.applicantEmail);
   
-  if (!resend) {
-    console.log("[Email] Skipping submission notification - Resend not configured");
+  if (!transporter) {
+    console.log("[Email] Skipping submission notification - Gmail not configured");
     return false;
   }
 
   const emailOptions = {
-    from: `Sariaya Building Permit System <${ENV.emailFrom}>`,
+    from: ENV.gmailUser,
     to: data.applicantEmail,
     subject: `📋 Application Received - Reference: ${data.referenceNumber}`,
     html: `
@@ -923,14 +908,9 @@ export async function sendApplicationSubmissionNotification(data: ApplicationSub
   };
 
   try {
-    const response = await resend.emails.send(emailOptions);
-    if (!response.error) {
-      console.log(`[Email] Submission notification sent to ${data.applicantEmail}`);
-      return true;
-    } else {
-      console.error("[Email] Submission notification failed to send:", response.error);
-      return false;
-    }
+    await transporter.sendMail(emailOptions);
+    console.log(`[Email] Submission notification sent to ${data.applicantEmail}`);
+    return true;
   } catch (error) {
     console.error("[Email] Failed to send submission notification:", error);
     return false;
@@ -953,13 +933,13 @@ export type ApplicationOnHoldNotificationData = {
 export async function sendApplicationOnHoldNotification(data: ApplicationOnHoldNotificationData): Promise<boolean> {
   console.log("[Email] sendApplicationOnHoldNotification called for:", data.applicantEmail);
   
-  if (!resend) {
-    console.log("[Email] Skipping on-hold notification - Resend not configured");
+  if (!transporter) {
+    console.log("[Email] Skipping on-hold notification - Gmail not configured");
     return false;
   }
 
   const emailOptions = {
-    from: `Sariaya Building Permit System <${ENV.emailFrom}>`,
+    from: ENV.gmailUser,
     to: data.applicantEmail,
     subject: `⏸️ Building Permit Application Placed on Hold - ${data.referenceNumber}`,
     html: `
@@ -1056,14 +1036,9 @@ export async function sendApplicationOnHoldNotification(data: ApplicationOnHoldN
   };
 
   try {
-    const response = await resend.emails.send(emailOptions);
-    if (!response.error) {
-      console.log(`[Email] On-hold notification sent to ${data.applicantEmail}`);
-      return true;
-    } else {
-      console.error("[Email] On-hold notification failed to send:", response.error);
-      return false;
-    }
+    await transporter.sendMail(emailOptions);
+    console.log(`[Email] On-hold notification sent to ${data.applicantEmail}`);
+    return true;
   } catch (error) {
     console.error("[Email] Failed to send on-hold notification:", error);
     return false;
