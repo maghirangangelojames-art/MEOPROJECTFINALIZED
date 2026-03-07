@@ -323,6 +323,7 @@ export default function ApplicationForm() {
       };
 
       // Upload all files in parallel for speed
+      console.log("[ApplicationForm] Starting file uploads for", requiredDocuments.length, "documents");
       const attachments = await Promise.all(
         requiredDocuments.map(async (document) => {
           const file = uploadedFiles[document.key];
@@ -330,29 +331,40 @@ export default function ApplicationForm() {
             throw new Error(`Missing file for ${document.label}`);
           }
 
-          const fileBase64 = await fileToBase64(file);
-          const uploaded = await uploadAttachmentMutation.mutateAsync({
-            documentKey: document.key,
-            fileName: file.name,
-            mimeType: file.type === "application/pdf" ? "application/pdf" : "image/jpeg",
-            fileBase64,
-          });
+          try {
+            const fileBase64 = await fileToBase64(file);
+            console.log("[ApplicationForm] Uploading file:", document.key, document.label);
+            const uploaded = await uploadAttachmentMutation.mutateAsync({
+              documentKey: document.key,
+              fileName: file.name,
+              mimeType: file.type === "application/pdf" ? "application/pdf" : "image/jpeg",
+              fileBase64,
+            });
 
-          return {
-            name: file.name,
-            url: uploaded.url,
-            type: file.type,
-            documentKey: document.key,
-            label: document.label,
-          };
+            return {
+              name: file.name,
+              url: uploaded.url,
+              type: file.type,
+              documentKey: document.key,
+              label: document.label,
+            };
+          } catch (err) {
+            console.error(`[ApplicationForm] Error uploading ${document.label}:`, err);
+            throw err;
+          }
         })
       );
+
+      console.log("[ApplicationForm] All files uploaded successfully, creating application");
+      console.log("[ApplicationForm] Attachments to send:", JSON.stringify(attachments, null, 2));
 
       // Create application with all attachments
       const result = await createApplicationMutation.mutateAsync({
         ...completeData,
         attachments,
       });
+      
+      console.log("[ApplicationForm] Application created successfully:", result);
 
       // Dismiss loading and show success with a short delay for UX
       toast.dismiss(toastId);
