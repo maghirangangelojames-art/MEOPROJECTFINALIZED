@@ -572,7 +572,7 @@ export default function TrackApplication() {
                       <p className="font-medium text-sm truncate">{attachment.name}</p>
                       {attachment.label && (
                         <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-1">
-                          {getFormattedDocumentLabel(attachment.documentKey, idx)}
+                          {getFormattedDocumentLabel(attachment.documentKey)}
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground">{attachment.type}</p>

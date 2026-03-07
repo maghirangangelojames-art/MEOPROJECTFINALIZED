@@ -24,12 +24,20 @@ export const nonLotOwnerDocuments = [
   { key: "constructAuthorization", label: "Authorization to erect/construct building" },
 ];
 
-// Helper to get formatted label with numbering
-export function getFormattedDocumentLabel(documentKey: string, index: number): string {
+// Helper to get the document index (number)
+function getDocumentIndex(documentKey: string): number {
+  const allDocs = [...baseRequiredDocuments, ...nonLotOwnerDocuments];
+  const index = allDocs.findIndex((d) => d.key === documentKey);
+  return index >= 0 ? index + 1 : 0;
+}
+
+// Helper to get formatted label with numbering based on documentKey
+export function getFormattedDocumentLabel(documentKey: string): string {
   const allDocs = [...baseRequiredDocuments, ...nonLotOwnerDocuments];
   const doc = allDocs.find((d) => d.key === documentKey);
-  if (!doc) return `Document ${index + 1}`;
-  return `${index + 1}. ${doc.label}`;
+  if (!doc) return `Document`;
+  const number = getDocumentIndex(documentKey);
+  return `${number}. ${doc.label}`;
 }
 
 // Helper to get label without numbering

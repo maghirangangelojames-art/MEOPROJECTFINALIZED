@@ -378,7 +378,7 @@ export default function ApplicationDetail() {
                           </div>
                           {attachment.label && (
                             <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
-                              {getFormattedDocumentLabel(attachment.documentKey, index)}
+                              {getFormattedDocumentLabel(attachment.documentKey)}
                             </p>
                           )}
                           <p className="text-xs text-muted-foreground">
