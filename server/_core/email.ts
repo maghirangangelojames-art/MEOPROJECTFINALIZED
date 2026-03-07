@@ -1,25 +1,57 @@
-import nodemailer from "nodemailer";
 import { ENV } from "./env";
 
-// Create Gmail transporter for sending emails
-const createGmailTransporter = () => {
-  if (!ENV.gmailUser || !ENV.gmailPassword) {
-    console.warn("[Email] Gmail credentials not configured. Email sending is disabled.");
+// SendGrid API client
+const sendgridApiUrl = "https://api.sendgrid.com/v3/mail/send";
+
+const createSendGridClient = () => {
+  if (!ENV.sendgridApiKey) {
+    console.warn("[Email] SendGrid API key not configured. Email sending is disabled.");
     return null;
   }
 
-  return nodemailer.createTransport({
-    service: "gmail",
-    port: 587,
-    secure: false, // Use TLS instead of SSL
-    auth: {
-      user: ENV.gmailUser,
-      pass: ENV.gmailPassword,
+  return {
+    send: async (emailOptions: {
+      from: string;
+      to: string;
+      subject: string;
+      html: string;
+    }) => {
+      const payload = {
+        personalizations: [
+          {
+            to: [{ email: emailOptions.to }],
+            subject: emailOptions.subject,
+          },
+        ],
+        from: { email: emailOptions.from },
+        content: [
+          {
+            type: "text/html",
+            value: emailOptions.html,
+          },
+        ],
+      };
+
+      const response = await fetch(sendgridApiUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${ENV.sendgridApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`SendGrid API error: ${response.status} - ${errorText}`);
+      }
+
+      return response;
     },
-  });
+  };
 };
 
-const transporter = createGmailTransporter();
+const sendgrid = createSendGridClient();
 
 export type LoginNotificationData = {
   email: string;
@@ -35,12 +67,12 @@ export type LoginNotificationData = {
 export async function sendLoginNotification(data: LoginNotificationData): Promise<boolean> {
   console.log("[Email] sendLoginNotification called for:", data.email);
   
-  if (!transporter) {
-    console.log("[Email] Skipping login notification - Gmail not configured");
+  if (!sendgrid) {
+    console.log("[Email] Skipping login notification - SendGrid not configured");
     return false;
   }
   
-  console.log("[Email] Transporter is available, preparing email...");
+  console.log("[Email] SendGrid client is available, preparing email...");
 
   const formattedTime = data.loginTime.toLocaleString("en-PH", {
     timeZone: "Asia/Manila",
@@ -49,7 +81,7 @@ export async function sendLoginNotification(data: LoginNotificationData): Promis
   });
 
   const emailOptions = {
-    from: ENV.gmailUser,
+    from: ENV.emailFrom,
     to: data.email,
     subject: "New Login to Building Permit System",
     html: `
@@ -153,7 +185,12 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    await transporter.sendMail(emailOptions);
+    await sendgrid.send({
+      to: emailOptions.to,
+      from: emailOptions.from,
+      subject: emailOptions.subject,
+      html: emailOptions.html,
+    });
     console.log(`[Email] Login notification sent to ${data.email}`);
     return true;
   } catch (error) {
@@ -174,8 +211,8 @@ export type ApplicationApprovedNotificationData = {
 export async function sendApplicationApprovedNotification(data: ApplicationApprovedNotificationData): Promise<boolean> {
   console.log("[Email] sendApplicationApprovedNotification called for:", data.applicantEmail);
   
-  if (!transporter) {
-    console.log("[Email] Skipping approval notification - Gmail not configured");
+  if (!sendgrid) {
+    console.log("[Email] Skipping approval notification - SendGrid not configured");
     return false;
   }
 
@@ -288,7 +325,7 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    await transporter.sendMail(emailOptions);
+    await sendgrid.send(emailOptions);
     console.log(`[Email] Approval notification sent to ${data.applicantEmail}`);
     return true;
   } catch (error) {
@@ -310,8 +347,8 @@ export type ApplicationResubmissionNotificationData = {
 export async function sendApplicationResubmissionNotification(data: ApplicationResubmissionNotificationData): Promise<boolean> {
   console.log("[Email] sendApplicationResubmissionNotification called for:", data.applicantEmail);
   
-  if (!transporter) {
-    console.log("[Email] Skipping resubmission notification - Gmail not configured");
+  if (!sendgrid) {
+    console.log("[Email] Skipping resubmission notification - SendGrid not configured");
     return false;
   }
 
@@ -436,7 +473,7 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    await transporter.sendMail(emailOptions);
+    await sendgrid.send(emailOptions);
     console.log(`[Email] Resubmission notification sent to ${data.applicantEmail}`);
     return true;
   } catch (error) {
@@ -462,8 +499,8 @@ export type ApplicationSubmissionNotificationToStaffData = {
 export async function sendApplicationSubmissionNotificationToStaff(data: ApplicationSubmissionNotificationToStaffData): Promise<boolean> {
   console.log("[Email] sendApplicationSubmissionNotificationToStaff called");
   
-  if (!transporter) {
-    console.log("[Email] Skipping staff submission notification - Gmail not configured");
+  if (!sendgrid) {
+    console.log("[Email] Skipping staff submission notification - SendGrid not configured");
     return false;
   }
 
@@ -480,7 +517,7 @@ export async function sendApplicationSubmissionNotificationToStaff(data: Applica
   });
 
   const emailOptions = {
-    from: ENV.gmailUser,
+    from: ENV.emailFrom,
     to: staffEmailRecipients,
     subject: `🆕 New Building Permit Application Submitted (${data.referenceNumber})`,
     html: `
@@ -620,7 +657,12 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    await transporter.sendMail(emailOptions);
+    await sendgrid.send({
+      to: emailOptions.to,
+      from: emailOptions.from,
+      subject: emailOptions.subject,
+      html: emailOptions.html,
+    });
     console.log(`[Email] Submission notification sent to staff: ${staffEmailRecipients}`);
     return true;
   } catch (error) {
@@ -644,8 +686,8 @@ export type ApplicationResubmissionNotificationToStaffData = {
 export async function sendApplicationResubmissionNotificationToStaff(data: ApplicationResubmissionNotificationToStaffData): Promise<boolean> {
   console.log("[Email] sendApplicationResubmissionNotificationToStaff called");
   
-  if (!transporter) {
-    console.log("[Email] Skipping staff resubmission notification - Gmail not configured");
+  if (!sendgrid) {
+    console.log("[Email] Skipping staff resubmission notification - SendGrid not configured");
     return false;
   }
 
@@ -784,7 +826,12 @@ This is an automated message. Please do not reply to this email.
   };
 
   try {
-    await transporter.sendMail(emailOptions);
+    await sendgrid.send({
+      to: emailOptions.to,
+      from: emailOptions.from,
+      subject: emailOptions.subject,
+      html: emailOptions.html,
+    });
     console.log(`[Email] Resubmission notification sent to staff: ${staffEmailRecipients}`);
     return true;
   } catch (error) {
@@ -810,8 +857,8 @@ export type ApplicationSubmissionNotificationData = {
 export async function sendApplicationSubmissionNotification(data: ApplicationSubmissionNotificationData): Promise<boolean> {
   console.log("[Email] sendApplicationSubmissionNotification called for:", data.applicantEmail);
   
-  if (!transporter) {
-    console.log("[Email] Skipping submission notification - Gmail not configured");
+  if (!sendgrid) {
+    console.log("[Email] Skipping submission notification - SendGrid not configured");
     return false;
   }
 
@@ -910,7 +957,7 @@ export async function sendApplicationSubmissionNotification(data: ApplicationSub
   };
 
   try {
-    await transporter.sendMail(emailOptions);
+    await sendgrid.send(emailOptions);
     console.log(`[Email] Submission notification sent to ${data.applicantEmail}`);
     return true;
   } catch (error) {
@@ -935,13 +982,13 @@ export type ApplicationOnHoldNotificationData = {
 export async function sendApplicationOnHoldNotification(data: ApplicationOnHoldNotificationData): Promise<boolean> {
   console.log("[Email] sendApplicationOnHoldNotification called for:", data.applicantEmail);
   
-  if (!transporter) {
-    console.log("[Email] Skipping on-hold notification - Gmail not configured");
+  if (!sendgrid) {
+    console.log("[Email] Skipping on-hold notification - SendGrid not configured");
     return false;
   }
 
   const emailOptions = {
-    from: ENV.gmailUser,
+    from: ENV.emailFrom,
     to: data.applicantEmail,
     subject: `⏸️ Building Permit Application Placed on Hold - ${data.referenceNumber}`,
     html: `
@@ -1038,7 +1085,12 @@ export async function sendApplicationOnHoldNotification(data: ApplicationOnHoldN
   };
 
   try {
-    await transporter.sendMail(emailOptions);
+    await sendgrid.send({
+      to: emailOptions.to,
+      from: emailOptions.from,
+      subject: emailOptions.subject,
+      html: emailOptions.html,
+    });
     console.log(`[Email] On-hold notification sent to ${data.applicantEmail}`);
     return true;
   } catch (error) {

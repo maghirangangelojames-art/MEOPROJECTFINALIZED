@@ -22,10 +22,8 @@ export const ENV = {
   supabaseAnonKey: process.env.SUPABASE_ANON_KEY ?? "",
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
   supabaseStorageBucket: process.env.SUPABASE_STORAGE_BUCKET ?? "permit-attachments",
-  // Email configuration (Gmail SMTP)
-  gmailUser: process.env.GMAIL_USER ?? "",
-  gmailPassword: process.env.GMAIL_PASSWORD ?? "",
-  resendApiKey: process.env.RESEND_API_KEY ?? "",
-  emailFrom: process.env.EMAIL_FROM ?? "noreply@resend.dev",
+  // Email configuration (SendGrid)
+  sendgridApiKey: process.env.SENDGRID_API_KEY ?? "",
+  emailFrom: process.env.EMAIL_FROM ?? "noreply@sariaya.gov.ph",
   appUrl: process.env.APP_URL ?? "https://meoprojectfinalized.onrender.com",
 };
