@@ -8,7 +8,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { NotificationBell } from "@/components/NotificationBell";
+import { ApplicantNotificationBell } from "@/components/ApplicantNotificationBell";
+import { StaffNotificationBell } from "@/components/StaffNotificationBell";
 import { useState } from "react";
 
 const pageScreenshots = [
@@ -104,7 +105,11 @@ export default function Home() {
             <ThemeToggle />
             {isAuthenticated ? (
               <div className="flex items-center gap-2 sm:gap-3">
-                <NotificationBell />
+                {user?.role === "user" ? (
+                  <ApplicantNotificationBell />
+                ) : (
+                  <StaffNotificationBell />
+                )}
                 <span className="text-sm text-muted-foreground hidden sm:inline font-medium">
                   {user?.name || "User"}
                 </span>
