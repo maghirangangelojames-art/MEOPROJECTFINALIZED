@@ -105,52 +105,31 @@ async function uploadToSupabaseStorage(input: {
     .join("/");
 
   const uploadUrl = `${supabaseUrl}/storage/v1/object/${encodedObjectPath}`;
-  
-  try {
-    const fileBytes = Buffer.from(input.fileBase64, "base64");
-    console.log(`[Upload] Starting upload for ${input.documentKey} (${fileBytes.length} bytes)`);
+  const fileBytes = Buffer.from(input.fileBase64, "base64");
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+  const uploadResponse = await fetch(uploadUrl, {
+    method: "POST",
+    headers: {
+      apikey: authKey,
+      Authorization: `Bearer ${authKey}`,
+      "Content-Type": input.mimeType,
+      "x-upsert": "true",
+    },
+    body: fileBytes,
+  });
 
-    const uploadResponse = await fetch(uploadUrl, {
-      method: "POST",
-      headers: {
-        apikey: authKey,
-        Authorization: `Bearer ${authKey}`,
-        "Content-Type": input.mimeType,
-        "x-upsert": "true",
-      },
-      body: fileBytes,
-      signal: controller.signal,
+  if (!uploadResponse.ok) {
+    const message = await uploadResponse.text().catch(() => uploadResponse.statusText);
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: `File upload failed: ${message}`,
     });
-
-    clearTimeout(timeoutId);
-
-    if (!uploadResponse.ok) {
-      const message = await uploadResponse.text().catch(() => uploadResponse.statusText);
-      console.error(`[Upload] Supabase error (${uploadResponse.status}):`, message);
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: `File upload failed: ${message}`,
-      });
-    }
-
-    console.log(`[Upload] Successfully uploaded ${input.documentKey}`);
-    return {
-      path: storagePath,
-      url: `${supabaseUrl}/storage/v1/object/public/${encodedObjectPath}`,
-    };
-  } catch (error: any) {
-    console.error(`[Upload] Error uploading to Supabase:`, error);
-    if (error.name === "AbortError") {
-      throw new TRPCError({
-        code: "TIMEOUT",
-        message: "File upload timed out. Please try again with a smaller file.",
-      });
-    }
-    throw error;
   }
+
+  return {
+    path: storagePath,
+    url: `${supabaseUrl}/storage/v1/object/public/${encodedObjectPath}`,
+  };
 }
 
 export const appRouter = router({
