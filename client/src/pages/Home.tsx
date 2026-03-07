@@ -104,9 +104,7 @@ export default function Home() {
             <ThemeToggle />
             {isAuthenticated ? (
               <div className="flex items-center gap-2 sm:gap-3">
-                {user?.role === "user" && (
-                  <NotificationBell />
-                )}
+                <NotificationBell />
                 <span className="text-sm text-muted-foreground hidden sm:inline font-medium">
                   {user?.name || "User"}
                 </span>
