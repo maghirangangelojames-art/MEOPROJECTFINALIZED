@@ -150,7 +150,7 @@ export default function Home() {
                   ✨ Streamlined Permit Process
                 </div>
                 <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl leading-tight">
-                  Digital Building Permit System
+                  Online Digital Building Permit System
                 </h1>
                 <p className="text-lg text-white/85 sm:text-xl font-light">
                   Fast, secure, and transparent building permit applications. Manage your permits with ease.
