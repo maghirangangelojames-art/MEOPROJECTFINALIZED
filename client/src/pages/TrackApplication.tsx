@@ -115,6 +115,12 @@ export default function TrackApplication() {
   const resubmitApplicationMutation = trpc.applications.resubmitApplication.useMutation();
   const updateAppInfoMutation = trpc.applications.updateApplicationInfoDuringResubmission.useMutation();
   
+  // Fetch notifications from server
+  const notificationsQuery = trpc.notifications.getByEmail.useQuery(
+    { email: user?.email || "" },
+    { enabled: !!user?.email }
+  );
+  
   const app = applicationQuery.data;
 
   // Initialize resubmission form when dialog opens
@@ -209,6 +215,43 @@ export default function TrackApplication() {
       }
     }
   }, [app]);
+
+  // Sync server notifications to localStorage
+  useEffect(() => {
+    if (!notificationsQuery.data || notificationsQuery.data.length === 0) return;
+
+    const localNotifications = JSON.parse(localStorage.getItem("appNotifications") || "[]");
+    let updated = false;
+
+    // Map server notifications to client format
+    notificationsQuery.data.forEach((serverNotif: any) => {
+      // Check if this notification already exists in localStorage
+      const exists = localNotifications.some((localNotif: any) =>
+        localNotif.type === serverNotif.type &&
+        localNotif.applicationRef === serverNotif.type &&
+        Math.abs(new Date(serverNotif.createdAt).getTime() - new Date(localNotif.timestamp).getTime()) < 1000
+      );
+
+      if (!exists) {
+        const clientNotif = {
+          id: serverNotif.id,
+          type: serverNotif.type,
+          message: serverNotif.subject, // Use subject as message
+          applicationRef: serverNotif.applicationId.toString(),
+          status: serverNotif.type === "approved" ? "approved" : serverNotif.type === "resubmission_requested" ? "for_resubmission" : "pending",
+          timestamp: new Date(serverNotif.createdAt),
+          read: false,
+        };
+        localNotifications.unshift(clientNotif);
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      localStorage.setItem("appNotifications", JSON.stringify(localNotifications.slice(0, 50)));
+    }
+  }, [notificationsQuery.data]);
+
 
   if (applicationQuery.isLoading) {
     return (

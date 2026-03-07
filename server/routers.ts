@@ -17,6 +17,7 @@ import {
   getDb,
   deleteApplication,
   logNotification,
+  getNotificationsByEmail,
 } from "./db";
 import { TRPCError } from "@trpc/server";
 import { ENV } from "./_core/env";
@@ -959,6 +960,19 @@ export const appRouter = router({
       .input(z.object({ applicationId: z.number() }))
       .query(async ({ input }) => {
         return getActivityLogsByApplicationId(input.applicationId);
+      }),
+  }),
+
+  // ============ Notifications ============
+  notifications: router({
+    getByEmail: protectedProcedure
+      .input(z.object({ email: z.string().email() }))
+      .query(async ({ input, ctx }) => {
+        // Only allow users to fetch their own notifications
+        if (ctx.user?.email !== input.email && ctx.user?.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN" });
+        }
+        return getNotificationsByEmail(input.email);
       }),
   }),
 });

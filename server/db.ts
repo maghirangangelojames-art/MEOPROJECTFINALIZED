@@ -461,6 +461,20 @@ export async function logNotification(data: {
 }
 
 /**
+ * Get notifications by recipient email
+ */
+export async function getNotificationsByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.query.notifications.findMany({
+    where: eq(notifications.recipientEmail, email),
+    orderBy: (notifications, { desc }) => desc(notifications.createdAt),
+    limit: 50,
+  });
+}
+
+/**
  * Delete an application by ID
  */
 export async function deleteApplication(id: number) {
