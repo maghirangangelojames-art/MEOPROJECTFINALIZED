@@ -1,28 +1,44 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { CheckCircle, Copy, Home, FileText, Calendar, Clock } from "lucide-react";
+import { CheckCircle, Copy, Home, FileText, Calendar, Clock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 
 export default function SubmissionConfirmation() {
   const [location] = useLocation();
   const [copied, setCopied] = useState(false);
+  const [refNumber, setRefNumber] = useState<string>("");
   
-  // Extract reference number from URL
-  const params = new URLSearchParams(location.split("?")[1]);
-  const refNumber = params.get("refNumber") || "PERMIT-2026-00000";
+  // Extract reference number from URL on mount
+  useEffect(() => {
+    const params = new URLSearchParams(location.split("?")[1]);
+    const ref = params.get("refNumber") || "PERMIT-2026-00000";
+    setRefNumber(ref);
+    console.log("[SubmissionConfirmation] Extracted refNumber:", ref);
+  }, [location]);
   
   // Fetch the application to get the exact submission timestamp from the database
-  const applicationQuery = trpc.applications.getByRefNumber.useQuery({
-    refNumber,
-  }, {
-    retry: false,
-  });
+  const applicationQuery = trpc.applications.getByRefNumber.useQuery(
+    { refNumber },
+    { 
+      enabled: !!refNumber && refNumber !== "PERMIT-2026-00000",
+      retry: 2,
+    }
+  );
   
   const app = applicationQuery.data;
   const submissionTime = app?.submittedAt ? new Date(app.submittedAt) : null;
+
+  useEffect(() => {
+    if (applicationQuery.error) {
+      console.error("[SubmissionConfirmation] Query error:", applicationQuery.error);
+    }
+    if (app) {
+      console.log("[SubmissionConfirmation] Application data loaded:", app);
+    }
+  }, [applicationQuery.error, app]);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(refNumber);
@@ -71,9 +87,17 @@ export default function SubmissionConfirmation() {
             </p>
             
             {/* Date and Time Submitted */}
-            {applicationQuery.isLoading ? (
+            {refNumber === "PERMIT-2026-00000" ? (
+              <div className="border-t border-white/20 pt-4 mt-4">
+                <p className="text-xs opacity-75 text-center text-black dark:text-white">Reference number not found in URL</p>
+              </div>
+            ) : applicationQuery.isLoading ? (
               <div className="border-t border-white/20 pt-4 mt-4 animate-pulse">
                 <p className="text-xs opacity-50 text-center text-black dark:text-white">Loading submission time...</p>
+              </div>
+            ) : applicationQuery.isError ? (
+              <div className="border-t border-white/20 pt-4 mt-4">
+                <p className="text-xs opacity-75 text-center text-black dark:text-white">Unable to load submission time</p>
               </div>
             ) : submissionTime ? (
               <div className="border-t border-white/20 pt-4 mt-4 space-y-2">
