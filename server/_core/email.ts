@@ -272,7 +272,7 @@ export async function sendApplicationApprovedNotification(data: ApplicationAppro
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track" style="display: inline-block; background-color: #10b981; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track-application" style="display: inline-block; background-color: #10b981; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         View Your Application
                       </a>
                     </div>
@@ -314,7 +314,7 @@ Application Details:
 
 You may now proceed with the next steps of your building project. For any questions, please contact the Engineering Office.
 
-View your application: ${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track
+View your application: ${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track-application
 
 Thank you for using the Sariaya Building Permit System!
 
@@ -420,7 +420,7 @@ export async function sendApplicationResubmissionNotification(data: ApplicationR
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track" style="display: inline-block; background-color: #f59e0b; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track-application" style="display: inline-block; background-color: #f59e0b; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         Review Application & Resubmit
                       </a>
                     </div>
@@ -467,7 +467,7 @@ ${data.staffRemarks}
 
 Please log in to your account and review the detailed remarks for each document. Make the necessary corrections and resubmit your application.
 
-Review Application & Resubmit: ${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track
+Review Application & Resubmit: ${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track-application
 
 If you have any questions, please contact the Engineering Office.
 
@@ -608,7 +608,7 @@ export async function sendApplicationSubmissionNotificationToStaff(data: Applica
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/staff/dashboard" style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/dashboard" style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         Review Application
                       </a>
                     </div>
@@ -658,7 +658,7 @@ Project Details:
 
 Please log in to the Staff Dashboard to review and process this application.
 
-Review Application: ${ENV.appUrl || "https://permit.sariaya.gov.ph"}/staff/dashboard
+Review Application: ${ENV.appUrl || "https://permit.sariaya.gov.ph"}/dashboard
 
 ---
 This is an automated message. Please do not reply to this email.
@@ -781,7 +781,7 @@ export async function sendApplicationResubmissionNotificationToStaff(data: Appli
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/staff/dashboard" style="display: inline-block; background-color: #f59e0b; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/dashboard" style="display: inline-block; background-color: #f59e0b; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         Review Updated Application
                       </a>
                     </div>
@@ -827,7 +827,7 @@ Application Details:
 
 Please review the updated files and determine if the application can now be approved or if further modifications are needed.
 
-Review Updated Application: ${ENV.appUrl || "https://permit.sariaya.gov.ph"}/staff/dashboard
+Review Updated Application: ${ENV.appUrl || "https://permit.sariaya.gov.ph"}/dashboard
 
 ---
 This is an automated message. Please do not reply to this email.
@@ -937,7 +937,7 @@ export async function sendApplicationSubmissionNotification(data: ApplicationSub
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track" style="display: inline-block; background-color: #10b981; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track-application" style="display: inline-block; background-color: #10b981; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         Track Your Application
                       </a>
                     </div>
@@ -1070,7 +1070,7 @@ export async function sendApplicationOnHoldNotification(data: ApplicationOnHoldN
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track" style="display: inline-block; background-color: #6366f1; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track-application" style="display: inline-block; background-color: #6366f1; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         View Application Details
                       </a>
                     </div>
