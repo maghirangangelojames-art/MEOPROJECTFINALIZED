@@ -304,7 +304,8 @@ export default function Home() {
                 <img
                   src="/IMAGES/MEO LOGO.png"
                   alt="MEO Logo"
-                  className="h-32 sm:h-40 lg:h-48 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-500 opacity-75 hover:opacity-100"
+                  loading="eager"
+                  className="h-32 sm:h-40 lg:h-48 w-auto object-contain hover:scale-105 transition-transform duration-500 opacity-90 hover:opacity-100"
                 />
               </div>
 
@@ -316,7 +317,8 @@ export default function Home() {
                 <img
                   src="/IMAGES/SARIAYA LOGO.png"
                   alt="Sariaya Logo"
-                  className="h-32 sm:h-40 lg:h-48 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-500 opacity-75 hover:opacity-100"
+                  loading="eager"
+                  className="h-32 sm:h-40 lg:h-48 w-auto object-contain hover:scale-105 transition-transform duration-500 opacity-90 hover:opacity-100"
                 />
               </div>
             </div>
