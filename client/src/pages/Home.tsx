@@ -284,42 +284,42 @@ export default function Home() {
       </section>
 
       {/* Logos Section - Trusted By */}
-      <section className="py-16 sm:py-24 lg:py-32 bg-gradient-to-b from-white/60 to-white/30 dark:from-slate-800/40 dark:to-slate-900/30 border-y border-slate-200/50 dark:border-slate-700/50 backdrop-blur-sm">
+      <section className="py-24 sm:py-32 lg:py-40 bg-white dark:bg-slate-950/50">
         <div className="container">
-          <div className="space-y-12 animate-fade-in">
+          <div className="space-y-16 animate-fade-in">
             {/* Heading */}
-            <div className="text-center space-y-3">
-              <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-widest">
-                Official Partners
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
-                Trusted by Local Government Units
+            <div className="text-center space-y-4 max-w-2xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+                Officially Partnered With
               </h2>
+              <p className="text-lg text-slate-600 dark:text-slate-300 font-light">
+                Trusted by the Municipality of Sariaya for efficient permit management
+              </p>
             </div>
 
-            {/* Logos Grid */}
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-12 sm:gap-16 lg:gap-20">
+            {/* Logos Grid - Cleaner Design */}
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-16 sm:gap-24 lg:gap-32">
               {/* MEO Logo */}
-              <div className="animate-slide-in-up flex items-center justify-center p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-700/50 shadow-lg border border-slate-100/50 dark:border-slate-600/50 hover:shadow-xl hover:border-slate-200/80 dark:hover:border-slate-500/80 transition-all duration-300 group">
+              <div className="animate-slide-in-up group flex items-center justify-center">
                 <img
                   src="/IMAGES/MEO LOGO.png"
                   alt="MEO Logo"
-                  className="h-20 sm:h-24 lg:h-28 w-auto object-contain group-hover:scale-110 transition-transform duration-300"
+                  className="h-32 sm:h-40 lg:h-48 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-500 opacity-75 hover:opacity-100"
                 />
               </div>
 
+              {/* Divider */}
+              <div className="hidden sm:block w-px h-32 sm:h-40 lg:h-48 bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-600 to-transparent" />
+
               {/* SARIAYA Logo */}
-              <div className="animate-slide-in-up flex items-center justify-center p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-700/50 shadow-lg border border-slate-100/50 dark:border-slate-600/50 hover:shadow-xl hover:border-slate-200/80 dark:hover:border-slate-500/80 transition-all duration-300 group" style={{ animationDelay: "0.1s" }}>
+              <div className="animate-slide-in-up group flex items-center justify-center" style={{ animationDelay: "0.1s" }}>
                 <img
                   src="/IMAGES/SARIAYA LOGO.png"
                   alt="Sariaya Logo"
-                  className="h-20 sm:h-24 lg:h-28 w-auto object-contain group-hover:scale-110 transition-transform duration-300"
+                  className="h-32 sm:h-40 lg:h-48 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-500 opacity-75 hover:opacity-100"
                 />
               </div>
             </div>
-
-            {/* Divider Line */}
-            <div className="h-px bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-600 to-transparent" />
           </div>
         </div>
       </section>
