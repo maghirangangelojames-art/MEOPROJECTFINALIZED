@@ -99,6 +99,25 @@ async function startServer() {
     })
   );
   
+  // Global error handler for unhandled errors in async routes
+  app.use((err: any, _req: any, res: any, _next: any) => {
+    console.error("[Server] Unhandled error:", err);
+    // Return proper JSON error response instead of HTML error page
+    res.status(500).json({
+      error: "Internal Server Error",
+      message: process.env.NODE_ENV === "development" ? err.message : "An unexpected error occurred",
+      code: "INTERNAL_ERROR",
+    });
+  });
+
+  // 404 handler
+  app.use((_req: any, res: any) => {
+    res.status(404).json({
+      error: "Not Found",
+      code: "NOT_FOUND",
+    });
+  });
+  
   console.log(`[Server] About to setup routes, NODE_ENV=${process.env.NODE_ENV}`);
   
   // development mode uses Vite, production mode uses static files
@@ -116,6 +135,23 @@ async function startServer() {
   if (port !== preferredPort) {
     console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
+
+  // Handle server errors
+  server.on("error", (error) => {
+    console.error("[Server] Server error:", error);
+  });
+
+  // Handle uncaught exceptions
+  process.on("uncaughtException", (error) => {
+    console.error("[Server] Uncaught exception:", error);
+    // Don't exit - let the server continue running
+  });
+
+  // Handle unhandled promise rejections
+  process.on("unhandledRejection", (reason, promise) => {
+    console.error("[Server] Unhandled rejection at:", promise, "reason:", reason);
+    // Don't exit - let the server continue running
+  });
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);

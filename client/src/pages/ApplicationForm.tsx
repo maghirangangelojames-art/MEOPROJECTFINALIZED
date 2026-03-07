@@ -322,31 +322,61 @@ export default function ApplicationForm() {
         ownerName: (formData.applicantCapacity || data.applicantCapacity) === "Authorized Representative" ? (formData.ownerName || data.ownerName || "") : undefined,
       };
 
-      // Upload all files in parallel for speed
-      const attachments = await Promise.all(
-        requiredDocuments.map(async (document) => {
-          const file = uploadedFiles[document.key];
-          if (!file) {
-            throw new Error(`Missing file for ${document.label}`);
+      // Upload files sequentially to avoid overwhelming the server
+      // This is more reliable on free tier deployments with limited resources
+      const attachments = [];
+      const maxRetries = 3;
+      
+      for (let i = 0; i < requiredDocuments.length; i++) {
+        const document = requiredDocuments[i];
+        const file = uploadedFiles[document.key];
+        if (!file) {
+          throw new Error(`Missing file for ${document.label}`);
+        }
+
+        let lastError: any = null;
+        let uploaded = null;
+
+        // Retry logic for failed uploads
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            const fileBase64 = await fileToBase64(file);
+            uploaded = await uploadAttachmentMutation.mutateAsync({
+              documentKey: document.key,
+              fileName: file.name,
+              mimeType: file.type === "application/pdf" ? "application/pdf" : "image/jpeg",
+              fileBase64,
+            });
+            lastError = null;
+            break; // Success, exit retry loop
+          } catch (error) {
+            lastError = error;
+            if (attempt < maxRetries) {
+              // Add exponential backoff: 1s, 2s, 4s
+              const waitTime = Math.pow(2, attempt - 1) * 1000;
+              toast.loading(`Retrying file upload (${attempt}/${maxRetries})...`, { duration: waitTime });
+              await new Promise(resolve => setTimeout(resolve, waitTime));
+            }
           }
+        }
 
-          const fileBase64 = await fileToBase64(file);
-          const uploaded = await uploadAttachmentMutation.mutateAsync({
-            documentKey: document.key,
-            fileName: file.name,
-            mimeType: file.type === "application/pdf" ? "application/pdf" : "image/jpeg",
-            fileBase64,
-          });
+        if (!uploaded) {
+          throw lastError || new Error(`Failed to upload ${document.label} after ${maxRetries} attempts`);
+        }
 
-          return {
-            name: file.name,
-            url: uploaded.url,
-            type: file.type,
-            documentKey: document.key,
-            label: document.label,
-          };
-        })
-      );
+        attachments.push({
+          name: file.name,
+          url: uploaded.url,
+          type: file.type,
+          documentKey: document.key,
+          label: document.label,
+        });
+
+        // Small delay between uploads to prevent overwhelming the server (100ms)
+        if (i < requiredDocuments.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
 
       // Create application with all attachments
       const result = await createApplicationMutation.mutateAsync({

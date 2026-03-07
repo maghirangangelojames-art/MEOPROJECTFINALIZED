@@ -95,41 +95,123 @@ async function uploadToSupabaseStorage(input: {
   const { supabaseUrl, supabaseAnonKey, supabaseServiceRoleKey, bucket } = getSupabaseStorageConfig();
   const authKey = supabaseServiceRoleKey || supabaseAnonKey;
 
-  const now = Date.now();
-  const safeName = sanitizeFileName(input.fileName);
-  const storagePath = `applications/${input.documentKey}/${now}-${safeName}`;
-  const objectPath = `${bucket}/${storagePath}`;
-  const encodedObjectPath = objectPath
-    .split("/")
-    .map((segment) => encodeURIComponent(segment))
-    .join("/");
+  try {
+    // Validate file size before processing (max 50MB)
+    const fileSizeInMb = Buffer.byteLength(input.fileBase64, 'base64') / (1024 * 1024);
+    if (fileSizeInMb > 50) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: `File is too large (${fileSizeInMb.toFixed(2)}MB). Maximum allowed is 50MB.`,
+      });
+    }
 
-  const uploadUrl = `${supabaseUrl}/storage/v1/object/${encodedObjectPath}`;
-  const fileBytes = Buffer.from(input.fileBase64, "base64");
+    const now = Date.now();
+    const safeName = sanitizeFileName(input.fileName);
+    const storagePath = `applications/${input.documentKey}/${now}-${safeName}`;
+    const objectPath = `${bucket}/${storagePath}`;
+    const encodedObjectPath = objectPath
+      .split("/")
+      .map((segment) => encodeURIComponent(segment))
+      .join("/");
 
-  const uploadResponse = await fetch(uploadUrl, {
-    method: "POST",
-    headers: {
-      apikey: authKey,
-      Authorization: `Bearer ${authKey}`,
-      "Content-Type": input.mimeType,
-      "x-upsert": "true",
-    },
-    body: fileBytes,
-  });
+    const uploadUrl = `${supabaseUrl}/storage/v1/object/${encodedObjectPath}`;
+    
+    // Convert base64 to buffer
+    let fileBytes: Buffer;
+    try {
+      fileBytes = Buffer.from(input.fileBase64, "base64");
+    } catch (e) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Invalid file format. Please ensure file is properly encoded.",
+      });
+    }
 
-  if (!uploadResponse.ok) {
-    const message = await uploadResponse.text().catch(() => uploadResponse.statusText);
+    // Add timeout for the fetch request (30 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+    let uploadResponse;
+    try {
+      uploadResponse = await fetch(uploadUrl, {
+        method: "POST",
+        headers: {
+          apikey: authKey,
+          Authorization: `Bearer ${authKey}`,
+          "Content-Type": input.mimeType,
+          "x-upsert": "true",
+        },
+        body: fileBytes,
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+
+    if (!uploadResponse.ok) {
+      const message = await uploadResponse.text().catch(() => uploadResponse.statusText);
+      console.error(`[Upload] Supabase error for ${input.documentKey}:`, uploadResponse.status, message);
+      
+      // Provide more specific error messages based on status
+      if (uploadResponse.status === 401) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Authentication failed with storage service. Please try again.",
+        });
+      } else if (uploadResponse.status === 429) {
+        throw new TRPCError({
+          code: "RATE_LIMITED",
+          message: "Too many requests. Please wait a moment and try again.",
+        });
+      } else if (uploadResponse.status >= 500) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Storage service is temporarily unavailable. Please try again.",
+        });
+      }
+      
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: `File upload failed: ${message || uploadResponse.statusText}`,
+      });
+    }
+
+    const result = {
+      path: storagePath,
+      url: `${supabaseUrl}/storage/v1/object/public/${encodedObjectPath}`,
+    };
+
+    return result;
+  } catch (error) {
+    // Re-throw TRPCError as-is
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+    
+    // Handle AbortError (timeout)
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new TRPCError({
+        code: "TIMEOUT",
+        message: "File upload timed out. Please check your internet connection and try again with a smaller file.",
+      });
+    }
+    
+    // Handle network errors
+    if (error instanceof TypeError) {
+      console.error("[Upload] Network error:", error.message);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Network error during upload. Please check your connection and try again.",
+      });
+    }
+    
+    // Handle unknown errors
+    console.error("[Upload] Unexpected error:", error);
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: `File upload failed: ${message}`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: error instanceof Error ? error.message : "Unknown error during file upload",
     });
   }
-
-  return {
-    path: storagePath,
-    url: `${supabaseUrl}/storage/v1/object/public/${encodedObjectPath}`,
-  };
 }
 
 export const appRouter = router({
