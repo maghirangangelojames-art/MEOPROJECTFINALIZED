@@ -376,7 +376,7 @@ export default function ApplicationDetail() {
                               </Tooltip>
                             )}
                           </div>
-                          {attachment.label && (
+                          {attachment.documentKey && (
                             <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
                               {getFormattedDocumentLabel(attachment.documentKey)}
                             </p>
