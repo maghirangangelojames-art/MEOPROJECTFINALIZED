@@ -90,11 +90,7 @@ const projectTypes = [
 ];
 
 const buildingClassifications = [
-  "Type 1 - Wood",
-  "Type 2 - Wood with Non-combustible Roof",
-  "Type 3 - Ordinary Masonry/Concrete",
-  "Type 4 - Incombustible",
-  "Type 5 - Fire Resistive",
+  "Residential",
 ];
 
 // Document label mapping for display
