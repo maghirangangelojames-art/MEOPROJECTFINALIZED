@@ -29,6 +29,13 @@
       "when": 1740960620000,
       "tag": "0004_add_pending_resubmit_status",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1741450800000,
+      "tag": "0005_backfill_uploaded_at",
+      "breakpoints": true
     }
   ]
 }
