@@ -5,6 +5,7 @@ services:
     plan: free
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm run db:push && pnpm run build
     startCommand: NODE_ENV=production node dist/index.js
+    # Force redeploy - 2026-03-08
     envVars:
       - key: NODE_ENV
         value: production
