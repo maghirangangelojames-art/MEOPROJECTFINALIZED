@@ -267,8 +267,32 @@ export async function sendApplicationApprovedNotification(data: ApplicationAppro
                       </table>
                     </div>
                     
+                    <h3 style="color: #1f2937; margin: 20px 0 15px 0; font-size: 16px; font-weight: 600;">📋 Next Steps:</h3>
+                    
+                    <div style="margin: 20px 0;">
+                      <h4 style="color: #047857; margin: 0 0 10px 0; font-size: 14px; font-weight: 600;">Step 1: Prepare Required Documents</h4>
+                      <p style="color: #4b5563; font-size: 14px; line-height: 1.6; margin: 0 0 15px 0;">
+                        Gather all hard copies of the documents you submitted with your application. Ensure all documents are complete, accurate, and in good condition.
+                      </p>
+                      
+                      <h4 style="color: #047857; margin: 10px 0 10px 0; font-size: 14px; font-weight: 600;">Step 2: Visit the Engineering Office</h4>
+                      <p style="color: #4b5563; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0;">
+                        Submit all hard copies at the Sariaya Municipal Engineering Office:
+                      </p>
+                      <div style="background-color: #f0fdf4; border-left: 4px solid #10b981; padding: 12px; margin: 10px 0 15px 0;">
+                        <p style="color: #065f46; font-size: 13px; font-weight: 600; margin: 0 0 5px 0;">📍 Sariaya Municipal Engineering Office</p>
+                        <p style="color: #047857; font-size: 13px; margin: 0 0 5px 0;">Location: Municipal Building, Sariaya, Quezon</p>
+                        <p style="color: #047857; font-size: 13px; margin: 0;">Reference Number: <span style="font-family: monospace; font-weight: bold;">${data.referenceNumber}</span></p>
+                      </div>
+                      
+                      <h4 style="color: #047857; margin: 10px 0 10px 0; font-size: 14px; font-weight: 600;">Step 3: Receive Your Permit</h4>
+                      <p style="color: #4b5563; font-size: 14px; line-height: 1.6; margin: 0;">
+                        After submission of hard copies, your building permit will be issued. The staff will provide you with the formal permit document and any additional instructions for project commencement.
+                      </p>
+                    </div>
+                    
                     <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 20px 0;">
-                      You may now proceed with the next steps of your building project. For any questions, please contact the Engineering Office.
+                      For any questions or concerns, please contact the Engineering Office.
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
