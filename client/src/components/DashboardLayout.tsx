@@ -169,7 +169,7 @@ function DashboardLayoutContent({
                   <img 
                     src="/IMAGES/WEBSITELOGO.png" 
                     alt="MEO Sariaya Logo" 
-                    className="h-6 w-6 object-contain"
+                    className="h-10 w-10 object-contain rounded-lg"
                   />
                   <span className="font-semibold tracking-tight truncate">
                     MEO Sariaya

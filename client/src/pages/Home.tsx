@@ -91,12 +91,12 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-slide-in-down">
-        <div className="container flex h-16 items-center justify-between">
+        <div className="container flex h-20 items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group cursor-pointer hover:opacity-80 transition-opacity">
             <img 
               src="/IMAGES/WEBSITELOGO.png" 
               alt="MEO Sariaya Logo" 
-              className="h-11 w-11 object-contain group-hover:scale-110 transition-transform duration-250"
+              className="h-14 w-14 object-contain group-hover:scale-110 transition-transform duration-250 rounded-lg"
             />
             <div className="hidden sm:block">
               <h1 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">MEO Sariaya</h1>
