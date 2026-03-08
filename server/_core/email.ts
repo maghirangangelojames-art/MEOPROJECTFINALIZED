@@ -272,7 +272,7 @@ export async function sendApplicationApprovedNotification(data: ApplicationAppro
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track-application" style="display: inline-block; background-color: #10b981; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="https://meoprojectfinalized.onrender.com/" style="display: inline-block; background-color: #10b981; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         View Your Application
                       </a>
                     </div>
@@ -420,7 +420,7 @@ export async function sendApplicationResubmissionNotification(data: ApplicationR
                     </p>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track-application" style="display: inline-block; background-color: #f59e0b; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="https://meoprojectfinalized.onrender.com/" style="display: inline-block; background-color: #f59e0b; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         Review Application & Resubmit
                       </a>
                     </div>
@@ -608,7 +608,7 @@ export async function sendApplicationSubmissionNotificationToStaff(data: Applica
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/dashboard" style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="https://meoprojectfinalized.onrender.com/" style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         Review Application
                       </a>
                     </div>
@@ -658,7 +658,7 @@ Project Details:
 
 Please log in to the Staff Dashboard to review and process this application.
 
-Review Application: ${ENV.appUrl || "https://permit.sariaya.gov.ph"}/dashboard
+Review Application: https://meoprojectfinalized.onrender.com/
 
 ---
 This is an automated message. Please do not reply to this email.
@@ -781,7 +781,7 @@ export async function sendApplicationResubmissionNotificationToStaff(data: Appli
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/dashboard" style="display: inline-block; background-color: #f59e0b; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="https://meoprojectfinalized.onrender.com/" style="display: inline-block; background-color: #f59e0b; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         Review Updated Application
                       </a>
                     </div>
@@ -937,7 +937,7 @@ export async function sendApplicationSubmissionNotification(data: ApplicationSub
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track-application" style="display: inline-block; background-color: #10b981; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="https://meoprojectfinalized.onrender.com/" style="display: inline-block; background-color: #10b981; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         Track Your Application
                       </a>
                     </div>
@@ -1070,7 +1070,7 @@ export async function sendApplicationOnHoldNotification(data: ApplicationOnHoldN
                     </div>
                     
                     <div style="text-align: center; margin: 30px 0;">
-                      <a href="${ENV.appUrl || "https://permit.sariaya.gov.ph"}/track-application" style="display: inline-block; background-color: #6366f1; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                      <a href="https://meoprojectfinalized.onrender.com/" style="display: inline-block; background-color: #6366f1; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">
                         View Application Details
                       </a>
                     </div>
