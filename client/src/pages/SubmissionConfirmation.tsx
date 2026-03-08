@@ -13,11 +13,12 @@ export default function SubmissionConfirmation() {
   
   // Extract reference number from URL on mount
   useEffect(() => {
-    const params = new URLSearchParams(location.split("?")[1]);
+    // Use window.location.search to get the query string
+    const params = new URLSearchParams(window.location.search);
     const ref = params.get("refNumber") || "PERMIT-2026-00000";
     setRefNumber(ref);
-    console.log("[SubmissionConfirmation] Extracted refNumber:", ref);
-  }, [location]);
+    console.log("[SubmissionConfirmation] Extracted refNumber:", ref, "from search:", window.location.search);
+  }, []);
   
   // Fetch the application to get the exact submission timestamp from the database
   const applicationQuery = trpc.applications.getByRefNumber.useQuery(
