@@ -440,9 +440,8 @@ export default function TrackApplication() {
   };
 
   const isFileResubmitted = (attachment: any) => {
-    // A file is considered resubmitted if it has an uploadedAt timestamp
-    // and no remarks (remarks were cleared upon resubmission)
-    return attachment.uploadedAt && !attachment.remarks;
+    // File is considered "Updated" when it's LOCKED (waiting for review)
+    return attachment.isLocked !== false;
   };
 
   const attachments = app.attachments as any[] || [];

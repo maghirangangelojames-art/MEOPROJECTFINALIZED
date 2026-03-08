@@ -248,11 +248,13 @@ export default function ApplicationDetail() {
   };
 
   const isFileResubmitted = (attachment: any) => {
-    return attachment.uploadedAt && !attachment.remarks;
+    // File is considered "Updated" when it's LOCKED (waiting for review)
+    return attachment.isLocked !== false;
   };
 
   const hasFileRemarks = (attachment: any) => {
-    return !!attachment.remarks;
+    // File requires fixing when it's UNLOCKED (staff needs changes)
+    return attachment.isLocked === false;
   };
 
   return (
