@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
+import { useLocation } from "wouter";
 
 interface ApplicantNotification {
   id: number;
@@ -19,6 +20,7 @@ interface ApplicantNotification {
 export function ApplicantNotificationBell() {
   const [notifications, setNotifications] = useState<ApplicantNotification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [, navigate] = useLocation();
 
   useEffect(() => {
     // Check localStorage for applicant notifications
@@ -173,7 +175,11 @@ export function ApplicantNotificationBell() {
                       ? "bg-green-50 dark:bg-green-950/30 hover:bg-green-100 dark:hover:bg-green-950/40" 
                       : "bg-background hover:bg-muted/30"
                   }`}
-                  onClick={() => markAsRead(notification.id)}
+                  onClick={() => {
+                    markAsRead(notification.id);
+                    navigate("/track-application");
+                    setIsOpen(false);
+                  }}
                 >
                   <div className="flex gap-3 items-start">
                     <div className="mt-0.5 flex-shrink-0">

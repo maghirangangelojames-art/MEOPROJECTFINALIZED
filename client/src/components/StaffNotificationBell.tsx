@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { useStaffNotifications } from "@/hooks/useStaffNotifications";
+import { useLocation } from "wouter";
 
 interface StaffNotification {
   id: number;
@@ -12,6 +13,7 @@ interface StaffNotification {
   applicantName: string;
   applicantEmail: string;
   applicationRef: string;
+  applicationId: number;
   timestamp: Date;
   read: boolean;
   detailsCount?: number; // Number of files resubmitted
@@ -21,6 +23,7 @@ export function StaffNotificationBell() {
   const [notifications, setNotifications] = useState<StaffNotification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const { refetch: refetchApplications } = useStaffNotifications();
+  const [, navigate] = useLocation();
 
   useEffect(() => {
     // Check localStorage for staff notifications
@@ -144,7 +147,11 @@ export function StaffNotificationBell() {
                       ? getNotificationColor(notification.type)
                       : "bg-background hover:bg-muted/30"
                   }`}
-                  onClick={() => markAsRead(notification.id)}
+                  onClick={() => {
+                    markAsRead(notification.id);
+                    navigate(`/application/${notification.applicationId}`);
+                    setIsOpen(false);
+                  }}
                 >
                   <div className="flex gap-3 items-start">
                     <div className="mt-0.5 flex-shrink-0">

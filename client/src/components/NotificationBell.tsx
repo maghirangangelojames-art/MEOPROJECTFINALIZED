@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
+import { useLocation } from "wouter";
 
 interface Notification {
   id: number;
@@ -20,6 +21,7 @@ interface Notification {
 export function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [, navigate] = useLocation();
 
   useEffect(() => {
     // Check localStorage for stored notifications
@@ -171,7 +173,11 @@ export function NotificationBell() {
                       ? "bg-blue-50 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-950/40" 
                       : "bg-background hover:bg-muted/30"
                   }`}
-                  onClick={() => markAsRead(notification.id)}
+                  onClick={() => {
+                    markAsRead(notification.id);
+                    navigate("/track-application");
+                    setIsOpen(false);
+                  }}
                 >
                   <div className="flex gap-3 items-start">
                     <div className="mt-0.5 flex-shrink-0">

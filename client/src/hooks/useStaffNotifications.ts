@@ -9,6 +9,7 @@ interface StoredStaffNotification {
   applicantName: string;
   applicantEmail: string;
   applicationRef: string;
+  applicationId: number;
   timestamp: Date;
   read: boolean;
   detailsCount?: number;
@@ -56,6 +57,7 @@ export function useStaffNotifications() {
         applicantName: app.applicantName,
         applicantEmail: app.applicantEmail,
         applicationRef: app.referenceNumber,
+        applicationId: app.id,
         timestamp: new Date(),
         read: false,
         detailsCount: app.status === "pending_resubmit" ? 1 : undefined,
