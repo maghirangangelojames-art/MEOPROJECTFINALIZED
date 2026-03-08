@@ -94,7 +94,7 @@ export default function Home() {
         <div className="container flex h-20 items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group cursor-pointer hover:opacity-80 transition-opacity">
             <img 
-              src="/IMAGES/WEBSITELOGO.png" 
+              src="/IMAGES/WEBSITELOGO-removebg-preview.png" 
               alt="MEO Sariaya Logo" 
               className="h-14 w-14 object-contain group-hover:scale-110 transition-transform duration-250 rounded-lg"
             />

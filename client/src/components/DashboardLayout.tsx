@@ -167,7 +167,7 @@ function DashboardLayoutContent({
               {!isCollapsed ? (
                 <div className="flex items-center gap-2 min-w-0">
                   <img 
-                    src="/IMAGES/WEBSITELOGO.png" 
+                    src="/IMAGES/WEBSITELOGO-removebg-preview.png" 
                     alt="MEO Sariaya Logo" 
                     className="h-16 w-16 object-contain rounded-lg"
                   />
