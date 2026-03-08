@@ -139,10 +139,9 @@ async function uploadToSupabaseStorage(input: {
       uploadResponse = await fetch(uploadUrl, {
         method: "POST",
         headers: {
-          apikey: authKey,
-          Authorization: `Bearer ${authKey}`,
-          "Content-Type": input.mimeType,
-          "x-upsert": "true",
+          "apikey": authKey,
+          "Authorization": `Bearer ${authKey}`,
+          "Content-Type": input.mimeType || "application/octet-stream",
         },
         body: fileBytes,
         signal: controller.signal,
@@ -154,6 +153,14 @@ async function uploadToSupabaseStorage(input: {
     if (!uploadResponse.ok) {
       const message = await uploadResponse.text().catch(() => uploadResponse.statusText);
       console.error(`[Upload] Supabase error for ${input.documentKey}:`, uploadResponse.status, message);
+      console.error(`[Upload] Request details:`, {
+        url: uploadUrl,
+        method: "POST",
+        contentType: input.mimeType,
+        fileSize: fileBytes.length,
+        bucket,
+        storagePath
+      });
       
       // Provide more specific error messages based on status
       if (uploadResponse.status === 401) {

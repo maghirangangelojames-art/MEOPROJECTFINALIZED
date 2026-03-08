@@ -231,6 +231,30 @@ export default function ApplicationDetail() {
     );
   };
 
+  const formatUploadDate = (date: string | Date | undefined) => {
+    if (!date) return null;
+    try {
+      const uploadDate = typeof date === 'string' ? new Date(date) : date;
+      return uploadDate.toLocaleDateString(undefined, { 
+        month: 'short', 
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch {
+      return null;
+    }
+  };
+
+  const isFileResubmitted = (attachment: any) => {
+    return attachment.uploadedAt && !attachment.remarks;
+  };
+
+  const hasFileRemarks = (attachment: any) => {
+    return !!attachment.remarks;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       {/* Header */}
@@ -361,12 +385,34 @@ export default function ApplicationDetail() {
                   {(app.attachments as any[]).map((attachment: any, index: number) => (
                     <div
                       key={index}
-                      className="border border-border rounded-lg overflow-hidden bg-white dark:bg-slate-800"
+                      className={`border rounded-lg overflow-hidden bg-white dark:bg-slate-800 relative ${
+                        isFileResubmitted(attachment) 
+                          ? 'border-green-300 dark:border-green-600'
+                          : hasFileRemarks(attachment)
+                          ? 'border-red-300 dark:border-red-600'
+                          : 'border-border'
+                      }`}
                     >
+                      {isFileResubmitted(attachment) && (
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-400 to-blue-400 rounded-t-lg"></div>
+                      )}
+                      {hasFileRemarks(attachment) && !isFileResubmitted(attachment) && (
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-400 to-orange-400 rounded-t-lg"></div>
+                      )}
                       <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 border-b border-border">
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <p className="font-semibold text-sm truncate text-foreground">{attachment.name}</p>
+                            {isFileResubmitted(attachment) && (
+                              <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 text-xs whitespace-nowrap">
+                                ✓ Updated
+                              </Badge>
+                            )}
+                            {hasFileRemarks(attachment) && !isFileResubmitted(attachment) && (
+                              <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100 text-xs whitespace-nowrap">
+                                ⚠ Requires Fixing
+                              </Badge>
+                            )}
                             {(attachment.isLocked !== false) && (
                               <Tooltip>
                                 <TooltipTrigger asChild>
@@ -381,9 +427,12 @@ export default function ApplicationDetail() {
                               {attachment.documentKey ? getFormattedDocumentLabel(attachment.documentKey) : attachment.label}
                             </p>
                           )}
-                          <p className="text-xs text-muted-foreground">
-                            {attachment.type === "application/pdf" ? "PDF" : "Image"}
-                          </p>
+                          <div className="text-xs text-muted-foreground space-y-1">
+                            <p>{attachment.type === "application/pdf" ? "PDF" : "Image"}</p>
+                            {attachment.uploadedAt && (
+                              <p>Uploaded: {formatUploadDate(attachment.uploadedAt)}</p>
+                            )}
+                          </div>
                         </div>
                         <div className="flex items-center gap-2 ml-4">
                           <Button
