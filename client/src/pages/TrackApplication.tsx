@@ -106,6 +106,7 @@ export default function TrackApplication() {
   const [editingFileName, setEditingFileName] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showResubmissionDialog, setShowResubmissionDialog] = useState(false);
+  const [showNextStepsDialog, setShowNextStepsDialog] = useState(false);
   const [resubmissionFormData, setResubmissionFormData] = useState<any>({});
 
   const applicationQuery = trpc.applications.getMyApplication.useQuery(undefined, {
@@ -523,6 +524,18 @@ export default function TrackApplication() {
                 </p>
               </div>
             </div>
+            
+            {/* Next Steps Button - Only show when approved */}
+            {app.status === "approved" && (
+              <div className="pt-4 border-t dark:border-white/20 border-black/20 flex justify-center">
+                <Button
+                  onClick={() => setShowNextStepsDialog(true)}
+                  className="bg-white dark:bg-slate-900 text-meo-600 dark:text-emerald-400 hover:bg-white/90 dark:hover:bg-slate-800 font-semibold"
+                >
+                  📋 What's Next?
+                </Button>
+              </div>
+            )}
           </div>
         </Card>
 
@@ -1030,6 +1043,93 @@ export default function TrackApplication() {
                     Resubmit Application
                   </>
                 )}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Next Steps Dialog - Only show when approved */}
+        <Dialog open={showNextStepsDialog} onOpenChange={setShowNextStepsDialog}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-2xl">✅ Next Steps for Your Approved Application</DialogTitle>
+              <DialogDescription>
+                Your building permit application has been approved. Please follow the steps below to complete the process.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-6 py-4">
+              {/* Step 1 */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-100 dark:bg-green-900">
+                    <span className="text-green-800 dark:text-green-100 font-bold">1</span>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-base mb-2">Prepare Required Documents</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Gather all the hard copies of the documents you submitted with your application. Ensure all documents are complete, accurate, and in good condition.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900">
+                    <span className="text-blue-800 dark:text-blue-100 font-bold">2</span>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-base mb-2">Visit the Engineering Office</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Submit all hard copies at the Sariaya Municipal Engineering Office:
+                  </p>
+                  <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <p className="text-sm font-medium mb-2">📍 Sariaya Municipal Engineering Office</p>
+                    <p className="text-sm text-muted-foreground mb-2">Location: Municipal Building, Sariaya, Quezon</p>
+                    <p className="text-sm text-muted-foreground">Please bring your Reference Number: <span className="font-mono font-semibold text-foreground">{app.referenceNumber}</span></p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900">
+                    <span className="text-purple-800 dark:text-purple-100 font-bold">3</span>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-base mb-2">Receive Your Permit</h3>
+                  <p className="text-sm text-muted-foreground">
+                    After submission of hard copies, your building permit will be issued. The staff will provide you with the formal permit document and any additional instructions for project commencement.
+                  </p>
+                </div>
+              </div>
+
+              {/* Important Note */}
+              <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                <p className="text-sm font-medium text-amber-900 dark:text-amber-100 mb-2">⚠️ Important</p>
+                <p className="text-sm text-amber-800 dark:text-amber-200">
+                  Please submit your documents within 30 days of receiving this approval. Failure to submit within this timeframe may require resubmission of your application.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 border-t pt-6">
+              <Button
+                variant="outline"
+                onClick={() => setShowNextStepsDialog(false)}
+              >
+                Close
+              </Button>
+              <Button
+                asChild
+                className="btn-primary-meo"
+              >
+                <Link href="/">Return to Home</Link>
               </Button>
             </div>
           </DialogContent>
