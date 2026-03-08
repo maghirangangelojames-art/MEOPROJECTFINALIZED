@@ -423,6 +423,28 @@ export default function TrackApplication() {
     }
   };
 
+  const formatUploadDate = (date: string | Date | undefined) => {
+    if (!date) return null;
+    try {
+      const uploadDate = typeof date === 'string' ? new Date(date) : date;
+      return uploadDate.toLocaleDateString(undefined, { 
+        month: 'short', 
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch {
+      return null;
+    }
+  };
+
+  const isFileResubmitted = (attachment: any) => {
+    // A file is considered resubmitted if it has an uploadedAt timestamp
+    // and no remarks (remarks were cleared upon resubmission)
+    return attachment.uploadedAt && !attachment.remarks;
+  };
+
   const attachments = app.attachments as any[] || [];
 
   return (
@@ -563,17 +585,32 @@ export default function TrackApplication() {
               {attachments.map((attachment: any, idx: number) => {
                 console.log(`[DEBUG] Attachment ${idx}:`, { documentKey: attachment.documentKey, label: attachment.label, name: attachment.name });
                 return (
-                <div key={idx} className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 transition">
+                <div key={idx} className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 transition relative">
+                  {isFileResubmitted(attachment) && (
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-400 to-blue-400 rounded-t-lg"></div>
+                  )}
                   <div className="flex items-center gap-3 flex-1">
                     <FileText className="h-5 w-5 text-muted-foreground" />
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-sm truncate">{attachment.name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-sm truncate">{attachment.name}</p>
+                        {isFileResubmitted(attachment) && (
+                          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 text-xs whitespace-nowrap">
+                            ✓ Updated
+                          </Badge>
+                        )}
+                      </div>
                       {(attachment.documentKey || attachment.label) && (
                         <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-1">
                           {attachment.documentKey ? getFormattedDocumentLabel(attachment.documentKey) : attachment.label}
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground">{attachment.type}</p>
+                      {attachment.uploadedAt && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Uploaded: {formatUploadDate(attachment.uploadedAt)}
+                        </p>
+                      )}
                       {attachment.remarks && (
                         <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">
                           <span className="font-medium">Staff Remarks:</span> {attachment.remarks}

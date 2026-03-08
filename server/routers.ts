@@ -412,10 +412,16 @@ export const appRouter = router({
           }
 
           const referenceNumber = generateReferenceNumber();
+          const now = new Date();
+          const attachmentsWithTimestamps = (input.attachments || []).map((att) => ({
+            ...att,
+            uploadedAt: now,
+          }));
+          
           await createApplication({
             referenceNumber,
             ...input,
-            attachments: input.attachments || [],
+            attachments: attachmentsWithTimestamps,
             status: "pending",
           });
 
@@ -773,6 +779,7 @@ export const appRouter = router({
         }
 
         const currentAttachments = (app.attachments as any[]) || [];
+        const now = new Date();
 
         // Update the specified file attachments
         input.updatedAttachments.forEach((update) => {
@@ -789,6 +796,7 @@ export const appRouter = router({
               url: update.url,
               type: update.type,
               remarks: "", // Clear remarks to mark file as resubmitted
+              uploadedAt: now, // Update timestamp to show file was resubmitted
             };
           }
         });
@@ -797,7 +805,6 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
-        const now = new Date();
         await db
           .update(applications)
           .set({
