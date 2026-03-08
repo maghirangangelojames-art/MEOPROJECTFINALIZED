@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ApplicantNotificationBell } from "@/components/ApplicantNotificationBell";
@@ -92,15 +92,17 @@ export default function Home() {
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-slide-in-down">
         <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-blue-700 to-blue-800 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg transition-all duration-250 shadow-md border border-white/20">
-              <FileText className="h-6 w-6 text-white drop-shadow-lg" />
-            </div>
+          <Link href="/" className="flex items-center gap-3 group cursor-pointer hover:opacity-80 transition-opacity">
+            <img 
+              src="/IMAGES/WEBSITELOGO.png" 
+              alt="MEO Sariaya Logo" 
+              className="h-11 w-11 object-contain group-hover:scale-110 transition-transform duration-250"
+            />
             <div className="hidden sm:block">
               <h1 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">MEO Sariaya</h1>
               <p className="text-xs text-muted-foreground font-medium">Building Permit System</p>
             </div>
-          </div>
+          </Link>
           <div className="flex items-center gap-2 sm:gap-4">
             <ThemeToggle />
             {isAuthenticated ? (

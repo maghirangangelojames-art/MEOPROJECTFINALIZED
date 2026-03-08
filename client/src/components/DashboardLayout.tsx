@@ -166,8 +166,13 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed ? (
                 <div className="flex items-center gap-2 min-w-0">
+                  <img 
+                    src="/IMAGES/WEBSITELOGO.png" 
+                    alt="MEO Sariaya Logo" 
+                    className="h-6 w-6 object-contain"
+                  />
                   <span className="font-semibold tracking-tight truncate">
-                    Navigation
+                    MEO Sariaya
                   </span>
                 </div>
               ) : null}
