@@ -248,13 +248,18 @@ export default function ApplicationDetail() {
   };
 
   const isFileResubmitted = (attachment: any) => {
-    // File is considered "Updated" when it's LOCKED (waiting for review)
-    return attachment.isLocked !== false;
+    // File is "Updated" when LOCKED and NO remarks (just submitted/resubmitted)
+    return attachment.isLocked !== false && !attachment.remarks;
   };
 
   const hasFileRemarks = (attachment: any) => {
-    // File requires fixing when it's UNLOCKED (staff needs changes)
+    // File "Requires Fixing" when UNLOCKED (staff needs changes)
     return attachment.isLocked === false;
+  };
+
+  const isFileChanged = (attachment: any) => {
+    // File "Changed" when LOCKED WITH remarks (applicant re-uploaded after being asked to fix)
+    return attachment.isLocked !== false && !!attachment.remarks;
   };
 
   return (
@@ -388,29 +393,39 @@ export default function ApplicationDetail() {
                     <div
                       key={index}
                       className={`border rounded-lg overflow-hidden bg-white dark:bg-slate-800 relative ${
-                        isFileResubmitted(attachment) 
+                        isFileChanged(attachment)
+                          ? 'border-violet-300 dark:border-violet-600'
+                          : isFileResubmitted(attachment) 
                           ? 'border-green-300 dark:border-green-600'
                           : hasFileRemarks(attachment)
                           ? 'border-red-300 dark:border-red-600'
                           : 'border-border'
                       }`}
                     >
-                      {isFileResubmitted(attachment) && (
+                      {isFileChanged(attachment) && (
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 to-purple-400 rounded-t-lg"></div>
+                      )}
+                      {isFileResubmitted(attachment) && !isFileChanged(attachment) && (
                         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-400 to-blue-400 rounded-t-lg"></div>
                       )}
-                      {hasFileRemarks(attachment) && !isFileResubmitted(attachment) && (
+                      {hasFileRemarks(attachment) && (
                         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-400 to-orange-400 rounded-t-lg"></div>
                       )}
                       <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 border-b border-border">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <p className="font-semibold text-sm truncate text-foreground">{attachment.name}</p>
-                            {isFileResubmitted(attachment) && (
+                            {isFileChanged(attachment) && (
+                              <Badge className="bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-100 text-xs whitespace-nowrap">
+                                📝 File Changed
+                              </Badge>
+                            )}
+                            {isFileResubmitted(attachment) && !isFileChanged(attachment) && (
                               <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 text-xs whitespace-nowrap">
                                 ✓ Updated
                               </Badge>
                             )}
-                            {hasFileRemarks(attachment) && !isFileResubmitted(attachment) && (
+                            {hasFileRemarks(attachment) && (
                               <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100 text-xs whitespace-nowrap">
                                 ⚠ Requires Fixing
                               </Badge>
