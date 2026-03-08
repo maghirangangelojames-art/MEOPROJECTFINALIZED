@@ -30,8 +30,14 @@ export function StaffNotificationBell() {
     const stored = localStorage.getItem("staffNotifications");
     if (stored) {
       try {
-        const parsed = JSON.parse(stored);
+        let parsed = JSON.parse(stored);
+        // Migrate old notifications that don't have applicationId by clearing them
+        // New notifications will be created with the applicationId
+        parsed = parsed.filter((n: StaffNotification) => n.applicationId);
         setNotifications(parsed);
+        if (parsed.length !== JSON.parse(stored).length) {
+          localStorage.setItem("staffNotifications", JSON.stringify(parsed));
+        }
       } catch (e) {
         // Invalid JSON, ignore
       }
@@ -149,7 +155,12 @@ export function StaffNotificationBell() {
                   }`}
                   onClick={() => {
                     markAsRead(notification.id);
-                    navigate(`/application/${notification.applicationId}`);
+                    if (notification.applicationId) {
+                      navigate(`/application/${notification.applicationId}`);
+                    } else {
+                      // Fallback to dashboard if applicationId is missing
+                      navigate("/dashboard");
+                    }
                     setIsOpen(false);
                   }}
                 >

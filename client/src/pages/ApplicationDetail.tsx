@@ -28,13 +28,21 @@ export default function ApplicationDetail() {
   // Fetch application
   const applicationQuery = trpc.applications.getById.useQuery(
     { id: parseInt(id || "0") },
-    { enabled: !!id }
+    { 
+      enabled: !!id,
+      staleTime: 0, // Always fetch fresh data when component mounts
+      gcTime: 0 // Don't cache
+    }
   );
 
   // Fetch activity logs
   const activityLogsQuery = trpc.activityLogs.getByApplicationId.useQuery(
     { applicationId: parseInt(id || "0") },
-    { enabled: !!id }
+    { 
+      enabled: !!id,
+      staleTime: 0,
+      gcTime: 0
+    }
   );
 
 
