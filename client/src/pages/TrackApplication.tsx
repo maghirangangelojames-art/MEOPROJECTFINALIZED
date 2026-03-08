@@ -440,8 +440,8 @@ export default function TrackApplication() {
   };
 
   const isFileResubmitted = (attachment: any) => {
-    // GREEN: File LOCKED and NO remarks (just submitted/resubmitted, waiting review)
-    return attachment.isLocked !== false && !attachment.remarks;
+    // GREEN: File LOCKED and NOT marked as changed after unlock (awaiting review)
+    return attachment.isLocked !== false && !attachment.changedAfterUnlock;
   };
 
   const hasFileRemarks = (attachment: any) => {
@@ -450,8 +450,8 @@ export default function TrackApplication() {
   };
 
   const isFileChanged = (attachment: any) => {
-    // VIOLET: File LOCKED WITH remarks (applicant re-uploaded after being asked to fix)
-    return attachment.isLocked !== false && !!attachment.remarks;
+    // VIOLET: File was changed after being unlocked (applicant re-uploaded in response to feedback)
+    return attachment.changedAfterUnlock === true;
   };
 
   const attachments = app.attachments as any[] || [];

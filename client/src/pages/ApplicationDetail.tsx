@@ -248,18 +248,18 @@ export default function ApplicationDetail() {
   };
 
   const isFileResubmitted = (attachment: any) => {
-    // File is "Updated" when LOCKED and NO remarks (just submitted/resubmitted)
-    return attachment.isLocked !== false && !attachment.remarks;
+    // GREEN: File LOCKED and NOT marked as changed after unlock (awaiting review)
+    return attachment.isLocked !== false && !attachment.changedAfterUnlock;
   };
 
   const hasFileRemarks = (attachment: any) => {
-    // File "Requires Fixing" when UNLOCKED (staff needs changes)
+    // RED: File UNLOCKED (staff needs changes)
     return attachment.isLocked === false;
   };
 
   const isFileChanged = (attachment: any) => {
-    // File "Changed" when LOCKED WITH remarks (applicant re-uploaded after being asked to fix)
-    return attachment.isLocked !== false && !!attachment.remarks;
+    // VIOLET: File was changed after being unlocked (applicant re-uploaded in response to feedback)
+    return attachment.changedAfterUnlock === true;
   };
 
   return (

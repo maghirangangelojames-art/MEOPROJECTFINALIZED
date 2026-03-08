@@ -794,19 +794,18 @@ export const appRouter = router({
             update.fileIndex >= 0 &&
             update.fileIndex < currentAttachments.length
           ) {
-            // Preserve locked status AND remarks when file is resubmitted
-            // This allows the three-state system to work:
-            // LOCKED + NO remarks = GREEN (awaiting review)
-            // UNLOCKED = RED (needs changes)
-            // LOCKED + WITH remarks = VIOLET (applicant re-uploaded in response to feedback)
             const existingAttachment = currentAttachments[update.fileIndex];
+            // Mark files that were UNLOCKED as "changedAfterUnlock"
+            // This enables the violet state for applicants who re-uploaded in response to feedback
+            const wasUnlocked = existingAttachment.isLocked === false;
+            
             currentAttachments[update.fileIndex] = {
               ...existingAttachment,
               name: update.name,
               url: update.url,
               type: update.type,
-              // remarks: keep existing remarks to show applicant responded to feedback
               uploadedAt: now, // Update timestamp to show file was resubmitted
+              changedAfterUnlock: wasUnlocked ? true : existingAttachment.changedAfterUnlock, // Mark if this was changed from unlocked state
             };
           }
         });
