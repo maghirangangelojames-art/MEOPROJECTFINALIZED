@@ -515,12 +515,15 @@ export const appRouter = router({
         if (input.status === "approved" && 
             (app.status === "for_resubmission" || app.status === "pending_resubmit")) {
           const attachments = (app.attachments as any[]) || [];
-          const filesWithRemarks = attachments.filter((att: any) => att.remarks);
+          // A file requires resubmission only if it has remarks AND hasn't been changed after unlock
+          const filesWithUnresolvedRemarks = attachments.filter((att: any) => 
+            att.remarks && !att.changedAfterUnlock
+          );
           
-          if (filesWithRemarks.length > 0) {
+          if (filesWithUnresolvedRemarks.length > 0) {
             throw new TRPCError({
               code: "BAD_REQUEST",
-              message: `Cannot approve application. ${filesWithRemarks.length} file(s) still require resubmission. All files must be resubmitted before approval.`,
+              message: `Cannot approve application. ${filesWithUnresolvedRemarks.length} file(s) still require resubmission. All files must be resubmitted before approval.`,
             });
           }
         }
