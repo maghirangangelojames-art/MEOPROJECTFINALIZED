@@ -3,7 +3,7 @@ services:
     name: permit-app
     runtime: node
     plan: free
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm run build
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm run db:push && pnpm run build
     startCommand: NODE_ENV=production node dist/index.js
     envVars:
       - key: NODE_ENV
