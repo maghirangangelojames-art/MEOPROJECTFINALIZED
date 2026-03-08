@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Calendar, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, FileText, CheckCircle, Clock, TrendingUp, Zap, Shield, Globe, AlertCircle, LayoutDashboard, Mail, Phone, Copy, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ApplicantNotificationBell } from "@/components/ApplicantNotificationBell";
