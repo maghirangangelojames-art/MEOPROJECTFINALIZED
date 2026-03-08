@@ -583,7 +583,12 @@ export default function TrackApplication() {
             <h2 className="text-xl font-bold mb-4">Uploaded Documents</h2>
             <div className="space-y-3">
               {attachments.map((attachment: any, idx: number) => {
-                console.log(`[DEBUG] Attachment ${idx}:`, { documentKey: attachment.documentKey, label: attachment.label, name: attachment.name });
+                console.log(`[DEBUG] Attachment ${idx}:`, { 
+                  name: attachment.name, 
+                  uploadedAt: attachment.uploadedAt, 
+                  remarks: attachment.remarks,
+                  documentKey: attachment.documentKey 
+                });
                 return (
                 <div key={idx} className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 transition relative">
                   {isFileResubmitted(attachment) && (
